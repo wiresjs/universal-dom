@@ -1,0 +1,7 @@
+.project
+.settings
+node_modules/
+bower_components/
+build/
+.vscode/
+.langCache/
