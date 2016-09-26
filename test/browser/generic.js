@@ -75,14 +75,19 @@ describe("Generic test", function() {
         attr.setValue("bar")
 
         getHTML().should.equal('<div id="bar"></div>')
-        subject.remove();
-
-
-
-
     });
 
     it("Should create an attribute via .attr", function() {
+        subject.attr("foo", "bar")
+        getHTML().should.equal('<div id="bar" foo="bar"></div>');
+    });
 
+    it("Should update an attribute via .attr", function() {
+        subject.attr("foo", "world")
+        getHTML().should.equal('<div id="bar" foo="world"></div>');
+    });
+
+    after(function() {
+        subject.remove();
     });
 })

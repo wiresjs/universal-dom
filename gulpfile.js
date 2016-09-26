@@ -7,6 +7,7 @@ const fs = require('fs');
 const tsUniversal = require("ts-universal");
 const sourcemaps = require('gulp-sourcemaps');
 const runSequence = require('run-sequence');
+const uglify = require("gulp-uglify");
 const babel = require("gulp-babel");
 
 
@@ -25,6 +26,7 @@ gulp.task("es5-build", function() {
         .pipe(babel({ presets: ["es2015"] }))
         .pipe(rename("universal-dom-es5.js"))
         .pipe(replace(/exports : undefined,/, "exports : this,"))
+        .pipe(uglify())
         .pipe(gulp.dest("build/"))
 })
 gulp.task('build', function() {

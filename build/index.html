@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+
+
+</head>
+
+<body>
+
+</body>
+<script type="text/javascript" src="universal-dom.js"></script>
+
+<script>
+    // let div = document.createElement("div")
+    // let attr = document.createAttribute("id");
+    // attr.value = "hello"
+    // div.setAttributeNode(attr)
+    // attr.value = "hell2"
+    // document.body.appendChild(div);
+
+    let subject = Dom.createElement("div");
+
+    document.body.appendChild(subject.getOriginal());
+
+    let foo = Dom.createAttribute("foo")
+    foo.setValue("bar")
+    subject.setAttr(foo);
+
+    setTimeout(function() {
+        foo.setValue("ooo")
+    }, 100)
+</script>
+
+</html>

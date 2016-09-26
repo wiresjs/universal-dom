@@ -1,3 +1,4 @@
+import { Attribute } from "./Attribute";
 import {IUniversalElement, IUniversalTextNode, IUniversalAttribute} from "../Common";
 
 /**
@@ -8,14 +9,6 @@ import {IUniversalElement, IUniversalTextNode, IUniversalAttribute} from "../Com
  * @implements {IUniversalElement<HTMLElement>}
  */
 export class Element implements IUniversalElement<HTMLElement> {
-    /**
-     *
-     *
-     * @private
-     * @type {(IUniversalAttribute<Attr>)[]}
-     * @memberOf Element
-     */
-    private attrs: (IUniversalAttribute<Attr>)[] = [];
 
     /**
      *
@@ -66,10 +59,50 @@ export class Element implements IUniversalElement<HTMLElement> {
      *
      * @memberOf Element
      */
-    public addChild(element: IUniversalElement<HTMLElement> |
+    public append(element: IUniversalElement<HTMLElement> |
         IUniversalTextNode<Text>): void {
-        this.children.push(element);
         this.original.appendChild(element.getOriginal());
+    }
+
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<HTMLElement> |
+     *         IUniversalTextNode<Text>)} element
+     *
+     * @memberOf Element
+     */
+    public appendTo(element: IUniversalElement<HTMLElement> |
+        IUniversalTextNode<Text>): void {
+        element.getOriginal().appendChild(this.original);
+    }
+
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<HTMLElement> |
+     *         IUniversalTextNode<Text>)} element
+     *
+     * @memberOf Element
+     */
+    public prepend(element: IUniversalElement<HTMLElement> |
+        IUniversalTextNode<Text>): void {
+        this.original.insertBefore(element.getOriginal(), this.original.firstChild);
+    }
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<HTMLElement> |
+     *         IUniversalTextNode<Text>)} element
+     *
+     * @memberOf Element
+     */
+    public prependTo(element: IUniversalElement<HTMLElement> |
+        IUniversalTextNode<Text>): void {
+        element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
     }
 
     /**
@@ -90,16 +123,42 @@ export class Element implements IUniversalElement<HTMLElement> {
      *
      * @memberOf Element
      */
-    public setAttr(attribute: IUniversalAttribute<Attr>): void {
-        this.attrs.push(attribute);
+    public setAttr(attribute: IUniversalAttribute<Attr>): IUniversalAttribute<Attr> {
         this.original.setAttributeNode(attribute.getOriginal());
+        return attribute;
     }
 
 
-    public attr(name : string, value? : any)
-    {
+    /**
+     *
+     *
+     * @param {(IUniversalAttribute<any> | string)} attribute
+     *
+     * @memberOf Element
+     */
+    public removeAttr(attribute: IUniversalAttribute<any> | string) {
 
     }
+
+    /**
+     *
+     *
+     * @param {string} name
+     * @param {*} [value]
+     * @returns {IUniversalAttribute<Attr>}
+     *
+     * @memberOf Element
+     */
+    public attr(name: string, value?: any): IUniversalAttribute<Attr> {
+        if (value === undefined) {
+            return this.getAttr(name);
+        } else {
+            let attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+            attr.setValue(value);
+            return attr;
+        }
+    }
+
     /**
      *
      *
@@ -109,10 +168,10 @@ export class Element implements IUniversalElement<HTMLElement> {
      * @memberOf Element
      */
     public getAttr(name: string): IUniversalAttribute<Attr> {
-        for (let i = 0; i < this.attrs.length; i++) {
-            if (this.attrs[i].getName() === name) {
-                return this.attrs[i];
-            }
+        let oAttr = this.original.getAttributeNode(name);
+        if (oAttr) {
+            let attr = new Attribute(oAttr);
+            return attr;
         }
     }
 

@@ -99,7 +99,37 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    addChild(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+    append(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any>)} element
+     *
+     * @memberOf IUniversalElement
+     */
+    appendTo(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any>)} element
+     *
+     * @memberOf IUniversalElement
+     */
+    prepend(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any>)} element
+     *
+     * @memberOf IUniversalElement
+     */
+    prependTo(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+
     /**
      *
      *
@@ -115,8 +145,17 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    setAttr(attribute: IUniversalAttribute<any>): void;
+    setAttr(attribute: IUniversalAttribute<any>): IUniversalAttribute<Attr>;
 
+
+    /**
+     *
+     *
+     * @param {(IUniversalAttribute<any> | string)} attribute
+     *
+     * @memberOf IUniversalElement
+     */
+    removeAttr(attribute: IUniversalAttribute<any> | string): void;
 
 
     /**
@@ -127,7 +166,7 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    attr(name: string, value?: any);
+    attr(name: string, value?: any): IUniversalAttribute<Attr>;
 
     /**
      *

@@ -25,8 +25,8 @@ export class Attribute implements IUniversalAttribute<Attr> {
      *
      * @memberOf Attribute
      */
-    constructor(private name: string, value?: string) {
-        this.original = document.createAttribute(name);
+    constructor(name: string | Attr, value?: string) {
+        this.original = typeof name === "string" ? document.createAttribute(name) : name;
         if (value !== undefined) {
             this.original.value = value;
         }
@@ -40,7 +40,7 @@ export class Attribute implements IUniversalAttribute<Attr> {
      * @memberOf Attribute
      */
     public getName(): string {
-        return this.name;
+        return this.original.name;
     }
 
     /**
@@ -83,6 +83,6 @@ export class Attribute implements IUniversalAttribute<Attr> {
      * @memberOf Attribute
      */
     public remove(): void {
-        this.original.parentElement.removeAttribute(this.name);
+        this.original.parentElement.removeAttribute(this.original.name);
     }
 }
