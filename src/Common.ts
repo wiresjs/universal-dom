@@ -116,6 +116,19 @@ export interface IUniversalElement<T> {
      * @memberOf IUniversalElement
      */
     setAttr(attribute: IUniversalAttribute<any>): void;
+
+
+
+    /**
+     *
+     *
+     * @param {string} name
+     * @param {*} [value]
+     *
+     * @memberOf IUniversalElement
+     */
+    attr(name: string, value?: any);
+
     /**
      *
      *
@@ -179,7 +192,7 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    setStyle(data: any, value?: string): void
+    setStyle(data: any, value?: string): void;
 
     /**
      *

@@ -25,8 +25,11 @@ export class Attribute implements IUniversalAttribute<Attr> {
      *
      * @memberOf Attribute
      */
-    constructor(private name: string) {
+    constructor(private name: string, value?: string) {
         this.original = document.createAttribute(name);
+        if (value !== undefined) {
+            this.original.value = value;
+        }
     }
 
     /**

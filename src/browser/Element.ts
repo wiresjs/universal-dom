@@ -16,6 +16,7 @@ export class Element implements IUniversalElement<HTMLElement> {
      * @memberOf Element
      */
     private attrs: (IUniversalAttribute<Attr>)[] = [];
+
     /**
      *
      *
@@ -91,7 +92,13 @@ export class Element implements IUniversalElement<HTMLElement> {
      */
     public setAttr(attribute: IUniversalAttribute<Attr>): void {
         this.attrs.push(attribute);
-        this.original.setAttribute(attribute.getName(), attribute.getValue());
+        this.original.setAttributeNode(attribute.getOriginal());
+    }
+
+
+    public attr(name : string, value? : any)
+    {
+
     }
     /**
      *
@@ -102,7 +109,11 @@ export class Element implements IUniversalElement<HTMLElement> {
      * @memberOf Element
      */
     public getAttr(name: string): IUniversalAttribute<Attr> {
-        return this.attrs.find(x => x.getName() === name);
+        for (let i = 0; i < this.attrs.length; i++) {
+            if (this.attrs[i].getName() === name) {
+                return this.attrs[i];
+            }
+        }
     }
 
     // children
