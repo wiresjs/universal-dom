@@ -1,24 +1,22 @@
 {
     "compilerOptions": {
         "target": "es6",
-        "module": "commonjs",
+        "module": "amd",
         "moduleResolution": "node",
         "isolatedModules": false,
         "jsx": "react",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "declaration":true,
+        "declaration": true,
         "noImplicitAny": false,
         "noImplicitUseStrict": false,
         "removeComments": true,
         "noLib": false,
-        "outDir": "../build",
+        "outFile": "out.js",
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true
     },
-    "exclude": [
-       
-    ],
+    "exclude": [],
     "compileOnSave": false,
     "buildOnSave": false,
     "atom": {

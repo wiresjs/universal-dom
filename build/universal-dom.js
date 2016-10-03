@@ -1,181 +1,471 @@
-(function(___env___){
-/* ****** Setup ****** */
-var __scope__ = ___env___.scope;
-var $isBackend = ___env___.isBackend;
-var __ts__ = ___env___.ts;
-
-
-/* ******* undefined ******* */
-__ts__.module("Common.js", function(exports, require){
-"use strict";
-
+(function($__exports__, $isBackend) {var __local__ = {};var define = function(n, d, f) {__local__[n] = { d: d, f: f }};var __resolve__ = function(name) {var m = __local__[name];if (m === undefined) {if ($isBackend) {return require(name);} else {Exports.__npm__ = Exports.__npm__ || {};return Exports.__npm__[name];}}if (m.r) { return m.r; }m.r = {};var z = [__resolve__, m.r];for (var i = 2; i < m.d.length; i++) {z.push(__resolve__(m.d[i]));}m.f.apply(null, z);return m.r;};
+define("Common", ["require", "exports"], function (require, exports) {
+    "use strict";
 });
-
-/* ******* browser/Attribute.ts ******* */
-__ts__.module("browser/Attribute.js", function(exports, require){
-"use strict";
-class Attribute {
-    constructor(name, value) {
-        this.original = typeof name === "string" ? document.createAttribute(name) : name;
-        if (value !== undefined) {
+define("Browser", ["require", "exports"], function (require, exports) {
+    "use strict";
+    class BrowserComment {
+        constructor(data) {
+            if (typeof data === "string") {
+                this.original = document.createComment(data);
+            }
+            else {
+                this.original = data;
+            }
+        }
+        getOriginal() {
+            return this.original;
+        }
+        appendTo(element) {
+            element.append(this);
+        }
+        prependTo(element) {
+            element.prepend(this);
+        }
+        insertAfter(element) {
+            let referenceNode = element.getOriginal();
+            if (referenceNode.parentNode) {
+                referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+            }
+        }
+        insertBefore(element) {
+            let referenceNode = element.getOriginal();
+            if (referenceNode.parentNode) {
+                referenceNode.parentNode.insertBefore(this.original, referenceNode);
+            }
+        }
+        remove() {
+            this.original.parentElement.removeChild(this.original);
+        }
+        getParent() {
+            if (this.original.parentNode) {
+                return new Element(this.original.parentElement);
+            }
+        }
+        getSource() {
+            return `<--${this.original.nodeValue}-->`;
+        }
+    }
+    exports.BrowserComment = BrowserComment;
+    class Attribute {
+        constructor(name, value) {
+            this.original = typeof name === "string" ? document.createAttribute(name) : name;
+            if (value !== undefined) {
+                this.original.value = value;
+            }
+        }
+        getName() {
+            return this.original.name;
+        }
+        getOriginal() {
+            return this.original;
+        }
+        setValue(value) {
             this.original.value = value;
         }
-    }
-    getName() {
-        return this.original.name;
-    }
-    getOriginal() {
-        return this.original;
-    }
-    setValue(value) {
-        this.original.value = value;
-    }
-    getValue() {
-        return this.original.value;
-    }
-    remove() {
-        this.original.parentElement.removeAttribute(this.original.name);
-    }
-}
-exports.Attribute = Attribute;
-
-});
-
-/* ******* browser/Element.ts ******* */
-__ts__.module("browser/Element.js", function(exports, require){
-"use strict";
-const Attribute_1 = require("./Attribute");
-class Element {
-    constructor(name) {
-        this.children = [];
-        this.original = document.createElement(name);
-    }
-    getOriginal() {
-        return this.original;
-    }
-    append(element) {
-        this.original.appendChild(element.getOriginal());
-    }
-    appendTo(element) {
-        element.getOriginal().appendChild(this.original);
-    }
-    prepend(element) {
-        this.original.insertBefore(element.getOriginal(), this.original.firstChild);
-    }
-    prependTo(element) {
-        element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
-    }
-    remove() {
-        this.original.parentNode.removeChild(this.original);
-    }
-    setAttr(attribute) {
-        this.original.setAttributeNode(attribute.getOriginal());
-        return attribute;
-    }
-    removeAttr(attribute) {
-    }
-    attr(name, value) {
-        if (value === undefined) {
-            return this.getAttr(name);
+        getValue() {
+            return this.original.value;
         }
-        else {
-            let attr = this.getAttr(name) || this.setAttr(new Attribute_1.Attribute(name));
-            attr.setValue(value);
-            return attr;
+        remove() {
+            this.original.parentElement.removeAttribute(this.original.name);
+        }
+        getParent() {
+            return new Element(this.original.parentElement);
         }
     }
-    getAttr(name) {
-        let oAttr = this.original.getAttributeNode(name);
-        if (oAttr) {
-            let attr = new Attribute_1.Attribute(oAttr);
-            return attr;
+    exports.Attribute = Attribute;
+    class TextNode {
+        constructor(data) {
+            if (data instanceof Text) {
+                this.original = data;
+            }
+            else {
+                this.original = document.createTextNode(data);
+            }
+        }
+        getOriginal() {
+            return this.original;
+        }
+        setValue(value) {
+            this.original.nodeValue = value;
+        }
+        getValue() {
+            return this.original.nodeValue;
+        }
+        remove() {
+            this.original.parentElement.removeChild(this.original);
+        }
+        getParent() {
+            return new Element(this.original.parentElement);
+        }
+        getSource() {
+            return this.getValue();
         }
     }
-    getChildren() {
-        return this.children;
-    }
-    setChildren(elements) {
-        this.children = elements;
-    }
-    addClass(name) {
-        this.original.classList.add(name);
-    }
-    hasClass(name) {
-        return this.original.classList.contains(name);
-    }
-    removeClass(name) {
-        this.original.classList.remove(name);
-    }
-    setStyle(data, value) {
-        if (typeof data === "object") {
-            for (let k in data) {
-                if (data.hasOwnProperty(k)) {
-                    this.original.style[k] = data[k];
+    exports.TextNode = TextNode;
+    class Element {
+        constructor(data) {
+            this.children = [];
+            if (data instanceof HTMLElement) {
+                this.original = data;
+            }
+            else {
+                this.original = document.createElement(data);
+            }
+        }
+        getOriginal() {
+            return this.original;
+        }
+        append(element) {
+            this.original.appendChild(element.getOriginal());
+        }
+        appendTo(element) {
+            element.getOriginal().appendChild(this.original);
+        }
+        prepend(element) {
+            this.original.insertBefore(element.getOriginal(), this.original.firstChild);
+        }
+        prependTo(element) {
+            element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
+        }
+        remove() {
+            this.original.parentNode.removeChild(this.original);
+        }
+        setAttr(attribute) {
+            this.original.setAttributeNode(attribute.getOriginal());
+            return attribute;
+        }
+        removeAttr(attribute) {
+        }
+        attr(name, value) {
+            if (value === undefined) {
+                return this.getAttr(name);
+            }
+            else {
+                let attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+                attr.setValue(value);
+                return attr;
+            }
+        }
+        getAttr(name) {
+            let oAttr = this.original.getAttributeNode(name);
+            if (oAttr) {
+                let attr = new Attribute(oAttr);
+                return attr;
+            }
+        }
+        getChildren() {
+            let childNodes = this.original.childNodes;
+            let result = [];
+            for (let i = 0; i < childNodes.length; i++) {
+                let node = childNodes[i];
+                if (node.nodeType === 1) {
+                    result.push(new Element(node));
+                }
+                if (node.nodeType === 8) {
+                    result.push(new BrowserComment(node));
+                }
+                if (node.nodeType === 3) {
+                    if (node.nodeValue) {
+                        result.push(new TextNode(node));
+                    }
                 }
             }
-            return;
+            return result;
         }
-        return this.original.style[data] = value;
+        setChildren(elements) {
+            this.children = elements;
+        }
+        addClass(name) {
+            this.original.classList.add(name);
+        }
+        hasClass(name) {
+            return this.original.classList.contains(name);
+        }
+        removeClass(name) {
+            this.original.classList.remove(name);
+        }
+        setStyle(data, value) {
+            if (typeof data === "object") {
+                for (let k in data) {
+                    if (data.hasOwnProperty(k)) {
+                        this.original.style[k] = data[k];
+                    }
+                }
+                return;
+            }
+            return this.original.style[data] = value;
+        }
+        getStyle(name) {
+            return this.original.style[name];
+        }
+        getSource() {
+            let html = this.original.outerHTML;
+            html = html.replace(/\r?\n|\r|\t/g, '');
+            html = html.replace(/\s{2,}/g, " ");
+            html = html.replace(/>\s+</g, "><");
+            html = html.trim();
+            return html;
+        }
+        getParent() {
+            let parent = this.original.parentElement;
+            return new Element(parent);
+        }
+        eachChild(closure) {
+            let childNodes = this.original.childNodes;
+            for (let i = 0; i < childNodes.length; i++) {
+                let el = childNodes[i];
+                closure(new Element(el), i);
+            }
+        }
     }
-    getStyle(name) {
-        return this.original.style[name];
+    exports.Element = Element;
+});
+define("Server", ["require", "exports"], function (require, exports) {
+    "use strict";
+    let elementIDS = 0;
+    class ServerComment {
+        constructor(data) {
+            this.$id = elementIDS++;
+            if (typeof data === "string") {
+                this.value = data;
+            }
+        }
+        getOriginal() {
+        }
+        appendTo(element) {
+            element.append(this);
+        }
+        prependTo(element) {
+            element.prepend(this);
+        }
+        insertAfter(element) {
+            let parent = element.getParent();
+            parent.eachChild(child => {
+            });
+        }
+        insertBefore(element) {
+        }
+        remove() {
+            let parent = this.parent;
+            let children = parent.getChildren();
+            if (parent) {
+                parent.eachChild((child, index) => {
+                    if (child === this) {
+                        children.splice(index, 1);
+                    }
+                });
+            }
+        }
+        setParent(element) {
+            this.parent = element;
+        }
+        getParent() {
+            return null;
+        }
+        getSource() {
+            return `<!--${this.value}-->`;
+        }
     }
-}
-exports.Element = Element;
-
+    exports.ServerComment = ServerComment;
+    class Attribute {
+        constructor(name, value) {
+            if (typeof name === "string") {
+                this.name = name;
+            }
+            if (value !== undefined) {
+                this.value = value;
+            }
+        }
+        getName() {
+            return this.name;
+        }
+        getOriginal() {
+            return this.value;
+        }
+        setValue(value) {
+            this.value = value;
+        }
+        getValue() {
+            return this.value;
+        }
+        remove() {
+        }
+        setParent(element) {
+            this.parent = element;
+        }
+        getParent() {
+            return this.parent;
+        }
+    }
+    exports.Attribute = Attribute;
+    class TextNode {
+        constructor(value) {
+            this.value = value;
+        }
+        getOriginal() {
+            return this.value;
+        }
+        setValue(value) {
+            this.value = value;
+        }
+        getValue() {
+            return this.value;
+        }
+        remove() {
+        }
+        setParent(element) {
+            this.parent = element;
+        }
+        getParent() {
+            return this.parent;
+        }
+        getSource() {
+            return this.getValue();
+        }
+    }
+    exports.TextNode = TextNode;
+    class Element {
+        constructor(name) {
+            this.$id = ++elementIDS;
+            this.attrs = new Map();
+            this.children = [];
+            if (typeof name === "string") {
+                this.name = name;
+            }
+        }
+        getOriginal() { }
+        append(element) {
+            let el = element;
+            el.setParent(this);
+            this.children.push(el);
+        }
+        appendTo(element) {
+            let el = element;
+            el.append(this);
+        }
+        prepend(element) {
+            element.setParent(this);
+            this.children.splice(0, 0, element);
+        }
+        prependTo(element) {
+            let el = element;
+            el.prepend(this);
+        }
+        removeChild(element) {
+            this.children.forEach((item, index) => {
+                let child = item;
+                if (child.$id === element.$id) {
+                    this.children.splice(index, 1);
+                }
+            });
+        }
+        remove() {
+            this.parent.removeChild(this);
+        }
+        setAttr(attribute) {
+            this.attrs.set(attribute.getName(), attribute);
+            return attribute;
+        }
+        removeAttr(attribute) {
+            this.attrs.delete(attribute.getName());
+        }
+        attr(name, value) {
+            if (value === undefined) {
+                return this.getAttr(name);
+            }
+            else {
+                let attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+                attr.setValue(value);
+                return attr;
+            }
+        }
+        getAttr(name) {
+            return this.attrs.get(name);
+        }
+        getChildren() {
+            return this.children;
+        }
+        eachChild(closure) {
+            for (let i = 0; i < this.children.length; i++) {
+                closure(this.children[i], i);
+            }
+        }
+        setChildren(elements) {
+            this.children = elements;
+        }
+        addClass(name) {
+        }
+        hasClass(name) {
+            return false;
+        }
+        removeClass(name) {
+        }
+        setStyle(data, value) {
+        }
+        getStyle(name) {
+            return "";
+        }
+        getSource() {
+            let html = [];
+            html.push(`<${this.name}`);
+            let localAttrs = [];
+            this.attrs.forEach(attr => {
+                localAttrs.push(`${attr.getName()}="${attr.getValue() || ""}"`);
+            });
+            if (localAttrs.length) {
+                html.push(" " + localAttrs.join(" "));
+            }
+            html.push(">");
+            for (let i = 0; i < this.children.length; i++) {
+                let child = this.children[i];
+                html.push(child.getSource());
+            }
+            html.push(`</${this.name}>`);
+            return html.join("");
+        }
+        setParent(element) {
+            this.parent = element;
+        }
+        getParent() {
+            return this.parent;
+        }
+    }
+    exports.Element = Element;
+});
+define("UniversalDom", ["require", "exports", "Browser", "Server"], function (require, exports, Browser_1, Server_1) {
+    "use strict";
+    class UniversalDom {
+        static createElement(data) {
+            return $isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
+        }
+        static createAttribute(name, value) {
+            return $isBackend ? new Server_1.Attribute(name, value) : new Browser_1.Attribute(name, value);
+        }
+        static createTextNode(value) {
+            return $isBackend ? new Server_1.TextNode(value) : new Browser_1.TextNode(value);
+        }
+        static createComment(value) {
+            return $isBackend ? new Server_1.ServerComment(value) : new Browser_1.BrowserComment(value);
+        }
+    }
+    exports.UniversalDom = UniversalDom;
+});
+define("index", ["require", "exports", "UniversalDom"], function (require, exports, UniversalDom_1) {
+    "use strict";
+    exports.Dom = UniversalDom_1.UniversalDom;
 });
 
-/* ******* browser/TextNode.ts ******* */
-__ts__.module("browser/TextNode.js", function(exports, require){
-"use strict";
-class TextNode {
-    constructor(value) {
-        this.original = document.createTextNode(value);
+var __expose__ = function(n, m, w, c) {
+    var e = __resolve__(n);
+    var bc;
+    if (!$isBackend) { var npm = $__exports__.__npm__ = $__exports__.__npm__ || {}; if (m) { bc = npm[m] } }
+    var cs = c ? c.split(",") : [];
+    if (cs.length){ for (var ln in __local__) { for (var i = 0; i < cs.length; i++) { if (ln.indexOf(cs[i]) === 0) { __resolve__(ln) } } }}
+    for (var k in e) {
+        $isBackend || w ? $__exports__[k] = e[k] : null;
+        bc ? bc[e] = e[k] : null;
     }
-    getOriginal() {
-        return this.original;
-    }
-    setValue(value) {
-        this.original.nodeValue = value;
-    }
-    getValue() {
-        return this.original.nodeValue;
-    }
-    remove() {
-        this.original.parentElement.removeChild(this.original);
-    }
-}
-exports.TextNode = TextNode;
-
-});
-
-/* ******* UniversalDom.ts ******* */
-__ts__.module("UniversalDom.js", function(exports, require){
-"use strict";
-const Element_1 = require("./browser/Element");
-const TextNode_1 = require("./browser/TextNode");
-const Attribute_1 = require("./browser/Attribute");
-class UniversalDom {
-    static createElement(name) {
-        return new Element_1.Element(name);
-    }
-    static createAttribute(name, value) {
-        return new Attribute_1.Attribute(name, value);
-    }
-    static createTextNode(value) {
-        return new TextNode_1.TextNode(value);
-    }
-}
-exports.UniversalDom = UniversalDom;
-
-});
-
-/* ******* index.ts ******* */
-__ts__.module("index.js", function(exports, require){
-"use strict";
-const UniversalDom_1 = require("./UniversalDom");
-exports.Dom = UniversalDom_1.UniversalDom;
-
-});
-
-__ts__.expose(__scope__, "index");})(function($scope, $isBackend) { var npmName = "universal-dom"; if (!$isBackend){$scope.__npm__ = $scope.__npm__ || {};if( npmName){ $scope.__npm__[npmName] = {};} }; var ts = {register: {},pathJoin: function() { var parts = []; for (var i = 0, l = arguments.length; i < l; i++) {parts = parts.concat(arguments[i].split("/")); } var newParts = []; for (i = 0, l = parts.length; i < l; i++) {var part = parts[i];if (!part || part === ".") { continue}if (part === "..") { newParts.pop();} else { newParts.push(part);} } if (parts[0] === "") {newParts.unshift("") } return newParts.join("/") || (newParts.length ? "/" : ".");},module: function(name, fn) { var _exports = {}; var relative = "./"; var rel = name.match(/^(.*)\/[\w]+\.js$/); if (rel) {relative = rel[1]; } fn(_exports, this.require.bind({self: this,path: name,relative: relative })); this.register[name] = _exports;},require: function(name) { var self = this.self; var path = this.path; var relative = this.relative; if (name[0] === ".") {var target = ts.pathJoin(relative, name) + ".js";if (self.register[target]) { return self.register[target];} } else {if( $isBackend ){ return require(name);} else { return $scope.__npm__[name];} }},expose: function(scope, path) { path = path.match(/\.js^/) ? path : path + ".js"; var e = this.register[path]; var npmExpose= !$isBackend && npmName; if (e !== undefined) {var useAmd = !$isBackend && typeof define == 'function' && define.amd;for (var key in e) { var value = e[key]; if (useAmd) {define(key, [], function() { return value;}); } else {if( npmExpose ){ $scope.__npm__[npmName][key] = value;};$scope[key] = value; }} } else {throw new Error('Module "' + path + '" Cannot be exposed! Make sure you export variables correctly and the module is present'); }} }; return {isBackend: $isBackend,scope: $scope,ts : ts }}(typeof exports !== "undefined" ? exports : this, typeof exports !== "undefined"));
+};
+__expose__("index", "universal-dom", true, "");
+})(typeof exports !== "undefined" ? exports : this, typeof exports !== "undefined");

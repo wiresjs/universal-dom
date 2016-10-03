@@ -6,31 +6,12 @@
  */
 export interface IUniversalTextNode<T> {
     getOriginal(): T;
-
-
-    /**
-     *
-     *
-     * @param {string} value
-     *
-     * @memberOf IUniversalTextNode
-     */
     setValue(value: string): void;
-    /**
-     *
-     *
-     * @returns {string}
-     *
-     * @memberOf IUniversalTextNode
-     */
     getValue(): string;
-    /**
-     *
-     *
-     *
-     * @memberOf IUniversalTextNode
-     */
     remove(): void;
+    setParent?(element: IUniversalElement<any>): void;
+    getParent(): IUniversalElement<any>;
+    getSource(): string;
 }
 
 /**
@@ -81,6 +62,37 @@ export interface IUniversalAttribute<T> {
      * @memberOf IUniversalAttribute
      */
     remove(): void;
+
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any>)} element
+     *
+     * @memberOf IUniversalAttribute
+     */
+    setParent?(element: IUniversalElement<any>): void;
+
+    /**
+     *
+     *
+     * @returns {IUniversalElement<any>}
+     *
+     * @memberOf IUniversalAttribute
+     */
+    getParent(): IUniversalElement<any>;
+}
+
+export interface IUniversalComment<T> {
+    getOriginal(): T;
+    appendTo(element: IUniversalElement<any>): void;
+    prependTo(element: IUniversalElement<any>): void;
+    insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    setParent?(element: IUniversalElement<any>): void;
+    getParent(): IUniversalElement<any>;
+    getSource(): string;
+    remove(): void;
 }
 
 /**
@@ -99,7 +111,7 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    append(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+    append(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
 
 
     /**
@@ -119,7 +131,7 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    prepend(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+    prepend(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
 
     /**
      *
@@ -186,7 +198,7 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    getChildren(): (IUniversalElement<any> | IUniversalTextNode<any>)[];
+    getChildren(): (IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<Text>)[];
     /**
      *
      *
@@ -194,7 +206,7 @@ export interface IUniversalElement<T> {
      *
      * @memberOf IUniversalElement
      */
-    setChildren(elements: (IUniversalElement<any> | IUniversalTextNode<any>)[]): void;
+    setChildren(elements: (IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<Text>)[]): void;
 
     // classes
     /**
@@ -242,4 +254,26 @@ export interface IUniversalElement<T> {
      * @memberOf IUniversalElement
      */
     getStyle(name: string): string;
+
+
+    getSource(): string;
+
+    setParent?(element: IUniversalElement<any>): void
+
+    getParent(): IUniversalElement<any>;
+
+    /**
+     *
+     *
+     * @param {({
+     *         (element: IUniversalElement<HTMLElement>
+     *             | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void
+     *     })} closure
+     *
+     * @memberOf IUniversalElement
+     */
+    eachChild(closure: {
+        (element: IUniversalElement<HTMLElement>
+            | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void
+    }): void;
 }

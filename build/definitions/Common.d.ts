@@ -29,4 +29,7 @@ export interface IUniversalElement<T> {
     removeClass(name: string): void;
     setStyle(data: any, value?: string): void;
     getStyle(name: string): string;
+    getHTML(): string;
+    setParent?(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
+    getParent(): IUniversalElement<any>;
 }

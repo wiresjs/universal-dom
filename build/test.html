@@ -6,9 +6,7 @@
 
 <body>
     <div id="mocha"></div>
-    <div id="root">
-
-    </div>
+    <div id="root"></div>
     <script src="./polyfills.js"></script>
     <script src="./universal-dom-es5.js"></script> -->
     <script src="../node_modules/mocha/mocha.js"></script>
@@ -17,8 +15,11 @@
     <script>
         mocha.ui('bdd');
     </script>
-    <script src="../test/browser/generic.js"></script>
-    <script src="../test/browser/dom_manipulation.js"></script>
+    <script src="../test/comments.js"></script>
+
+    <!--
+    <script src="../test/generic.js"></script>
+    <script src="../test/dom_manipulation.js"></script> -->
 
     <script>
         mocha.run()

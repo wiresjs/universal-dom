@@ -23,21 +23,21 @@ gulp.task('watch', ['build'], function() {
 
 gulp.task("es5-build", function() {
     return gulp.src("build/universal-dom.js")
-        .pipe(babel({ presets: ["es2015"] }))
+        .pipe(babel({ presets: ["es2015"], plugins: ["nofn"] }))
         .pipe(rename("universal-dom-es5.js"))
         .pipe(replace(/exports : undefined,/, "exports : this,"))
-        .pipe(uglify())
+        // .pipe(uglify())
         .pipe(gulp.dest("build/"))
 })
 gulp.task('build', function() {
     let result = gulp.src('src/**/*.ts')
         .pipe(sourcemaps.init())
-        .pipe(ts(project));
+        .pipe(project());
     result.dts.pipe(gulp.dest('build/definitions'));
     return result.js.pipe(tsUniversal('build/', {
-            base: 'build/',
             expose: 'index',
-            npm: 'universal-dom'
+            expose2window: true,
+            name: 'universal-dom'
         }))
         .pipe(rename('universal-dom.js'))
         .pipe(gulp.dest('build/'));

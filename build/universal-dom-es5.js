@@ -1,1 +1,747 @@
-"use strict";function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol?"symbol":typeof e},_createClass=function(){function e(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(t,n,i){return n&&e(t.prototype,n),i&&e(t,i),t}}();!function(e){var t=e.scope,n=(e.isBackend,e.ts);n.module("Common.js",function(e,t){}),n.module("browser/Attribute.js",function(e,t){var n=function(){function e(t,n){_classCallCheck(this,e),this.original="string"==typeof t?document.createAttribute(t):t,void 0!==n&&(this.original.value=n)}return _createClass(e,[{key:"getName",value:function(){return this.original.name}},{key:"getOriginal",value:function(){return this.original}},{key:"setValue",value:function(e){this.original.value=e}},{key:"getValue",value:function(){return this.original.value}},{key:"remove",value:function(){this.original.parentElement.removeAttribute(this.original.name)}}]),e}();e.Attribute=n}),n.module("browser/Element.js",function(e,t){var n=t("./Attribute"),i=function(){function e(t){_classCallCheck(this,e),this.children=[],this.original=document.createElement(t)}return _createClass(e,[{key:"getOriginal",value:function(){return this.original}},{key:"append",value:function(e){this.original.appendChild(e.getOriginal())}},{key:"appendTo",value:function(e){e.getOriginal().appendChild(this.original)}},{key:"prepend",value:function(e){this.original.insertBefore(e.getOriginal(),this.original.firstChild)}},{key:"prependTo",value:function(e){e.getOriginal().insertBefore(this.original,e.getOriginal().firstChild)}},{key:"remove",value:function(){this.original.parentNode.removeChild(this.original)}},{key:"setAttr",value:function(e){return this.original.setAttributeNode(e.getOriginal()),e}},{key:"removeAttr",value:function(e){}},{key:"attr",value:function e(t,i){if(void 0===i)return this.getAttr(t);var e=this.getAttr(t)||this.setAttr(new n.Attribute(t));return e.setValue(i),e}},{key:"getAttr",value:function(e){var t=this.original.getAttributeNode(e);if(t){var i=new n.Attribute(t);return i}}},{key:"getChildren",value:function(){return this.children}},{key:"setChildren",value:function(e){this.children=e}},{key:"addClass",value:function(e){this.original.classList.add(e)}},{key:"hasClass",value:function(e){return this.original.classList.contains(e)}},{key:"removeClass",value:function(e){this.original.classList.remove(e)}},{key:"setStyle",value:function(e,t){if("object"!==("undefined"==typeof e?"undefined":_typeof(e)))return this.original.style[e]=t;for(var n in e)e.hasOwnProperty(n)&&(this.original.style[n]=e[n])}},{key:"getStyle",value:function(e){return this.original.style[e]}}]),e}();e.Element=i}),n.module("browser/TextNode.js",function(e,t){var n=function(){function e(t){_classCallCheck(this,e),this.original=document.createTextNode(t)}return _createClass(e,[{key:"getOriginal",value:function(){return this.original}},{key:"setValue",value:function(e){this.original.nodeValue=e}},{key:"getValue",value:function(){return this.original.nodeValue}},{key:"remove",value:function(){this.original.parentElement.removeChild(this.original)}}]),e}();e.TextNode=n}),n.module("UniversalDom.js",function(e,t){var n=t("./browser/Element"),i=t("./browser/TextNode"),r=t("./browser/Attribute"),o=function(){function e(){_classCallCheck(this,e)}return _createClass(e,null,[{key:"createElement",value:function(e){return new n.Element(e)}},{key:"createAttribute",value:function(e,t){return new r.Attribute(e,t)}},{key:"createTextNode",value:function(e){return new i.TextNode(e)}}]),e}();e.UniversalDom=o}),n.module("index.js",function(e,t){var n=t("./UniversalDom");e.Dom=n.UniversalDom}),n.expose(t,"index")}(function(e,t){var n="universal-dom";t||(e.__npm__=e.__npm__||{},n&&(e.__npm__[n]={}));var i={register:{},pathJoin:function(){for(var e=[],t=0,n=arguments.length;t<n;t++)e=e.concat(arguments[t].split("/"));var i=[];for(t=0,n=e.length;t<n;t++){var r=e[t];r&&"."!==r&&(".."===r?i.pop():i.push(r))}return""===e[0]&&i.unshift(""),i.join("/")||(i.length?"/":".")},module:function(e,t){var n={},i="./",r=e.match(/^(.*)\/[\w]+\.js$/);r&&(i=r[1]),t(n,this.require.bind({self:this,path:e,relative:i})),this.register[e]=n},require:function(e){function t(t){return e.apply(this,arguments)}return t.toString=function(){return e.toString()},t}(function(n){var r=this.self,o=(this.path,this.relative);if("."!==n[0])return t?require(n):e.__npm__[n];var a=i.pathJoin(o,n)+".js";return r.register[a]?r.register[a]:void 0}),expose:function(i,r){r=r.match(/\.js^/)?r:r+".js";var o=this.register[r],a=!t&&n;if(void 0===o)throw new Error('Module "'+r+'" Cannot be exposed! Make sure you export variables correctly and the module is present');var u=!t&&"function"==typeof define&&define.amd;for(var l in o){var s=o[l];u?define(l,[],function(){return s}):(a&&(e.__npm__[n][l]=s),e[l]=s)}}};return{isBackend:t,scope:e,ts:i}}("undefined"!=typeof exports?exports:this,"undefined"!=typeof exports));
+"use strict";
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+(function ($__exports__, $isBackend) {
+    var __local__ = {};var define = function define(n, d, f) {
+        __local__[n] = { d: d, f: f };
+    };var __resolve__ = function __resolve__(name) {
+        var m = __local__[name];if (m === undefined) {
+            if ($isBackend) {
+                return require(name);
+            } else {
+                Exports.__npm__ = Exports.__npm__ || {};return Exports.__npm__[name];
+            }
+        }if (m.r) {
+            return m.r;
+        }m.r = {};var z = [__resolve__, m.r];for (var i = 2; i < m.d.length; i++) {
+            z.push(__resolve__(m.d[i]));
+        }m.f.apply(null, z);return m.r;
+    };
+    define("Common", ["require", "exports"], function (require, exports) {});
+    define("Browser", ["require", "exports"], function (require, exports) {
+        "use strict";
+
+        var BrowserComment = function () {
+            function BrowserComment(data) {
+                _classCallCheck(this, BrowserComment);
+
+                if (typeof data === "string") {
+                    this.original = document.createComment(data);
+                } else {
+                    this.original = data;
+                }
+            }
+
+            _createClass(BrowserComment, [{
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.append(this);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+                    }
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode);
+                    }
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentElement.removeChild(this.original);
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    if (this.original.parentNode) {
+                        return new Element(this.original.parentElement);
+                    }
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return "<--" + this.original.nodeValue + "-->";
+                }
+            }]);
+
+            return BrowserComment;
+        }();
+
+        exports.BrowserComment = BrowserComment;
+
+        var Attribute = function () {
+            function Attribute(name, value) {
+                _classCallCheck(this, Attribute);
+
+                this.original = typeof name === "string" ? document.createAttribute(name) : name;
+                if (value !== undefined) {
+                    this.original.value = value;
+                }
+            }
+
+            _createClass(Attribute, [{
+                key: "getName",
+                value: function getName() {
+                    return this.original.name;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.original.value = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.original.value;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentElement.removeAttribute(this.original.name);
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return new Element(this.original.parentElement);
+                }
+            }]);
+
+            return Attribute;
+        }();
+
+        exports.Attribute = Attribute;
+
+        var TextNode = function () {
+            function TextNode(data) {
+                _classCallCheck(this, TextNode);
+
+                if (data instanceof Text) {
+                    this.original = data;
+                } else {
+                    this.original = document.createTextNode(data);
+                }
+            }
+
+            _createClass(TextNode, [{
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.original.nodeValue = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.original.nodeValue;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentElement.removeChild(this.original);
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return new Element(this.original.parentElement);
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return this.getValue();
+                }
+            }]);
+
+            return TextNode;
+        }();
+
+        exports.TextNode = TextNode;
+
+        var Element = function () {
+            function Element(data) {
+                _classCallCheck(this, Element);
+
+                this.children = [];
+                if (data instanceof HTMLElement) {
+                    this.original = data;
+                } else {
+                    this.original = document.createElement(data);
+                }
+            }
+
+            _createClass(Element, [{
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "append",
+                value: function append(element) {
+                    this.original.appendChild(element.getOriginal());
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.getOriginal().appendChild(this.original);
+                }
+            }, {
+                key: "prepend",
+                value: function prepend(element) {
+                    this.original.insertBefore(element.getOriginal(), this.original.firstChild);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentNode.removeChild(this.original);
+                }
+            }, {
+                key: "setAttr",
+                value: function setAttr(attribute) {
+                    this.original.setAttributeNode(attribute.getOriginal());
+                    return attribute;
+                }
+            }, {
+                key: "removeAttr",
+                value: function removeAttr(attribute) {}
+            }, {
+                key: "attr",
+                value: function attr(name, value) {
+                    if (value === undefined) {
+                        return this.getAttr(name);
+                    } else {
+                        var attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+                        attr.setValue(value);
+                        return attr;
+                    }
+                }
+            }, {
+                key: "getAttr",
+                value: function getAttr(name) {
+                    var oAttr = this.original.getAttributeNode(name);
+                    if (oAttr) {
+                        var attr = new Attribute(oAttr);
+                        return attr;
+                    }
+                }
+            }, {
+                key: "getChildren",
+                value: function getChildren() {
+                    var childNodes = this.original.childNodes;
+                    var result = [];
+                    for (var i = 0; i < childNodes.length; i++) {
+                        var node = childNodes[i];
+                        if (node.nodeType === 1) {
+                            result.push(new Element(node));
+                        }
+                        if (node.nodeType === 8) {
+                            result.push(new BrowserComment(node));
+                        }
+                        if (node.nodeType === 3) {
+                            if (node.nodeValue) {
+                                result.push(new TextNode(node));
+                            }
+                        }
+                    }
+                    return result;
+                }
+            }, {
+                key: "setChildren",
+                value: function setChildren(elements) {
+                    this.children = elements;
+                }
+            }, {
+                key: "addClass",
+                value: function addClass(name) {
+                    this.original.classList.add(name);
+                }
+            }, {
+                key: "hasClass",
+                value: function hasClass(name) {
+                    return this.original.classList.contains(name);
+                }
+            }, {
+                key: "removeClass",
+                value: function removeClass(name) {
+                    this.original.classList.remove(name);
+                }
+            }, {
+                key: "setStyle",
+                value: function setStyle(data, value) {
+                    if ((typeof data === "undefined" ? "undefined" : _typeof(data)) === "object") {
+                        for (var k in data) {
+                            if (data.hasOwnProperty(k)) {
+                                this.original.style[k] = data[k];
+                            }
+                        }
+                        return;
+                    }
+                    return this.original.style[data] = value;
+                }
+            }, {
+                key: "getStyle",
+                value: function getStyle(name) {
+                    return this.original.style[name];
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    var html = this.original.outerHTML;
+                    html = html.replace(/\r?\n|\r|\t/g, '');
+                    html = html.replace(/\s{2,}/g, " ");
+                    html = html.replace(/>\s+</g, "><");
+                    html = html.trim();
+                    return html;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    var parent = this.original.parentElement;
+                    return new Element(parent);
+                }
+            }, {
+                key: "eachChild",
+                value: function eachChild(closure) {
+                    var childNodes = this.original.childNodes;
+                    for (var i = 0; i < childNodes.length; i++) {
+                        var el = childNodes[i];
+                        closure(new Element(el), i);
+                    }
+                }
+            }]);
+
+            return Element;
+        }();
+
+        exports.Element = Element;
+    });
+    define("Server", ["require", "exports"], function (require, exports) {
+        "use strict";
+
+        var elementIDS = 0;
+
+        var ServerComment = function () {
+            function ServerComment(data) {
+                _classCallCheck(this, ServerComment);
+
+                this.$id = elementIDS++;
+                if (typeof data === "string") {
+                    this.value = data;
+                }
+            }
+
+            _createClass(ServerComment, [{
+                key: "getOriginal",
+                value: function getOriginal() {}
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.append(this);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    var parent = element.getParent();
+                    parent.eachChild(function (child) {});
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {}
+            }, {
+                key: "remove",
+                value: function remove() {
+                    var _this = this;
+
+                    var parent = this.parent;
+                    var children = parent.getChildren();
+                    if (parent) {
+                        parent.eachChild(function (child, index) {
+                            if (child === _this) {
+                                children.splice(index, 1);
+                            }
+                        });
+                    }
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return null;
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return "<!--" + this.value + "-->";
+                }
+            }]);
+
+            return ServerComment;
+        }();
+
+        exports.ServerComment = ServerComment;
+
+        var Attribute = function () {
+            function Attribute(name, value) {
+                _classCallCheck(this, Attribute);
+
+                if (typeof name === "string") {
+                    this.name = name;
+                }
+                if (value !== undefined) {
+                    this.value = value;
+                }
+            }
+
+            _createClass(Attribute, [{
+                key: "getName",
+                value: function getName() {
+                    return this.name;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.value;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.value = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.value;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {}
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }]);
+
+            return Attribute;
+        }();
+
+        exports.Attribute = Attribute;
+
+        var TextNode = function () {
+            function TextNode(value) {
+                _classCallCheck(this, TextNode);
+
+                this.value = value;
+            }
+
+            _createClass(TextNode, [{
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.value;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.value = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.value;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {}
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return this.getValue();
+                }
+            }]);
+
+            return TextNode;
+        }();
+
+        exports.TextNode = TextNode;
+
+        var Element = function () {
+            function Element(name) {
+                _classCallCheck(this, Element);
+
+                this.$id = ++elementIDS;
+                this.attrs = new Map();
+                this.children = [];
+                if (typeof name === "string") {
+                    this.name = name;
+                }
+            }
+
+            _createClass(Element, [{
+                key: "getOriginal",
+                value: function getOriginal() {}
+            }, {
+                key: "append",
+                value: function append(element) {
+                    var el = element;
+                    el.setParent(this);
+                    this.children.push(el);
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    var el = element;
+                    el.append(this);
+                }
+            }, {
+                key: "prepend",
+                value: function prepend(element) {
+                    element.setParent(this);
+                    this.children.splice(0, 0, element);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    var el = element;
+                    el.prepend(this);
+                }
+            }, {
+                key: "removeChild",
+                value: function removeChild(element) {
+                    var _this2 = this;
+
+                    this.children.forEach(function (item, index) {
+                        var child = item;
+                        if (child.$id === element.$id) {
+                            _this2.children.splice(index, 1);
+                        }
+                    });
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.parent.removeChild(this);
+                }
+            }, {
+                key: "setAttr",
+                value: function setAttr(attribute) {
+                    this.attrs.set(attribute.getName(), attribute);
+                    return attribute;
+                }
+            }, {
+                key: "removeAttr",
+                value: function removeAttr(attribute) {
+                    this.attrs.delete(attribute.getName());
+                }
+            }, {
+                key: "attr",
+                value: function attr(name, value) {
+                    if (value === undefined) {
+                        return this.getAttr(name);
+                    } else {
+                        var attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+                        attr.setValue(value);
+                        return attr;
+                    }
+                }
+            }, {
+                key: "getAttr",
+                value: function getAttr(name) {
+                    return this.attrs.get(name);
+                }
+            }, {
+                key: "getChildren",
+                value: function getChildren() {
+                    return this.children;
+                }
+            }, {
+                key: "eachChild",
+                value: function eachChild(closure) {
+                    for (var i = 0; i < this.children.length; i++) {
+                        closure(this.children[i], i);
+                    }
+                }
+            }, {
+                key: "setChildren",
+                value: function setChildren(elements) {
+                    this.children = elements;
+                }
+            }, {
+                key: "addClass",
+                value: function addClass(name) {}
+            }, {
+                key: "hasClass",
+                value: function hasClass(name) {
+                    return false;
+                }
+            }, {
+                key: "removeClass",
+                value: function removeClass(name) {}
+            }, {
+                key: "setStyle",
+                value: function setStyle(data, value) {}
+            }, {
+                key: "getStyle",
+                value: function getStyle(name) {
+                    return "";
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    var html = [];
+                    html.push("<" + this.name);
+                    var localAttrs = [];
+                    this.attrs.forEach(function (attr) {
+                        localAttrs.push(attr.getName() + "=\"" + (attr.getValue() || "") + "\"");
+                    });
+                    if (localAttrs.length) {
+                        html.push(" " + localAttrs.join(" "));
+                    }
+                    html.push(">");
+                    for (var i = 0; i < this.children.length; i++) {
+                        var child = this.children[i];
+                        html.push(child.getSource());
+                    }
+                    html.push("</" + this.name + ">");
+                    return html.join("");
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }]);
+
+            return Element;
+        }();
+
+        exports.Element = Element;
+    });
+    define("UniversalDom", ["require", "exports", "Browser", "Server"], function (require, exports, Browser_1, Server_1) {
+        "use strict";
+
+        var UniversalDom = function () {
+            function UniversalDom() {
+                _classCallCheck(this, UniversalDom);
+            }
+
+            _createClass(UniversalDom, null, [{
+                key: "createElement",
+                value: function createElement(data) {
+                    return $isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
+                }
+            }, {
+                key: "createAttribute",
+                value: function createAttribute(name, value) {
+                    return $isBackend ? new Server_1.Attribute(name, value) : new Browser_1.Attribute(name, value);
+                }
+            }, {
+                key: "createTextNode",
+                value: function createTextNode(value) {
+                    return $isBackend ? new Server_1.TextNode(value) : new Browser_1.TextNode(value);
+                }
+            }, {
+                key: "createComment",
+                value: function createComment(value) {
+                    return $isBackend ? new Server_1.ServerComment(value) : new Browser_1.BrowserComment(value);
+                }
+            }]);
+
+            return UniversalDom;
+        }();
+
+        exports.UniversalDom = UniversalDom;
+    });
+    define("index", ["require", "exports", "UniversalDom"], function (require, exports, UniversalDom_1) {
+        "use strict";
+
+        exports.Dom = UniversalDom_1.UniversalDom;
+    });
+
+    var __expose__ = function __expose__(n, m, w, c) {
+        var e = __resolve__(n);
+        var bc;
+        if (!$isBackend) {
+            var npm = $__exports__.__npm__ = $__exports__.__npm__ || {};if (m) {
+                bc = npm[m];
+            }
+        }
+        var cs = c ? c.split(",") : [];
+        if (cs.length) {
+            for (var ln in __local__) {
+                for (var i = 0; i < cs.length; i++) {
+                    if (ln.indexOf(cs[i]) === 0) {
+                        __resolve__(ln);
+                    }
+                }
+            }
+        }
+        for (var k in e) {
+            $isBackend || w ? $__exports__[k] = e[k] : null;
+            bc ? bc[e] = e[k] : null;
+        }
+    };
+    __expose__("index", "universal-dom", true, "");
+})(typeof exports !== "undefined" ? exports : this, typeof exports !== "undefined");
