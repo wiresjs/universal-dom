@@ -29,6 +29,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     define("Common", ["require", "exports"], function (require, exports) {});
     define("Browser", ["require", "exports"], function (require, exports) {
         "use strict";
+        /**
+         *
+         *
+         * @param {*} node
+         * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+         */
 
         var mapNodeObject = function mapNodeObject(node) {
             if (!node) {
@@ -44,6 +50,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 return new TextNode(node);
             }
         };
+        /**
+         *
+         *
+         * @export
+         * @class GenericDomManupulations
+         */
 
         var GenericDomManupulations = function () {
             function GenericDomManupulations() {
@@ -52,10 +64,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             _createClass(GenericDomManupulations, [{
                 key: "_getNextSibling",
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} element
+                 * @returns {*}
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
                 value: function _getNextSibling(element) {
                     var original = element.original;
                     return mapNodeObject(original.nextSibling);
                 }
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} element
+                 * @returns {*}
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
+
             }, {
                 key: "_getPreviousSibling",
                 value: function _getPreviousSibling(element) {
@@ -68,13 +100,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }();
 
         exports.GenericDomManupulations = GenericDomManupulations;
+        /**
+         *
+         *
+         * @export
+         * @class BrowserComment
+         * @extends {GenericDomManupulations}
+         * @implements {IUniversalComment<Comment>}
+         */
 
         var BrowserComment = function (_GenericDomManupulati) {
             _inherits(BrowserComment, _GenericDomManupulati);
 
+            /**
+             * Creates an instance of BrowserComment.
+             *
+             * @param {(string | Comment)} data
+             *
+             * @memberOf BrowserComment
+             */
             function BrowserComment(data) {
                 _classCallCheck(this, BrowserComment);
 
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberOf BrowserComment
+                 */
                 var _this = _possibleConstructorReturn(this, (BrowserComment.__proto__ || Object.getPrototypeOf(BrowserComment)).call(this));
 
                 _this._isRehydrated = false;
@@ -86,27 +140,67 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this;
             }
+            /**
+             *
+             *
+             * @returns
+             *
+             * @memberOf BrowserComment
+             */
+
 
             _createClass(BrowserComment, [{
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return this._isRehydrated;
                 }
+                /**
+                 *
+                 *
+                 * @returns {Comment}
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this.original;
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "appendTo",
                 value: function appendTo(element) {
                     element.append(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "prependTo",
                 value: function prependTo(element) {
                     element.prepend(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "insertAfter",
                 value: function insertAfter(element) {
@@ -115,6 +209,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "insertBefore",
                 value: function insertBefore(element) {
@@ -123,21 +225,52 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         referenceNode.parentNode.insertBefore(this.original, referenceNode);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "getNextSibling",
                 value: function getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "getPreviousSibling",
                 value: function getPreviousSibling() {
                     return this._getPreviousSibling(this);
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this.original.parentElement.removeChild(this.original);
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
@@ -145,6 +278,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         return new Element(this.original.parentElement);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf BrowserComment
+                 */
+
             }, {
                 key: "getSource",
                 value: function getSource() {
@@ -156,8 +297,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }(GenericDomManupulations);
 
         exports.BrowserComment = BrowserComment;
+        /**
+         *
+         *
+         * @export
+         * @class Attribute
+         * @implements {IUniversalAttribute<Attr>}
+         */
 
         var Attribute = function () {
+            /**
+             * Creates an instance of Attribute.
+             *
+             * @param {(string | Attr)} name
+             * @param {string} [value]
+             *
+             * @memberOf Attribute
+             */
             function Attribute(name, value) {
                 _classCallCheck(this, Attribute);
 
@@ -166,37 +322,92 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this.original.value = value;
                 }
             }
+            /**
+             *
+             *
+             * @returns {string}
+             *
+             * @memberOf Attribute
+             */
+
 
             _createClass(Attribute, [{
                 key: "getName",
                 value: function getName() {
                     return this.original.name;
                 }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this.original;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} value
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "setValue",
                 value: function setValue(value) {
                     this.original.value = value;
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getValue",
                 value: function getValue() {
                     return this.original.value;
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this.parent.removeAttr(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {Element} parent
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "setParent",
                 value: function setParent(parent) {
                     this.parent = parent;
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
@@ -208,13 +419,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }();
 
         exports.Attribute = Attribute;
+        /**
+         *
+         *
+         * @export
+         * @class TextNode
+         * @extends {GenericDomManupulations}
+         * @implements {IUniversalTextNode<Text>}
+         */
 
         var TextNode = function (_GenericDomManupulati2) {
             _inherits(TextNode, _GenericDomManupulati2);
 
+            /**
+             * Creates an instance of TextNode.
+             *
+             * @param {(string | Text)} data
+             *
+             * @memberOf TextNode
+             */
             function TextNode(data) {
                 _classCallCheck(this, TextNode);
 
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberOf TextNode
+                 */
                 var _this2 = _possibleConstructorReturn(this, (TextNode.__proto__ || Object.getPrototypeOf(TextNode)).call(this));
 
                 _this2._isRehydrated = false;
@@ -226,47 +459,118 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this2;
             }
+            /**
+             *
+             *
+             * @returns
+             *
+             * @memberOf TextNode
+             */
+
 
             _createClass(TextNode, [{
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return this._isRehydrated;
                 }
+                /**
+                 *
+                 *
+                 * @returns {Text}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this.original;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} value
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "setValue",
                 value: function setValue(value) {
                     this.original.nodeValue = value;
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getValue",
                 value: function getValue() {
                     return this.original.nodeValue;
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this.original.parentElement.removeChild(this.original);
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
                     return new Element(this.original.parentElement);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "appendTo",
                 value: function appendTo(element) {
                     element.append(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "prependTo",
                 value: function prependTo(element) {
                     element.prepend(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "insertAfter",
                 value: function insertAfter(element) {
@@ -275,6 +579,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "insertBefore",
                 value: function insertBefore(element) {
@@ -283,16 +595,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         referenceNode.parentNode.insertBefore(this.original, referenceNode);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getNextSibling",
                 value: function getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getPreviousSibling",
                 value: function getPreviousSibling() {
                     return this._getPreviousSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getSource",
                 value: function getSource() {
@@ -304,16 +640,46 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }(GenericDomManupulations);
 
         exports.TextNode = TextNode;
+        /**
+         *
+         *
+         * @export
+         * @class Element
+         * @extends {GenericDomManupulations}
+         * @implements {IUniversalElement<HTMLElement>}
+         */
 
         var Element = function (_GenericDomManupulati3) {
             _inherits(Element, _GenericDomManupulati3);
 
+            /**
+             * Creates an instance of Element.
+             *
+             * @param {(string | HTMLElement)} data
+             *
+             * @memberOf Element
+             */
             function Element(data) {
                 _classCallCheck(this, Element);
 
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {boolean}
+                 * @memberOf Element
+                 */
                 var _this3 = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
 
                 _this3._isRehydrated = false;
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {((IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text> | IUniversalComment<Comment>)[])}
+                 * @memberOf Element
+                 */
                 _this3.children = [];
                 if (data instanceof HTMLElement) {
                     _this3.original = data;
@@ -323,37 +689,97 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this3;
             }
+            /**
+             *
+             *
+             * @returns
+             *
+             * @memberOf Element
+             */
+
 
             _createClass(Element, [{
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return this._isRehydrated;
                 }
+                /**
+                 *
+                 *
+                 * @returns {HTMLElement}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this.original;
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "append",
                 value: function append(element) {
                     this.original.appendChild(element.getOriginal());
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "appendTo",
                 value: function appendTo(element) {
                     element.getOriginal().appendChild(this.original);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "prepend",
                 value: function prepend(element) {
                     this.original.insertBefore(element.getOriginal(), this.original.firstChild);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "prependTo",
                 value: function prependTo(element) {
                     element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "insertAfter",
                 value: function insertAfter(element) {
@@ -362,6 +788,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "insertBefore",
                 value: function insertBefore(element) {
@@ -370,21 +804,53 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         referenceNode.parentNode.insertBefore(this.original, referenceNode);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getNextSibling",
                 value: function getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getPreviousSibling",
                 value: function getPreviousSibling() {
                     return this._getPreviousSibling(this);
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this.original.parentNode.removeChild(this.original);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalAttribute<Attr>} attribute
+                 * @returns {IUniversalAttribute<Attr>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setAttr",
                 value: function setAttr(attribute) {
@@ -392,6 +858,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this.original.setAttributeNode(attribute.getOriginal());
                     return attribute;
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalAttribute<Attr> | string)} attr
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "removeAttr",
                 value: function removeAttr(attr) {
@@ -401,6 +875,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.original.removeAttribute(attr);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @param {*} [value]
+                 * @returns {IUniversalAttribute<Attr>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "attr",
                 value: function attr(name, value) {
@@ -412,6 +896,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         return attr;
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @returns {IUniversalAttribute<Attr>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getAttr",
                 value: function getAttr(name) {
@@ -421,6 +914,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         return attr;
                     }
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalAttribute<Attr>[]}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getAttrs",
                 value: function getAttrs() {
@@ -431,6 +932,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     return attrs;
                 }
+                /**
+                 *
+                 *
+                 * @returns {((IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text>)[])}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getChildren",
                 value: function getChildren() {
@@ -444,11 +954,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     return result;
                 }
+                /**
+                 *
+                 *
+                 * @param {((IUniversalElement<HTMLElement>
+                 *         | IUniversalTextNode<Text>)[])} elements
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setChildren",
                 value: function setChildren(elements) {
                     this.children = elements;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "addClass",
                 value: function addClass(name) {
@@ -456,16 +983,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.original.classList.add(name);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @returns {boolean}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "hasClass",
                 value: function hasClass(name) {
                     return this.original.classList.contains(name);
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "removeClass",
                 value: function removeClass(name) {
                     this.original.classList.remove(name);
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "toggleClass",
                 value: function toggleClass(name) {
@@ -475,6 +1027,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.original.classList.add(name);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {*} data
+                 * @param {string} [value]
+                 * @returns
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setStyle",
                 value: function setStyle(data, value) {
@@ -488,23 +1050,59 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     return this.original.style[data] = value;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @returns
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getStyle",
                 value: function getStyle(name) {
                     return this.original.style[name];
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getSource",
                 value: function getSource() {
                     var html = this.original.outerHTML;
                     return this.cleanUpHTML(html);
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
                     var parent = this.original.parentElement;
                     return new Element(parent);
                 }
+                /**
+                 *
+                 *
+                 * @param {({
+                 *         (element: IUniversalElement<HTMLElement>
+                 *             | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void
+                 *     })} closure
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "eachChild",
                 value: function eachChild(closure) {
@@ -514,12 +1112,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         closure(new Element(el), i);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getHTML",
                 value: function getHTML() {
                     var html = this.original.innerHTML;
                     return this.cleanUpHTML(html);
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "empty",
                 value: function empty() {
@@ -527,6 +1140,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.original.removeChild(this.original.firstChild);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @private
+                 * @param {string} html
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "cleanUpHTML",
                 value: function cleanUpHTML(html) {
@@ -549,6 +1172,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         "use strict";
 
         var elementIDS = 0;
+        /**
+         *
+         *
+         * @export
+         * @class GenericDomManupulations
+         */
 
         var GenericDomManupulations = function () {
             function GenericDomManupulations() {
@@ -557,6 +1186,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             _createClass(GenericDomManupulations, [{
                 key: "_insertAfter",
+
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} element
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
                 value: function _insertAfter(element) {
                     var parent = element.getParent();
                     var children = parent.getChildren();
@@ -565,6 +1203,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         children.splice(index + 1, 0, this);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} element
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
+
             }, {
                 key: "_insertBefore",
                 value: function _insertBefore(element) {
@@ -575,6 +1222,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         children.splice(index, 0, this);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} parent
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
+
             }, {
                 key: "_remove",
                 value: function _remove(parent) {
@@ -586,6 +1242,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     }
                 }
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} element
+                 * @returns {*}
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
+
             }, {
                 key: "_getNextSibling",
                 value: function _getNextSibling(element) {
@@ -597,6 +1263,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     }
                 }
+                /**
+                 *
+                 *
+                 * @protected
+                 * @param {*} element
+                 * @returns {*}
+                 *
+                 * @memberOf GenericDomManupulations
+                 */
+
             }, {
                 key: "_getPreviousSibling",
                 value: function _getPreviousSibling(element) {
@@ -614,13 +1290,34 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }();
 
         exports.GenericDomManupulations = GenericDomManupulations;
+        /**
+         *
+         *
+         * @export
+         * @class ServerComment
+         * @extends {GenericDomManupulations}
+         * @implements {IUniversalComment<any>}
+         */
 
         var ServerComment = function (_GenericDomManupulati4) {
             _inherits(ServerComment, _GenericDomManupulati4);
 
+            /**
+             * Creates an instance of ServerComment.
+             *
+             * @param {(string | Comment)} data
+             *
+             * @memberOf ServerComment
+             */
             function ServerComment(data) {
                 _classCallCheck(this, ServerComment);
 
+                /**
+                 *
+                 *
+                 * @type {number}
+                 * @memberOf ServerComment
+                 */
                 var _this4 = _possibleConstructorReturn(this, (ServerComment.__proto__ || Object.getPrototypeOf(ServerComment)).call(this));
 
                 _this4.$id = elementIDS++;
@@ -629,62 +1326,157 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this4;
             }
+            /**
+             *
+             *
+             * @returns {*}
+             *
+             * @memberOf ServerComment
+             */
+
 
             _createClass(ServerComment, [{
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this;
                 }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return false;
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "appendTo",
                 value: function appendTo(element) {
                     element.append(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "prependTo",
                 value: function prependTo(element) {
                     element.prepend(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "insertAfter",
                 value: function insertAfter(element) {
                     this._insertAfter(element);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "insertBefore",
                 value: function insertBefore(element) {
                     this._insertBefore(element);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "getNextSibling",
                 value: function getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "getPreviousSibling",
                 value: function getPreviousSibling() {
                     return this._getPreviousSibling(this);
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this._remove(this.parent);
                 }
+                /**
+                 *
+                 *
+                 * @param {Element} element
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "setParent",
                 value: function setParent(element) {
                     this.parent = element;
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
                     return this.parent;
                 }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf ServerComment
+                 */
+
             }, {
                 key: "getSource",
                 value: function getSource() {
@@ -696,11 +1488,33 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }(GenericDomManupulations);
 
         exports.ServerComment = ServerComment;
+        /**
+         *
+         *
+         * @export
+         * @class Attribute
+         * @implements {IUniversalAttribute<any>}
+         */
 
         var Attribute = function () {
+            /**
+             * Creates an instance of Attribute.
+             *
+             * @param {(string | Attr)} name
+             * @param {string} [value]
+             *
+             * @memberOf Attribute
+             */
             function Attribute(name, value) {
                 _classCallCheck(this, Attribute);
 
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {Map<string, string>}
+                 * @memberOf Attribute
+                 */
                 this.userStyles = new Map();
                 if (typeof name === "string") {
                     this.name = name;
@@ -709,6 +1523,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this.value = value;
                 }
             }
+            /**
+             *
+             *
+             * @param {(string | any)} data
+             * @param {string} value
+             * @returns
+             *
+             * @memberOf Attribute
+             */
+
 
             _createClass(Attribute, [{
                 key: "setStyle",
@@ -723,26 +1547,67 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     this.userStyles.set(data, value);
                 }
+                /**
+                 *
+                 *
+                 * @param {string} key
+                 * @returns
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getStyle",
                 value: function getStyle(key) {
                     return this.userStyles.get(key);
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getName",
                 value: function getName() {
                     return this.name;
                 }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this.value;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} value
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "setValue",
                 value: function setValue(value) {
                     this.value = value;
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getValue",
                 value: function getValue() {
@@ -763,16 +1628,39 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     return this.value;
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this.parent.removeAttr(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "setParent",
                 value: function setParent(element) {
                     this.parent = element;
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf Attribute
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
@@ -784,10 +1672,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }();
 
         exports.Attribute = Attribute;
+        /**
+         *
+         *
+         * @export
+         * @class TextNode
+         * @extends {GenericDomManupulations}
+         * @implements {IUniversalTextNode<string>}
+         */
 
         var TextNode = function (_GenericDomManupulati5) {
             _inherits(TextNode, _GenericDomManupulati5);
 
+            /**
+             * Creates an instance of TextNode.
+             *
+             * @param {string} value
+             *
+             * @memberOf TextNode
+             */
             function TextNode(value) {
                 _classCallCheck(this, TextNode);
 
@@ -796,72 +1699,183 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 _this6.value = value;
                 return _this6;
             }
+            /**
+             *
+             *
+             * @returns
+             *
+             * @memberOf TextNode
+             */
+
 
             _createClass(TextNode, [{
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return false;
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this.value;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} value
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "setValue",
                 value: function setValue(value) {
                     this.value = value;
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getValue",
                 value: function getValue() {
                     return this.value;
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this._remove(this.parent);
                 }
+                /**
+                 *
+                 *
+                 * @param {Element} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "setParent",
                 value: function setParent(element) {
                     this.parent = element;
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
                     return this.parent;
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "appendTo",
                 value: function appendTo(element) {
                     element.append(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalElement<any>} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "prependTo",
                 value: function prependTo(element) {
                     element.prepend(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "insertAfter",
                 value: function insertAfter(element) {
                     this._insertAfter(element);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "insertBefore",
                 value: function insertBefore(element) {
                     this._insertBefore(element);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getNextSibling",
                 value: function getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getPreviousSibling",
                 value: function getPreviousSibling() {
                     return this._getPreviousSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf TextNode
+                 */
+
             }, {
                 key: "getSource",
                 value: function getSource() {
@@ -873,33 +1887,101 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }(GenericDomManupulations);
 
         exports.TextNode = TextNode;
+        /**
+         *
+         *
+         * @export
+         * @class Element
+         * @extends {GenericDomManupulations}
+         * @implements {IUniversalElement<any>}
+         */
 
         var Element = function (_GenericDomManupulati6) {
             _inherits(Element, _GenericDomManupulati6);
 
+            /**
+             * Creates an instance of Element.
+             *
+             * @param {(string | HTMLElement)} name
+             *
+             * @memberOf Element
+             */
             function Element(name) {
                 _classCallCheck(this, Element);
 
+                /**
+                 *
+                 *
+                 * @type {number}
+                 * @memberOf Element
+                 */
                 var _this7 = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
 
                 _this7.$id = ++elementIDS;
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {Map<string, Attribute>}
+                 * @memberOf Element
+                 */
                 _this7.attrs = new Map();
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {Set<string>}
+                 * @memberOf Element
+                 */
                 _this7.classNames = new Set();
+                /**
+                 *
+                 *
+                 * @private
+                 * @type {((IUniversalElement<HTMLElement> |
+                 *         IUniversalTextNode<Text> | IUniversalComment<Text>)[])}
+                 * @memberOf Element
+                 */
                 _this7.children = [];
                 if (typeof name === "string") {
                     _this7.name = name;
                 }
                 return _this7;
             }
+            /**
+             *
+             *
+             * @returns
+             *
+             * @memberOf Element
+             */
+
 
             _createClass(Element, [{
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return false;
                 }
+                /**
+                 *
+                 *
+                 * @returns {*}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getOriginal",
                 value: function getOriginal() {}
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> |
+                 *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "append",
                 value: function append(element) {
@@ -907,44 +1989,110 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     el.setParent(this);
                     this.children.push(el);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> |
+                 *         IUniversalTextNode<Text>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "appendTo",
                 value: function appendTo(element) {
                     var el = element;
                     el.append(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "prepend",
                 value: function prepend(element) {
                     element.setParent(this);
                     this.children.splice(0, 0, element);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> |
+                 *         IUniversalTextNode<Text>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "prependTo",
                 value: function prependTo(element) {
                     var el = element;
                     el.prepend(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "insertAfter",
                 value: function insertAfter(element) {
                     this._insertAfter(element);
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "insertBefore",
                 value: function insertBefore(element) {
                     this._insertBefore(element);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getNextSibling",
                 value: function getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getPreviousSibling",
                 value: function getPreviousSibling() {
                     return this._getPreviousSibling(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {Element} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "removeChild",
                 value: function removeChild(element) {
@@ -953,11 +2101,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.children.splice(index, 1);
                     }
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "remove",
                 value: function remove() {
                     this.parent.removeChild(this);
                 }
+                /**
+                 *
+                 *
+                 * @param {IUniversalAttribute<any>} attribute
+                 * @returns {IUniversalAttribute<Attr>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setAttr",
                 value: function setAttr(attribute) {
@@ -965,11 +2129,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this.attrs.set(attribute.getName(), attribute);
                     return attribute;
                 }
+                /**
+                 *
+                 *
+                 * @param {(IUniversalAttribute<any> | string)} attribute
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "removeAttr",
                 value: function removeAttr(attribute) {
                     this.attrs.delete(attribute.getName());
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @param {*} [value]
+                 * @returns {IUniversalAttribute<Attr>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "attr",
                 value: function attr(name, value) {
@@ -981,11 +2163,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         return attr;
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @returns {IUniversalAttribute<any>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getAttr",
                 value: function getAttr(name) {
                     return this.attrs.get(name);
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalAttribute<any>[]}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getAttrs",
                 value: function getAttrs() {
@@ -1009,11 +2208,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     });
                     return attrs;
                 }
+                /**
+                 *
+                 *
+                 * @returns {((IUniversalElement<any> |
+                 *         IUniversalTextNode<any> | IUniversalComment<any>)[])}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getChildren",
                 value: function getChildren() {
                     return this.children;
                 }
+                /**
+                 *
+                 *
+                 * @param {({
+                 *         (element: IUniversalElement<any>
+                 *             | IUniversalTextNode<any> | IUniversalComment<any>, index: number): void
+                 *     })} closure
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "eachChild",
                 value: function eachChild(closure) {
@@ -1021,11 +2240,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         closure(this.children[i], i);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {((IUniversalElement<any>
+                 *         | IUniversalTextNode<any>)[])} elements
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setChildren",
                 value: function setChildren(elements) {
                     this.children = elements;
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "addClass",
                 value: function addClass(name) {
@@ -1033,16 +2269,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.classNames.add(name);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @returns {boolean}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "hasClass",
                 value: function hasClass(name) {
                     return this.classNames.has(name);
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "removeClass",
                 value: function removeClass(name) {
                     this.classNames.delete(name);
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "toggleClass",
                 value: function toggleClass(name) {
@@ -1052,18 +2313,44 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         this.classNames.add(name);
                     }
                 }
+                /**
+                 *
+                 *
+                 * @param {*} data
+                 * @param {string} [value]
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setStyle",
                 value: function setStyle(data, value) {
                     var styleAttr = this.getAttr("style") || this.setAttr(new Attribute("style"));
                     styleAttr.setStyle(data, value);
                 }
+                /**
+                 *
+                 *
+                 * @param {string} name
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getStyle",
                 value: function getStyle(name) {
                     var styleAttr = this.getAttr("style") || this.setAttr(new Attribute("style"));
                     return styleAttr.getStyle(name);
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getSource",
                 value: function getSource() {
@@ -1091,16 +2378,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     html.push("</" + this.name + ">");
                     return html.join("");
                 }
+                /**
+                 *
+                 *
+                 * @param {Element} element
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "setParent",
                 value: function setParent(element) {
                     this.parent = element;
                 }
+                /**
+                 *
+                 *
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getParent",
                 value: function getParent() {
                     return this.parent;
                 }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "getHTML",
                 value: function getHTML() {
@@ -1111,6 +2422,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                     return html.join("");
                 }
+                /**
+                 *
+                 *
+                 *
+                 * @memberOf Element
+                 */
+
             }, {
                 key: "empty",
                 value: function empty() {
@@ -1127,6 +2445,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         "use strict";
 
         var isBackend = typeof module !== "undefined" && module.exports && (typeof process === "undefined" ? "undefined" : _typeof(process)) === "object";
+        /**
+         *
+         *
+         * @export
+         * @class UniversalDom
+         */
 
         var UniversalDom = function () {
             function UniversalDom() {
@@ -1135,19 +2459,60 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
             _createClass(UniversalDom, null, [{
                 key: "createElement",
+
+                /**
+                 *
+                 *
+                 * @static
+                 * @param {(string | HTMLElement)} data
+                 * @returns {IUniversalElement<any>}
+                 *
+                 * @memberOf UniversalDom
+                 */
                 value: function createElement(data) {
                     return isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
                 }
+                /**
+                 *
+                 *
+                 * @static
+                 * @param {string} name
+                 * @param {string} [value]
+                 * @returns {IUniversalAttribute<any>}
+                 *
+                 * @memberOf UniversalDom
+                 */
+
             }, {
                 key: "createAttribute",
                 value: function createAttribute(name, value) {
                     return isBackend ? new Server_1.Attribute(name, value) : new Browser_1.Attribute(name, value);
                 }
+                /**
+                 *
+                 *
+                 * @static
+                 * @param {string} value
+                 * @returns {IUniversalTextNode<any>}
+                 *
+                 * @memberOf UniversalDom
+                 */
+
             }, {
                 key: "createTextNode",
                 value: function createTextNode(value) {
                     return isBackend ? new Server_1.TextNode(value) : new Browser_1.TextNode(value);
                 }
+                /**
+                 *
+                 *
+                 * @static
+                 * @param {string} value
+                 * @returns {IUniversalComment<any>}
+                 *
+                 * @memberOf UniversalDom
+                 */
+
             }, {
                 key: "createComment",
                 value: function createComment(value) {

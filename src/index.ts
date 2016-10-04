@@ -1,5 +1,4 @@
 declare const $isBackend: boolean;
-import {UniversalDom as dom} from "./UniversalDom";
 
-
-export let Dom = dom;
+export {UniversalDom as Dom} from "./UniversalDom";
+export {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";

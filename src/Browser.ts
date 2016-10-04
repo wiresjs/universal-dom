@@ -266,7 +266,6 @@ export class Attribute implements IUniversalAttribute<Attr> {
      * @memberOf Attribute
      */
     constructor(name: string | Attr, value?: string) {
-
         this.original = typeof name === "string" ? document.createAttribute(name) : name;
         if (value !== undefined) {
             this.original.value = value;

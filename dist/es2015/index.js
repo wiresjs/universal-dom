@@ -1,2 +1,1 @@
-import { UniversalDom as dom } from "./UniversalDom";
-export let Dom = dom;
+export { UniversalDom as Dom } from "./UniversalDom";
