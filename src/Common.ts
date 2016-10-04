@@ -16,6 +16,7 @@ export interface IUniversalTextNode<T> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+
     getSource(): string;
 }
 

@@ -1,10 +1,16 @@
 import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
+export class GenericDomManupulations {
+    protected _getNextSibling(element: any): any {
+        let original = element.original;
+    }
+}
 
-export class BrowserComment implements IUniversalComment<Comment> {
+export class BrowserComment extends GenericDomManupulations implements IUniversalComment<Comment> {
     private original: Comment;
     private _isRehydrated: boolean = false;
 
     constructor(data: string | Comment) {
+        super();
         if (typeof data === "string") {
             this.original = document.createComment(data);
         } else {
@@ -39,6 +45,10 @@ export class BrowserComment implements IUniversalComment<Comment> {
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
+    }
+
+    public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getNextSibling(this);
     }
 
     public remove(): void {

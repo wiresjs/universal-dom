@@ -1,12 +1,19 @@
 System.register([], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var BrowserComment, Attribute, TextNode, Element;
+    var GenericDomManupulations, BrowserComment, Attribute, TextNode, Element;
     return {
         setters:[],
         execute: function() {
-            BrowserComment = class BrowserComment {
+            GenericDomManupulations = class GenericDomManupulations {
+                _getNextSibling(element) {
+                    let original = element.original;
+                }
+            };
+            exports_1("GenericDomManupulations", GenericDomManupulations);
+            BrowserComment = class BrowserComment extends GenericDomManupulations {
                 constructor(data) {
+                    super();
                     this._isRehydrated = false;
                     if (typeof data === "string") {
                         this.original = document.createComment(data);
@@ -39,6 +46,9 @@ System.register([], function(exports_1, context_1) {
                     if (referenceNode.parentNode) {
                         referenceNode.parentNode.insertBefore(this.original, referenceNode);
                     }
+                }
+                getNextSibling() {
+                    return this._getNextSibling(this);
                 }
                 remove() {
                     this.original.parentElement.removeChild(this.original);

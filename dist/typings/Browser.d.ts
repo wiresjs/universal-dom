@@ -1,5 +1,8 @@
 import { IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment } from "./Common";
-export declare class BrowserComment implements IUniversalComment<Comment> {
+export declare class GenericDomManupulations {
+    protected _getNextSibling(element: any): any;
+}
+export declare class BrowserComment extends GenericDomManupulations implements IUniversalComment<Comment> {
     private original;
     private _isRehydrated;
     constructor(data: string | Comment);
@@ -9,6 +12,7 @@ export declare class BrowserComment implements IUniversalComment<Comment> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     remove(): void;
     getParent(): IUniversalElement<any>;
     getSource(): string;
