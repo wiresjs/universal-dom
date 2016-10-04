@@ -8,10 +8,13 @@ if (isServer) {
 } else {
     root = Dom.createElement(document.getElementById("root"));
 }
-var subject = Dom.createElement("div")
-subject.appendTo(root);
+var subject;
 
 describe("Classes manipulation", function() {
+    before(function() {
+        subject = Dom.createElement("div")
+        subject.appendTo(root);
+    })
     it("Should add a class", function() {
         subject.addClass("hello")
         root.getSource().should.equal('<div id="root"><div class="hello"></div></div>');

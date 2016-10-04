@@ -259,6 +259,13 @@ export interface IUniversalElement<T> {
     removeClass(name: string): void;
 
 
+    /**
+     * 
+     * 
+     * @param {string} name
+     * 
+     * @memberOf IUniversalElement
+     */
     toggleClass(name: string): void;
 
     /**

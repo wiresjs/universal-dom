@@ -1,7 +1,7 @@
 import {Element as BrowserElement,
     TextNode as BrowserTextNode,
     Attribute as BrowserAttribute,
-    BrowserComment
+    BrowserComment,
 } from "./Browser";
 
 import {Element as ServerElement,
@@ -12,22 +12,23 @@ import {Element as ServerElement,
 
 import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
 
-declare const $isBackend: boolean;
 
+declare const module: any;
+const isBackend = typeof module !== "undefined" && module.exports;
 
 export class UniversalDom {
     public static createElement(data: string | HTMLElement): IUniversalElement<any> {
-        return $isBackend ? new ServerElement(data) : new BrowserElement(data);
+        return isBackend ? new ServerElement(data) : new BrowserElement(data);
     }
 
     public static createAttribute(name: string, value?: string): IUniversalAttribute<any> {
-        return $isBackend ? new ServerAttribute(name, value) : new BrowserAttribute(name, value);
+        return isBackend ? new ServerAttribute(name, value) : new BrowserAttribute(name, value);
     }
     public static createTextNode(value: string): IUniversalTextNode<any> {
-        return $isBackend ? new ServerTextNode(value) : new BrowserTextNode(value);
+        return isBackend ? new ServerTextNode(value) : new BrowserTextNode(value);
     }
 
     public static createComment(value: string): IUniversalComment<any> {
-        return $isBackend ? new ServerComment(value) : new BrowserComment(value);
+        return isBackend ? new ServerComment(value) : new BrowserComment(value);
     }
 }

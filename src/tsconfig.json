@@ -12,7 +12,7 @@
         "noImplicitUseStrict": false,
         "removeComments": true,
         "noLib": false,
-        "outFile": "out.js",
+        "outFile": "./out.js",
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true
     },

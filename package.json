@@ -2,7 +2,8 @@
     "name": "universal-dom",
     "version": "1.0.0",
     "description": "Hello!",
-    "main": "gulpfile.js",
+    "typings": "./dist/typings/index.d.ts",
+    "main": "dist/universal/universal-dom.js",
     "directories": {
         "test": "test"
     },
@@ -26,13 +27,13 @@
         "typescript": "^2.0.3"
     },
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "gulp build-universal; ./test.sh"
     },
     "repository": {
         "type": "git",
-        "url": "git+ssh://git@bitbucket.org/zervant/zervanthttpcore.git"
+        "url": "git+git@github.com:wiresjs/universal-dom.git"
     },
     "author": "",
     "license": "ISC",
-    "homepage": "https://bitbucket.org/zervant/zervanthttpcore#readme"
+    "homepage": "https://github.com/wiresjs/universal-dom/#readme"
 }

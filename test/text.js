@@ -47,9 +47,6 @@ describe("Comments", function() {
     });
 
 
-
-
-
     it("Should use text.insertBefore", function() {
         root.empty();
         var p1 = Dom.createElement("p");

@@ -1,1 +1,972 @@
-"use strict";function _possibleConstructorReturn(e,t){if(!e)throw new ReferenceError("this hasn't been initialised - super() hasn't been called");return!t||"object"!=typeof t&&"function"!=typeof t?e:t}function _inherits(e,t){if("function"!=typeof t&&null!==t)throw new TypeError("Super expression must either be null or a function, not "+typeof t);e.prototype=Object.create(t&&t.prototype,{constructor:{value:e,enumerable:!1,writable:!0,configurable:!0}}),t&&(Object.setPrototypeOf?Object.setPrototypeOf(e,t):e.__proto__=t)}function _classCallCheck(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}var _typeof="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(e){return typeof e}:function(e){return e&&"function"==typeof Symbol&&e.constructor===Symbol?"symbol":typeof e},_createClass=function(){function e(e,t){for(var n=0;n<t.length;n++){var i=t[n];i.enumerable=i.enumerable||!1,i.configurable=!0,"value"in i&&(i.writable=!0),Object.defineProperty(e,i.key,i)}}return function(t,n,i){return n&&e(t.prototype,n),i&&e(t,i),t}}();!function(e,t){var n={},i=function(e,t,i){n[e]={d:t,f:i}},r=function e(i){var r=n[i];if(void 0===r)return t?require(i):(Exports.__npm__=Exports.__npm__||{},Exports.__npm__[i]);if(r.r)return r.r;r.r={};for(var a=[e,r.r],s=2;s<r.d.length;s++)a.push(e(r.d[s]));return r.f.apply(null,a),r.r};i("Common",["require","exports"],function(e,t){}),i("Browser",["require","exports"],function(e,t){var n=function(){function e(t){_classCallCheck(this,e),this._isRehydrated=!1,"string"==typeof t?this.original=document.createComment(t):(this._isRehydrated=!0,this.original=t)}return _createClass(e,[{key:"isRehydrated",value:function(){return this._isRehydrated}},{key:"getOriginal",value:function(){return this.original}},{key:"appendTo",value:function(e){e.append(this)}},{key:"prependTo",value:function(e){e.prepend(this)}},{key:"insertAfter",value:function(e){var t=e.getOriginal();t.parentNode&&t.parentNode.insertBefore(this.original,t.nextSibling)}},{key:"insertBefore",value:function(e){var t=e.getOriginal();t.parentNode&&t.parentNode.insertBefore(this.original,t)}},{key:"remove",value:function(){this.original.parentElement.removeChild(this.original)}},{key:"getParent",value:function(){if(this.original.parentNode)return new a(this.original.parentElement)}},{key:"getSource",value:function(){return"<--"+this.original.nodeValue+"-->"}}]),e}();t.BrowserComment=n;var i=function(){function e(t,n){_classCallCheck(this,e),this.original="string"==typeof t?document.createAttribute(t):t,void 0!==n&&(this.original.value=n)}return _createClass(e,[{key:"getName",value:function(){return this.original.name}},{key:"getOriginal",value:function(){return this.original}},{key:"setValue",value:function(e){this.original.value=e}},{key:"getValue",value:function(){return this.original.value}},{key:"remove",value:function(){this.parent.removeAttr(this)}},{key:"setParent",value:function(e){this.parent=e}},{key:"getParent",value:function(){return this.parent}}]),e}();t.Attribute=i;var r=function(){function e(t){_classCallCheck(this,e),this._isRehydrated=!1,t instanceof Text?(this.original=t,this._isRehydrated=!0):this.original=document.createTextNode(t)}return _createClass(e,[{key:"isRehydrated",value:function(){return this._isRehydrated}},{key:"getOriginal",value:function(){return this.original}},{key:"setValue",value:function(e){this.original.nodeValue=e}},{key:"getValue",value:function(){return this.original.nodeValue}},{key:"remove",value:function(){this.original.parentElement.removeChild(this.original)}},{key:"getParent",value:function(){return new a(this.original.parentElement)}},{key:"appendTo",value:function(e){e.append(this)}},{key:"prependTo",value:function(e){e.prepend(this)}},{key:"insertAfter",value:function(e){var t=e.getOriginal();t.parentNode&&t.parentNode.insertBefore(this.original,t.nextSibling)}},{key:"insertBefore",value:function(e){var t=e.getOriginal();t.parentNode&&t.parentNode.insertBefore(this.original,t)}},{key:"getSource",value:function(){return this.getValue()}}]),e}();t.TextNode=r;var a=function(){function e(t){_classCallCheck(this,e),this._isRehydrated=!1,this.children=[],t instanceof HTMLElement?(this.original=t,this._isRehydrated=!0):this.original=document.createElement(t)}return _createClass(e,[{key:"isRehydrated",value:function(){return this._isRehydrated}},{key:"getOriginal",value:function(){return this.original}},{key:"append",value:function(e){this.original.appendChild(e.getOriginal())}},{key:"appendTo",value:function(e){e.getOriginal().appendChild(this.original)}},{key:"prepend",value:function(e){this.original.insertBefore(e.getOriginal(),this.original.firstChild)}},{key:"prependTo",value:function(e){e.getOriginal().insertBefore(this.original,e.getOriginal().firstChild)}},{key:"insertAfter",value:function(e){var t=e.getOriginal();t.parentNode&&t.parentNode.insertBefore(this.original,t.nextSibling)}},{key:"insertBefore",value:function(e){var t=e.getOriginal();t.parentNode&&t.parentNode.insertBefore(this.original,t)}},{key:"remove",value:function(){this.original.parentNode.removeChild(this.original)}},{key:"setAttr",value:function(e){return e.setParent(this),this.original.setAttributeNode(e.getOriginal()),e}},{key:"removeAttr",value:function(e){e instanceof i?this.original.removeAttributeNode(e.getOriginal()):this.original.removeAttribute(e)}},{key:"attr",value:function e(t,n){if(void 0===n)return this.getAttr(t);var e=this.getAttr(t)||this.setAttr(new i(t));return e.setValue(n),e}},{key:"getAttr",value:function(e){var t=this.original.getAttributeNode(e);if(t){var n=new i(t);return n}}},{key:"getChildren",value:function(){for(var t=this.original.childNodes,i=[],a=0;a<t.length;a++){var s=t[a];1===s.nodeType&&i.push(new e(s)),8===s.nodeType&&i.push(new n(s)),3===s.nodeType&&s.nodeValue&&i.push(new r(s))}return i}},{key:"setChildren",value:function(e){this.children=e}},{key:"addClass",value:function(e){this.original.classList.contains(e)||this.original.classList.add(e)}},{key:"hasClass",value:function(e){return this.original.classList.contains(e)}},{key:"removeClass",value:function(e){this.original.classList.remove(e)}},{key:"toggleClass",value:function(e){this.original.classList.contains(e)?this.original.classList.remove(e):this.original.classList.add(e)}},{key:"setStyle",value:function(e,t){if("object"!==("undefined"==typeof e?"undefined":_typeof(e)))return this.original.style[e]=t;for(var n in e)e.hasOwnProperty(n)&&(this.original.style[n]=e[n])}},{key:"getStyle",value:function(e){return this.original.style[e]}},{key:"getSource",value:function(){var e=this.original.outerHTML;return e=e.replace(/\r?\n|\r|\t/g,""),e=e.replace(/\s{2,}/g," "),e=e.replace(/>\s+</g,"><"),e=e.replace(/\sclass=""/g,""),e=e.trim()}},{key:"getParent",value:function(){var t=this.original.parentElement;return new e(t)}},{key:"eachChild",value:function(t){for(var n=this.original.childNodes,i=0;i<n.length;i++){var r=n[i];t(new e(r),i)}}},{key:"empty",value:function(){for(;this.original.firstChild;)this.original.removeChild(this.original.firstChild)}}]),e}();t.Element=a}),i("Server",["require","exports"],function(e,t){var n=0,i=function(){function e(){_classCallCheck(this,e)}return _createClass(e,[{key:"_insertAfter",value:function(e){var t=e.getParent(),n=t.getChildren(),i=n.indexOf(e);i>-1&&n.splice(i+1,0,this)}},{key:"_insertBefore",value:function(e){var t=e.getParent(),n=t.getChildren(),i=n.indexOf(e);i>-1&&n.splice(i,0,this)}},{key:"_remove",value:function(e){var t=e.getChildren();if(e){var n=t.indexOf(this);n>-1&&t.splice(n,1)}}}]),e}();t.GenericDomManupulations=i;var r=function(e){function t(e){_classCallCheck(this,t);var i=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return i.$id=n++,"string"==typeof e&&(i.value=e),i}return _inherits(t,e),_createClass(t,[{key:"getOriginal",value:function(){return this}},{key:"isRehydrated",value:function(){return!1}},{key:"appendTo",value:function(e){e.append(this)}},{key:"prependTo",value:function(e){e.prepend(this)}},{key:"insertAfter",value:function(e){this._insertAfter(e)}},{key:"insertBefore",value:function(e){this._insertBefore(e)}},{key:"remove",value:function(){this._remove(this.parent)}},{key:"setParent",value:function(e){this.parent=e}},{key:"getParent",value:function(){return this.parent}},{key:"getSource",value:function(){return"<!--"+this.value+"-->"}}]),t}(i);t.ServerComment=r;var a=function(){function e(t,n){_classCallCheck(this,e),"string"==typeof t&&(this.name=t),void 0!==n&&(this.value=n)}return _createClass(e,[{key:"getName",value:function(){return this.name}},{key:"getOriginal",value:function(){return this.value}},{key:"setValue",value:function(e){this.value=e}},{key:"getValue",value:function(){return this.value}},{key:"remove",value:function(){this.parent.removeAttr(this)}},{key:"setParent",value:function(e){this.parent=e}},{key:"getParent",value:function(){return this.parent}}]),e}();t.Attribute=a;var s=function(e){function t(e){_classCallCheck(this,t);var n=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return n.value=e,n}return _inherits(t,e),_createClass(t,[{key:"isRehydrated",value:function(){return!1}},{key:"getOriginal",value:function(){return this.value}},{key:"setValue",value:function(e){this.value=e}},{key:"getValue",value:function(){return this.value}},{key:"remove",value:function(){this._remove(this.parent)}},{key:"setParent",value:function(e){this.parent=e}},{key:"getParent",value:function(){return this.parent}},{key:"appendTo",value:function(e){e.append(this)}},{key:"prependTo",value:function(e){e.prepend(this)}},{key:"insertAfter",value:function(e){this._insertAfter(e)}},{key:"insertBefore",value:function(e){this._insertBefore(e)}},{key:"getSource",value:function(){return this.getValue()}}]),t}(i);t.TextNode=s;var o=function(e){function t(e){_classCallCheck(this,t);var i=_possibleConstructorReturn(this,(t.__proto__||Object.getPrototypeOf(t)).call(this));return i.$id=++n,i.attrs=new Map,i.classNames=new Set,i.children=[],"string"==typeof e&&(i.name=e),i}return _inherits(t,e),_createClass(t,[{key:"isRehydrated",value:function(){return!1}},{key:"getOriginal",value:function(){}},{key:"append",value:function(e){var t=e;t.setParent(this),this.children.push(t)}},{key:"appendTo",value:function(e){var t=e;t.append(this)}},{key:"prepend",value:function(e){e.setParent(this),this.children.splice(0,0,e)}},{key:"prependTo",value:function(e){var t=e;t.prepend(this)}},{key:"insertAfter",value:function(e){this._insertAfter(e)}},{key:"insertBefore",value:function(e){this._insertBefore(e)}},{key:"removeChild",value:function(e){var t=this.children.indexOf(e);t>-1&&this.children.splice(t,1)}},{key:"remove",value:function(){this.parent.removeChild(this)}},{key:"setAttr",value:function(e){return e.setParent(this),this.attrs.set(e.getName(),e),e}},{key:"removeAttr",value:function(e){this.attrs.delete(e.getName())}},{key:"attr",value:function e(t,n){if(void 0===n)return this.getAttr(t);var e=this.getAttr(t)||this.setAttr(new a(t));return e.setValue(n),e}},{key:"getAttr",value:function(e){return this.attrs.get(e)}},{key:"getChildren",value:function(){return this.children}},{key:"eachChild",value:function(e){for(var t=0;t<this.children.length;t++)e(this.children[t],t)}},{key:"setChildren",value:function(e){this.children=e}},{key:"addClass",value:function(e){this.classNames.has(e)||this.classNames.add(e)}},{key:"hasClass",value:function(e){return this.classNames.has(e)}},{key:"removeClass",value:function(e){this.classNames.delete(e)}},{key:"toggleClass",value:function(e){this.classNames.has(e)?this.classNames.delete(e):this.classNames.add(e)}},{key:"setStyle",value:function(e,t){}},{key:"getStyle",value:function(e){return""}},{key:"getSource",value:function(){var e=[];e.push("<"+this.name);var t=[];this.attrs.forEach(function(e){t.push(e.getName()+'="'+(e.getValue()||"")+'"')});var n=[];this.classNames.forEach(function(e){n.push(e)}),this.classNames.size>0&&e.push(' class="'+n.join(" ")+'"'),t.length&&e.push(" "+t.join(" ")),e.push(">");for(var i=0;i<this.children.length;i++){var r=this.children[i];e.push(r.getSource())}return e.push("</"+this.name+">"),e.join("")}},{key:"setParent",value:function(e){this.parent=e}},{key:"getParent",value:function(){return this.parent}},{key:"empty",value:function(){this.children=[]}}]),t}(i);t.Element=o}),i("UniversalDom",["require","exports","Browser","Server"],function(e,n,i,r){var a=function(){function e(){_classCallCheck(this,e)}return _createClass(e,null,[{key:"createElement",value:function(e){return t?new r.Element(e):new i.Element(e)}},{key:"createAttribute",value:function(e,n){return t?new r.Attribute(e,n):new i.Attribute(e,n)}},{key:"createTextNode",value:function(e){return t?new r.TextNode(e):new i.TextNode(e)}},{key:"createComment",value:function(e){return t?new r.ServerComment(e):new i.BrowserComment(e)}}]),e}();n.UniversalDom=a}),i("index",["require","exports","UniversalDom"],function(e,t,n){t.Dom=n.UniversalDom});var a=function(i,a,s,o){var u,l=r(i);if(!t){var c=e.__npm__=e.__npm__||{};a&&(u=c[a])}var h=o?o.split(","):[];if(h.length)for(var f in n)for(var v=0;v<h.length;v++)0===f.indexOf(h[v])&&r(f);for(var p in l)t||s?e[p]=l[p]:null,u?u[l]=l[p]:null};a("index","universal-dom",!0,"")}("undefined"!=typeof exports?exports:this,"undefined"!=typeof exports);
+"use strict";
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+(function ($__exports__, $isBackend) {
+    var __local__ = {};var define = function define(n, d, f) {
+        __local__[n] = { d: d, f: f };
+    };var __resolve__ = function __resolve__(name) {
+        var m = __local__[name];if (m === undefined) {
+            if ($isBackend) {
+                return require(name);
+            } else {
+                Exports.__npm__ = Exports.__npm__ || {};return Exports.__npm__[name];
+            }
+        }if (m.r) {
+            return m.r;
+        }m.r = {};var z = [__resolve__, m.r];for (var i = 2; i < m.d.length; i++) {
+            z.push(__resolve__(m.d[i]));
+        }m.f.apply(null, z);return m.r;
+    };
+    define("Common", ["require", "exports"], function (require, exports) {});
+    define("Browser", ["require", "exports"], function (require, exports) {
+        "use strict";
+
+        var BrowserComment = function () {
+            function BrowserComment(data) {
+                _classCallCheck(this, BrowserComment);
+
+                this._isRehydrated = false;
+                if (typeof data === "string") {
+                    this.original = document.createComment(data);
+                } else {
+                    this._isRehydrated = true;
+                    this.original = data;
+                }
+            }
+
+            _createClass(BrowserComment, [{
+                key: "isRehydrated",
+                value: function isRehydrated() {
+                    return this._isRehydrated;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.append(this);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+                    }
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode);
+                    }
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentElement.removeChild(this.original);
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    if (this.original.parentNode) {
+                        return new Element(this.original.parentElement);
+                    }
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return "<--" + this.original.nodeValue + "-->";
+                }
+            }]);
+
+            return BrowserComment;
+        }();
+
+        exports.BrowserComment = BrowserComment;
+
+        var Attribute = function () {
+            function Attribute(name, value) {
+                _classCallCheck(this, Attribute);
+
+                this.original = typeof name === "string" ? document.createAttribute(name) : name;
+                if (value !== undefined) {
+                    this.original.value = value;
+                }
+            }
+
+            _createClass(Attribute, [{
+                key: "getName",
+                value: function getName() {
+                    return this.original.name;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.original.value = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.original.value;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.parent.removeAttr(this);
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(parent) {
+                    this.parent = parent;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }]);
+
+            return Attribute;
+        }();
+
+        exports.Attribute = Attribute;
+
+        var TextNode = function () {
+            function TextNode(data) {
+                _classCallCheck(this, TextNode);
+
+                this._isRehydrated = false;
+                if (data instanceof Text) {
+                    this.original = data;
+                    this._isRehydrated = true;
+                } else {
+                    this.original = document.createTextNode(data);
+                }
+            }
+
+            _createClass(TextNode, [{
+                key: "isRehydrated",
+                value: function isRehydrated() {
+                    return this._isRehydrated;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.original.nodeValue = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.original.nodeValue;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentElement.removeChild(this.original);
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return new Element(this.original.parentElement);
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.append(this);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+                    }
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode);
+                    }
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return this.getValue();
+                }
+            }]);
+
+            return TextNode;
+        }();
+
+        exports.TextNode = TextNode;
+
+        var Element = function () {
+            function Element(data) {
+                _classCallCheck(this, Element);
+
+                this._isRehydrated = false;
+                this.children = [];
+                if (data instanceof HTMLElement) {
+                    this.original = data;
+                    this._isRehydrated = true;
+                } else {
+                    this.original = document.createElement(data);
+                }
+            }
+
+            _createClass(Element, [{
+                key: "isRehydrated",
+                value: function isRehydrated() {
+                    return this._isRehydrated;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.original;
+                }
+            }, {
+                key: "append",
+                value: function append(element) {
+                    this.original.appendChild(element.getOriginal());
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.getOriginal().appendChild(this.original);
+                }
+            }, {
+                key: "prepend",
+                value: function prepend(element) {
+                    this.original.insertBefore(element.getOriginal(), this.original.firstChild);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+                    }
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    var referenceNode = element.getOriginal();
+                    if (referenceNode.parentNode) {
+                        referenceNode.parentNode.insertBefore(this.original, referenceNode);
+                    }
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.original.parentNode.removeChild(this.original);
+                }
+            }, {
+                key: "setAttr",
+                value: function setAttr(attribute) {
+                    attribute.setParent(this);
+                    this.original.setAttributeNode(attribute.getOriginal());
+                    return attribute;
+                }
+            }, {
+                key: "removeAttr",
+                value: function removeAttr(attr) {
+                    if (attr instanceof Attribute) {
+                        this.original.removeAttributeNode(attr.getOriginal());
+                    } else {
+                        this.original.removeAttribute(attr);
+                    }
+                }
+            }, {
+                key: "attr",
+                value: function attr(name, value) {
+                    if (value === undefined) {
+                        return this.getAttr(name);
+                    } else {
+                        var attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+                        attr.setValue(value);
+                        return attr;
+                    }
+                }
+            }, {
+                key: "getAttr",
+                value: function getAttr(name) {
+                    var oAttr = this.original.getAttributeNode(name);
+                    if (oAttr) {
+                        var attr = new Attribute(oAttr);
+                        return attr;
+                    }
+                }
+            }, {
+                key: "getChildren",
+                value: function getChildren() {
+                    var childNodes = this.original.childNodes;
+                    var result = [];
+                    for (var i = 0; i < childNodes.length; i++) {
+                        var node = childNodes[i];
+                        if (node.nodeType === 1) {
+                            result.push(new Element(node));
+                        }
+                        if (node.nodeType === 8) {
+                            result.push(new BrowserComment(node));
+                        }
+                        if (node.nodeType === 3) {
+                            if (node.nodeValue) {
+                                result.push(new TextNode(node));
+                            }
+                        }
+                    }
+                    return result;
+                }
+            }, {
+                key: "setChildren",
+                value: function setChildren(elements) {
+                    this.children = elements;
+                }
+            }, {
+                key: "addClass",
+                value: function addClass(name) {
+                    if (!this.original.classList.contains(name)) {
+                        this.original.classList.add(name);
+                    }
+                }
+            }, {
+                key: "hasClass",
+                value: function hasClass(name) {
+                    return this.original.classList.contains(name);
+                }
+            }, {
+                key: "removeClass",
+                value: function removeClass(name) {
+                    this.original.classList.remove(name);
+                }
+            }, {
+                key: "toggleClass",
+                value: function toggleClass(name) {
+                    if (this.original.classList.contains(name)) {
+                        this.original.classList.remove(name);
+                    } else {
+                        this.original.classList.add(name);
+                    }
+                }
+            }, {
+                key: "setStyle",
+                value: function setStyle(data, value) {
+                    if ((typeof data === "undefined" ? "undefined" : _typeof(data)) === "object") {
+                        for (var k in data) {
+                            if (data.hasOwnProperty(k)) {
+                                this.original.style[k] = data[k];
+                            }
+                        }
+                        return;
+                    }
+                    return this.original.style[data] = value;
+                }
+            }, {
+                key: "getStyle",
+                value: function getStyle(name) {
+                    return this.original.style[name];
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    var html = this.original.outerHTML;
+                    html = html.replace(/\r?\n|\r|\t/g, '');
+                    html = html.replace(/\s{2,}/g, " ");
+                    html = html.replace(/>\s+</g, "><");
+                    html = html.replace(/\sclass=""/g, "");
+                    html = html.trim();
+                    return html;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    var parent = this.original.parentElement;
+                    return new Element(parent);
+                }
+            }, {
+                key: "eachChild",
+                value: function eachChild(closure) {
+                    var childNodes = this.original.childNodes;
+                    for (var i = 0; i < childNodes.length; i++) {
+                        var el = childNodes[i];
+                        closure(new Element(el), i);
+                    }
+                }
+            }, {
+                key: "empty",
+                value: function empty() {
+                    while (this.original.firstChild) {
+                        this.original.removeChild(this.original.firstChild);
+                    }
+                }
+            }]);
+
+            return Element;
+        }();
+
+        exports.Element = Element;
+    });
+    define("Server", ["require", "exports"], function (require, exports) {
+        "use strict";
+
+        var elementIDS = 0;
+
+        var GenericDomManupulations = function () {
+            function GenericDomManupulations() {
+                _classCallCheck(this, GenericDomManupulations);
+            }
+
+            _createClass(GenericDomManupulations, [{
+                key: "_insertAfter",
+                value: function _insertAfter(element) {
+                    var parent = element.getParent();
+                    var children = parent.getChildren();
+                    var index = children.indexOf(element);
+                    if (index > -1) {
+                        children.splice(index + 1, 0, this);
+                    }
+                }
+            }, {
+                key: "_insertBefore",
+                value: function _insertBefore(element) {
+                    var parent = element.getParent();
+                    var children = parent.getChildren();
+                    var index = children.indexOf(element);
+                    if (index > -1) {
+                        children.splice(index, 0, this);
+                    }
+                }
+            }, {
+                key: "_remove",
+                value: function _remove(parent) {
+                    var children = parent.getChildren();
+                    if (parent) {
+                        var index = children.indexOf(this);
+                        if (index > -1) {
+                            children.splice(index, 1);
+                        }
+                    }
+                }
+            }]);
+
+            return GenericDomManupulations;
+        }();
+
+        exports.GenericDomManupulations = GenericDomManupulations;
+
+        var ServerComment = function (_GenericDomManupulati) {
+            _inherits(ServerComment, _GenericDomManupulati);
+
+            function ServerComment(data) {
+                _classCallCheck(this, ServerComment);
+
+                var _this = _possibleConstructorReturn(this, (ServerComment.__proto__ || Object.getPrototypeOf(ServerComment)).call(this));
+
+                _this.$id = elementIDS++;
+                if (typeof data === "string") {
+                    _this.value = data;
+                }
+                return _this;
+            }
+
+            _createClass(ServerComment, [{
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this;
+                }
+            }, {
+                key: "isRehydrated",
+                value: function isRehydrated() {
+                    return false;
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.append(this);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    this._insertAfter(element);
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    this._insertBefore(element);
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this._remove(this.parent);
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return "<!--" + this.value + "-->";
+                }
+            }]);
+
+            return ServerComment;
+        }(GenericDomManupulations);
+
+        exports.ServerComment = ServerComment;
+
+        var Attribute = function () {
+            function Attribute(name, value) {
+                _classCallCheck(this, Attribute);
+
+                if (typeof name === "string") {
+                    this.name = name;
+                }
+                if (value !== undefined) {
+                    this.value = value;
+                }
+            }
+
+            _createClass(Attribute, [{
+                key: "getName",
+                value: function getName() {
+                    return this.name;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.value;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.value = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.value;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.parent.removeAttr(this);
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }]);
+
+            return Attribute;
+        }();
+
+        exports.Attribute = Attribute;
+
+        var TextNode = function (_GenericDomManupulati2) {
+            _inherits(TextNode, _GenericDomManupulati2);
+
+            function TextNode(value) {
+                _classCallCheck(this, TextNode);
+
+                var _this2 = _possibleConstructorReturn(this, (TextNode.__proto__ || Object.getPrototypeOf(TextNode)).call(this));
+
+                _this2.value = value;
+                return _this2;
+            }
+
+            _createClass(TextNode, [{
+                key: "isRehydrated",
+                value: function isRehydrated() {
+                    return false;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {
+                    return this.value;
+                }
+            }, {
+                key: "setValue",
+                value: function setValue(value) {
+                    this.value = value;
+                }
+            }, {
+                key: "getValue",
+                value: function getValue() {
+                    return this.value;
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this._remove(this.parent);
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    element.append(this);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    element.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    this._insertAfter(element);
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    this._insertBefore(element);
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    return this.getValue();
+                }
+            }]);
+
+            return TextNode;
+        }(GenericDomManupulations);
+
+        exports.TextNode = TextNode;
+
+        var Element = function (_GenericDomManupulati3) {
+            _inherits(Element, _GenericDomManupulati3);
+
+            function Element(name) {
+                _classCallCheck(this, Element);
+
+                var _this3 = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
+
+                _this3.$id = ++elementIDS;
+                _this3.attrs = new Map();
+                _this3.classNames = new Set();
+                _this3.children = [];
+                if (typeof name === "string") {
+                    _this3.name = name;
+                }
+                return _this3;
+            }
+
+            _createClass(Element, [{
+                key: "isRehydrated",
+                value: function isRehydrated() {
+                    return false;
+                }
+            }, {
+                key: "getOriginal",
+                value: function getOriginal() {}
+            }, {
+                key: "append",
+                value: function append(element) {
+                    var el = element;
+                    el.setParent(this);
+                    this.children.push(el);
+                }
+            }, {
+                key: "appendTo",
+                value: function appendTo(element) {
+                    var el = element;
+                    el.append(this);
+                }
+            }, {
+                key: "prepend",
+                value: function prepend(element) {
+                    element.setParent(this);
+                    this.children.splice(0, 0, element);
+                }
+            }, {
+                key: "prependTo",
+                value: function prependTo(element) {
+                    var el = element;
+                    el.prepend(this);
+                }
+            }, {
+                key: "insertAfter",
+                value: function insertAfter(element) {
+                    this._insertAfter(element);
+                }
+            }, {
+                key: "insertBefore",
+                value: function insertBefore(element) {
+                    this._insertBefore(element);
+                }
+            }, {
+                key: "removeChild",
+                value: function removeChild(element) {
+                    var index = this.children.indexOf(element);
+                    if (index > -1) {
+                        this.children.splice(index, 1);
+                    }
+                }
+            }, {
+                key: "remove",
+                value: function remove() {
+                    this.parent.removeChild(this);
+                }
+            }, {
+                key: "setAttr",
+                value: function setAttr(attribute) {
+                    attribute.setParent(this);
+                    this.attrs.set(attribute.getName(), attribute);
+                    return attribute;
+                }
+            }, {
+                key: "removeAttr",
+                value: function removeAttr(attribute) {
+                    this.attrs.delete(attribute.getName());
+                }
+            }, {
+                key: "attr",
+                value: function attr(name, value) {
+                    if (value === undefined) {
+                        return this.getAttr(name);
+                    } else {
+                        var attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+                        attr.setValue(value);
+                        return attr;
+                    }
+                }
+            }, {
+                key: "getAttr",
+                value: function getAttr(name) {
+                    return this.attrs.get(name);
+                }
+            }, {
+                key: "getChildren",
+                value: function getChildren() {
+                    return this.children;
+                }
+            }, {
+                key: "eachChild",
+                value: function eachChild(closure) {
+                    for (var i = 0; i < this.children.length; i++) {
+                        closure(this.children[i], i);
+                    }
+                }
+            }, {
+                key: "setChildren",
+                value: function setChildren(elements) {
+                    this.children = elements;
+                }
+            }, {
+                key: "addClass",
+                value: function addClass(name) {
+                    if (!this.classNames.has(name)) {
+                        this.classNames.add(name);
+                    }
+                }
+            }, {
+                key: "hasClass",
+                value: function hasClass(name) {
+                    return this.classNames.has(name);
+                }
+            }, {
+                key: "removeClass",
+                value: function removeClass(name) {
+                    this.classNames.delete(name);
+                }
+            }, {
+                key: "toggleClass",
+                value: function toggleClass(name) {
+                    if (this.classNames.has(name)) {
+                        this.classNames.delete(name);
+                    } else {
+                        this.classNames.add(name);
+                    }
+                }
+            }, {
+                key: "setStyle",
+                value: function setStyle(data, value) {}
+            }, {
+                key: "getStyle",
+                value: function getStyle(name) {
+                    return "";
+                }
+            }, {
+                key: "getSource",
+                value: function getSource() {
+                    var html = [];
+                    html.push("<" + this.name);
+                    var localAttrs = [];
+                    this.attrs.forEach(function (attr) {
+                        localAttrs.push(attr.getName() + "=\"" + (attr.getValue() || "") + "\"");
+                    });
+                    var clsNames = [];
+                    this.classNames.forEach(function (clsName) {
+                        clsNames.push(clsName);
+                    });
+                    if (this.classNames.size > 0) {
+                        html.push(" class=\"" + clsNames.join(" ") + "\"");
+                    }
+                    if (localAttrs.length) {
+                        html.push(" " + localAttrs.join(" "));
+                    }
+                    html.push(">");
+                    for (var i = 0; i < this.children.length; i++) {
+                        var child = this.children[i];
+                        html.push(child.getSource());
+                    }
+                    html.push("</" + this.name + ">");
+                    return html.join("");
+                }
+            }, {
+                key: "setParent",
+                value: function setParent(element) {
+                    this.parent = element;
+                }
+            }, {
+                key: "getParent",
+                value: function getParent() {
+                    return this.parent;
+                }
+            }, {
+                key: "empty",
+                value: function empty() {
+                    this.children = [];
+                }
+            }]);
+
+            return Element;
+        }(GenericDomManupulations);
+
+        exports.Element = Element;
+    });
+    define("UniversalDom", ["require", "exports", "Browser", "Server"], function (require, exports, Browser_1, Server_1) {
+        "use strict";
+
+        var isBackend = typeof module !== "undefined" && module.exports;
+
+        var UniversalDom = function () {
+            function UniversalDom() {
+                _classCallCheck(this, UniversalDom);
+            }
+
+            _createClass(UniversalDom, null, [{
+                key: "createElement",
+                value: function createElement(data) {
+                    return isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
+                }
+            }, {
+                key: "createAttribute",
+                value: function createAttribute(name, value) {
+                    return isBackend ? new Server_1.Attribute(name, value) : new Browser_1.Attribute(name, value);
+                }
+            }, {
+                key: "createTextNode",
+                value: function createTextNode(value) {
+                    return isBackend ? new Server_1.TextNode(value) : new Browser_1.TextNode(value);
+                }
+            }, {
+                key: "createComment",
+                value: function createComment(value) {
+                    return isBackend ? new Server_1.ServerComment(value) : new Browser_1.BrowserComment(value);
+                }
+            }]);
+
+            return UniversalDom;
+        }();
+
+        exports.UniversalDom = UniversalDom;
+    });
+    define("index", ["require", "exports", "UniversalDom"], function (require, exports, UniversalDom_1) {
+        "use strict";
+
+        exports.Dom = UniversalDom_1.UniversalDom;
+    });
+
+    var __expose__ = function __expose__(n, m, w, c) {
+        var e = __resolve__(n);
+        var bc;
+        if (!$isBackend) {
+            var npm = $__exports__.__npm__ = $__exports__.__npm__ || {};if (m) {
+                bc = npm[m];
+            }
+        }
+        var cs = c ? c.split(",") : [];
+        if (cs.length) {
+            for (var ln in __local__) {
+                for (var i = 0; i < cs.length; i++) {
+                    if (ln.indexOf(cs[i]) === 0) {
+                        __resolve__(ln);
+                    }
+                }
+            }
+        }
+        for (var k in e) {
+            $isBackend || w ? $__exports__[k] = e[k] : null;
+            bc ? bc[e] = e[k] : null;
+        }
+    };
+    __expose__("index", "universal-dom", true, "");
+})(typeof exports !== "undefined" ? exports : this, typeof exports !== "undefined");

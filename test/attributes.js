@@ -8,11 +8,15 @@ if (isServer) {
 } else {
     root = Dom.createElement(document.getElementById("root"));
 }
-var subject = Dom.createElement("div")
+var subject
+
 var myAttr;
 describe("Text manipulation", function() {
+    before(function() {
+        subject = Dom.createElement("div");
+    })
     it("Should create an attribute using .attr", function() {
-        subject.attr("foo", "bar")
+        subject.attr("foo", "bar");
         subject.appendTo(root);
         root.getSource().should.equal('<div id="root"><div foo="bar"></div></div>');
     });
