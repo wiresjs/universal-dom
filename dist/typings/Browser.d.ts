@@ -72,5 +72,7 @@ export declare class Element implements IUniversalElement<HTMLElement> {
     eachChild(closure: {
         (element: IUniversalElement<HTMLElement> | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void;
     }): void;
+    getHTML(): string;
     empty(): void;
+    private cleanUpHTML(html);
 }

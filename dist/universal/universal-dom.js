@@ -266,12 +266,7 @@ define("Browser", ["require", "exports"], function (require, exports) {
         }
         getSource() {
             let html = this.original.outerHTML;
-            html = html.replace(/\r?\n|\r|\t/g, "");
-            html = html.replace(/\s{2,}/g, " ");
-            html = html.replace(/>\s+</g, "><");
-            html = html.replace(/\sclass=""/g, "");
-            html = html.trim();
-            return html;
+            return this.cleanUpHTML(html);
         }
         getParent() {
             let parent = this.original.parentElement;
@@ -284,10 +279,22 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 closure(new Element(el), i);
             }
         }
+        getHTML() {
+            let html = this.original.innerHTML;
+            return this.cleanUpHTML(html);
+        }
         empty() {
             while (this.original.firstChild) {
                 this.original.removeChild(this.original.firstChild);
             }
+        }
+        cleanUpHTML(html) {
+            html = html.replace(/\r?\n|\r|\t/g, "");
+            html = html.replace(/\s{2,}/g, " ");
+            html = html.replace(/>\s+</g, "><");
+            html = html.replace(/\sclass=""/g, "");
+            html = html.trim();
+            return html;
         }
     }
     exports.Element = Element;
@@ -571,6 +578,14 @@ define("Server", ["require", "exports"], function (require, exports) {
         }
         getParent() {
             return this.parent;
+        }
+        getHTML() {
+            let html = [];
+            for (let i = 0; i < this.children.length; i++) {
+                let child = this.children[i];
+                html.push(child.getSource());
+            }
+            return html.join("");
         }
         empty() {
             this.children = [];

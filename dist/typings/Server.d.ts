@@ -86,5 +86,6 @@ export declare class Element extends GenericDomManupulations implements IUnivers
     getSource(): string;
     setParent(element: Element): void;
     getParent(): IUniversalElement<any>;
+    getHTML(): string;
     empty(): void;
 }

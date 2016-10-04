@@ -56,6 +56,7 @@ export interface IUniversalElement<T> {
     getSource(): string;
     setParent?(element: IUniversalElement<any>): void;
     getParent(): IUniversalElement<any>;
+    getHTML(): string;
     eachChild(closure: {
         (element: IUniversalElement<HTMLElement> | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void;
     }): void;

@@ -115,6 +115,19 @@ describe("Children and dom manipulations", function() {
         subject.insertBefore(c2);
         root.getSource().should.equal('<div id="root"><!--comment1--><div id="foo"></div><!--comment2--></div>');
     });
+
+    it("Should get html (children)", function() {
+        root.empty();
+        subject = Dom.createElement("div");
+        subject.attr("id", "foo");
+        var c1 = Dom.createComment("comment1")
+        var c2 = Dom.createComment("comment2")
+        root.append(c1);
+        root.append(c2);
+
+        subject.insertBefore(c2);
+        root.getHTML().should.equal('<!--comment1--><div id="foo"></div><!--comment2-->');
+    });
     after(function() {
         root.empty();
     });

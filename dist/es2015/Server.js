@@ -272,6 +272,14 @@ export class Element extends GenericDomManupulations {
     getParent() {
         return this.parent;
     }
+    getHTML() {
+        let html = [];
+        for (let i = 0; i < this.children.length; i++) {
+            let child = this.children[i];
+            html.push(child.getSource());
+        }
+        return html.join("");
+    }
     empty() {
         this.children = [];
     }

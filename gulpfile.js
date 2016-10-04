@@ -66,7 +66,7 @@ gulp.task('build', function() {
 
 gulp.task("build-universal", ["build"], () => {
     return runSequence("es5-build", "es5-uglify");
-})
+});
 
 gulp.task("dist-universal", ["build-universal"], () => {
     return gulp.src(["build/universal-dom.js", "build/universal-dom-es5.js", "build/universal-dom.min.js"])

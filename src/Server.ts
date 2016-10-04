@@ -365,6 +365,14 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         return this.parent;
     }
 
+    public getHTML(): string {
+        let html = [];
+        for (let i = 0; i < this.children.length; i++) {
+            let child = this.children[i];
+            html.push(child.getSource());
+        }
+        return html.join("");
+    }
     public empty() {
         this.children = [];
     }

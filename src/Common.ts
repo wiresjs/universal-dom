@@ -260,10 +260,10 @@ export interface IUniversalElement<T> {
 
 
     /**
-     * 
-     * 
+     *
+     *
      * @param {string} name
-     * 
+     *
      * @memberOf IUniversalElement
      */
     toggleClass(name: string): void;
@@ -294,6 +294,15 @@ export interface IUniversalElement<T> {
     setParent?(element: IUniversalElement<any>): void
 
     getParent(): IUniversalElement<any>;
+
+    /**
+     *
+     * Gets html from a dom
+     * @returns {string}
+     *
+     * @memberOf IUniversalElement
+     */
+    getHTML(): string;
 
     /**
      *

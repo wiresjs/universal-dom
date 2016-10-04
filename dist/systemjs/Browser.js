@@ -267,12 +267,7 @@ System.register([], function(exports_1, context_1) {
                 }
                 getSource() {
                     let html = this.original.outerHTML;
-                    html = html.replace(/\r?\n|\r|\t/g, "");
-                    html = html.replace(/\s{2,}/g, " ");
-                    html = html.replace(/>\s+</g, "><");
-                    html = html.replace(/\sclass=""/g, "");
-                    html = html.trim();
-                    return html;
+                    return this.cleanUpHTML(html);
                 }
                 getParent() {
                     let parent = this.original.parentElement;
@@ -285,10 +280,22 @@ System.register([], function(exports_1, context_1) {
                         closure(new Element(el), i);
                     }
                 }
+                getHTML() {
+                    let html = this.original.innerHTML;
+                    return this.cleanUpHTML(html);
+                }
                 empty() {
                     while (this.original.firstChild) {
                         this.original.removeChild(this.original.firstChild);
                     }
+                }
+                cleanUpHTML(html) {
+                    html = html.replace(/\r?\n|\r|\t/g, "");
+                    html = html.replace(/\s{2,}/g, " ");
+                    html = html.replace(/>\s+</g, "><");
+                    html = html.replace(/\sclass=""/g, "");
+                    html = html.trim();
+                    return html;
                 }
             };
             exports_1("Element", Element);

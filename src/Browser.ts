@@ -336,7 +336,7 @@ export class Element implements IUniversalElement<HTMLElement> {
         if (attr instanceof Attribute) {
             this.original.removeAttributeNode(attr.getOriginal());
         } else {
-            this.original.removeAttribute(<string> attr);
+            this.original.removeAttribute(<string>attr);
         }
     }
 
@@ -392,14 +392,14 @@ export class Element implements IUniversalElement<HTMLElement> {
         for (let i = 0; i < childNodes.length; i++) {
             let node = childNodes[i];
             if (node.nodeType === 1) {
-                result.push(new Element(<HTMLElement> node));
+                result.push(new Element(<HTMLElement>node));
             }
             if (node.nodeType === 8) {
-                result.push(new BrowserComment(<Comment> node));
+                result.push(new BrowserComment(<Comment>node));
             }
             if (node.nodeType === 3) {
                 if (node.nodeValue) {
-                    result.push(new TextNode(<Text> node));
+                    result.push(new TextNode(<Text>node));
                 }
             }
         }
@@ -495,6 +495,7 @@ export class Element implements IUniversalElement<HTMLElement> {
         return this.original.style[name];
     }
 
+
     /**
      *
      *
@@ -504,12 +505,7 @@ export class Element implements IUniversalElement<HTMLElement> {
      */
     public getSource(): string {
         let html = this.original.outerHTML;
-        html = html.replace(/\r?\n|\r|\t/g, "");
-        html = html.replace(/\s{2,}/g, " ");
-        html = html.replace(/>\s+</g, "><");
-        html = html.replace(/\sclass=""/g, "");
-        html = html.trim();
-        return html;
+        return this.cleanUpHTML(html);
     }
 
     /**
@@ -540,14 +536,28 @@ export class Element implements IUniversalElement<HTMLElement> {
     }) {
         let childNodes = this.original.childNodes;
         for (let i = 0; i < childNodes.length; i++) {
-            let el = <HTMLElement> childNodes[i];
+            let el = <HTMLElement>childNodes[i];
             closure(new Element(el), i);
         }
+    }
+
+    public getHTML(): string {
+        let html = this.original.innerHTML;
+        return this.cleanUpHTML(html);
     }
 
     public empty() {
         while (this.original.firstChild) {
             this.original.removeChild(this.original.firstChild);
         }
+    }
+
+    private cleanUpHTML(html: string): string {
+        html = html.replace(/\r?\n|\r|\t/g, "");
+        html = html.replace(/\s{2,}/g, " ");
+        html = html.replace(/>\s+</g, "><");
+        html = html.replace(/\sclass=""/g, "");
+        html = html.trim();
+        return html;
     }
 }
