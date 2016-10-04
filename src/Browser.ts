@@ -1,6 +1,12 @@
 import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
 
 
+/**
+ *
+ *
+ * @param {*} node
+ * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+ */
 let mapNodeObject = (node: any): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> => {
     if (!node) {
         return;
@@ -15,21 +21,78 @@ let mapNodeObject = (node: any): IUniversalElement<any> | IUniversalTextNode<any
         return new TextNode(<Text>node);
     }
 }
+
+/**
+ *
+ *
+ * @export
+ * @class GenericDomManupulations
+ */
 export class GenericDomManupulations {
+
+    /**
+     *
+     *
+     * @protected
+     * @param {*} element
+     * @returns {*}
+     *
+     * @memberOf GenericDomManupulations
+     */
     protected _getNextSibling(element: any): any {
         let original = element.original;
         return mapNodeObject(original.nextSibling);
     }
+
+    /**
+     *
+     *
+     * @protected
+     * @param {*} element
+     * @returns {*}
+     *
+     * @memberOf GenericDomManupulations
+     */
     protected _getPreviousSibling(element: any): any {
         let original = element.original;
         return mapNodeObject(original.previousSibling);
     }
 }
 
+/**
+ *
+ *
+ * @export
+ * @class BrowserComment
+ * @extends {GenericDomManupulations}
+ * @implements {IUniversalComment<Comment>}
+ */
 export class BrowserComment extends GenericDomManupulations implements IUniversalComment<Comment> {
+    /**
+     *
+     *
+     * @private
+     * @type {Comment}
+     * @memberOf BrowserComment
+     */
     private original: Comment;
+
+    /**
+     *
+     *
+     * @private
+     * @type {boolean}
+     * @memberOf BrowserComment
+     */
     private _isRehydrated: boolean = false;
 
+    /**
+     * Creates an instance of BrowserComment.
+     *
+     * @param {(string | Comment)} data
+     *
+     * @memberOf BrowserComment
+     */
     constructor(data: string | Comment) {
         super();
         if (typeof data === "string") {
@@ -39,21 +102,57 @@ export class BrowserComment extends GenericDomManupulations implements IUniversa
             this.original = data;
         }
     }
+    /**
+     *
+     *
+     * @returns
+     *
+     * @memberOf BrowserComment
+     */
     public isRehydrated() {
         return this._isRehydrated;
     }
 
+    /**
+     *
+     *
+     * @returns {Comment}
+     *
+     * @memberOf BrowserComment
+     */
     public getOriginal(): Comment {
         return this.original;
     }
 
+    /**
+     *
+     *
+     * @param {IUniversalElement<any>} element
+     *
+     * @memberOf BrowserComment
+     */
     public appendTo(element: IUniversalElement<any>): void {
         element.append(this);
     }
+
+    /**
+     *
+     *
+     * @param {IUniversalElement<any>} element
+     *
+     * @memberOf BrowserComment
+     */
     public prependTo(element: IUniversalElement<any>): void {
         element.prepend(this);
     }
 
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf BrowserComment
+     */
     public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
         let referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
@@ -61,6 +160,13 @@ export class BrowserComment extends GenericDomManupulations implements IUniversa
         }
     }
 
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf BrowserComment
+     */
     public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
         let referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
@@ -68,35 +174,97 @@ export class BrowserComment extends GenericDomManupulations implements IUniversa
         }
     }
 
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf BrowserComment
+     */
     public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getNextSibling(this);
     }
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf BrowserComment
+     */
     public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getPreviousSibling(this);
     }
 
+    /**
+     *
+     *
+     *
+     * @memberOf BrowserComment
+     */
     public remove(): void {
         this.original.parentElement.removeChild(this.original);
     }
 
+    /**
+     *
+     *
+     * @returns {IUniversalElement<any>}
+     *
+     * @memberOf BrowserComment
+     */
     public getParent(): IUniversalElement<any> {
         if (this.original.parentNode) {
             return new Element(this.original.parentElement);
         }
     }
 
+    /**
+     *
+     *
+     * @returns
+     *
+     * @memberOf BrowserComment
+     */
     public getSource() {
         return `<!--${this.original.nodeValue}-->`;
     }
 
 }
 
-
+/**
+ *
+ *
+ * @export
+ * @class Attribute
+ * @implements {IUniversalAttribute<Attr>}
+ */
 export class Attribute implements IUniversalAttribute<Attr> {
 
+    /**
+     *
+     *
+     * @private
+     * @type {Attr}
+     * @memberOf Attribute
+     */
     private original: Attr;
+    /**
+     *
+     *
+     * @private
+     * @type {Element}
+     * @memberOf Attribute
+     */
     private parent: Element;
 
+    /**
+     * Creates an instance of Attribute.
+     *
+     * @param {(string | Attr)} name
+     * @param {string} [value]
+     *
+     * @memberOf Attribute
+     */
     constructor(name: string | Attr, value?: string) {
 
         this.original = typeof name === "string" ? document.createAttribute(name) : name;
@@ -105,42 +273,119 @@ export class Attribute implements IUniversalAttribute<Attr> {
         }
     }
 
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf Attribute
+     */
     public getName(): string {
         return this.original.name;
     }
 
 
+    /**
+     *
+     *
+     * @returns
+     *
+     * @memberOf Attribute
+     */
     public getOriginal() {
         return this.original;
     }
 
+    /**
+     *
+     *
+     * @param {string} value
+     *
+     * @memberOf Attribute
+     */
     public setValue(value: string): void {
         this.original.value = value;
     }
 
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf Attribute
+     */
     public getValue(): string {
         return this.original.value;
     }
 
+    /**
+     *
+     *
+     *
+     * @memberOf Attribute
+     */
     public remove(): void {
         this.parent.removeAttr(this);
     }
+
+    /**
+     *
+     *
+     * @param {Element} parent
+     *
+     * @memberOf Attribute
+     */
     public setParent(parent: Element) {
         this.parent = parent;
     }
+
+    /**
+     *
+     *
+     * @returns {IUniversalElement<any>}
+     *
+     * @memberOf Attribute
+     */
     public getParent(): IUniversalElement<any> {
         return this.parent;
     }
 }
 
-
-
+/**
+ *
+ *
+ * @export
+ * @class TextNode
+ * @extends {GenericDomManupulations}
+ * @implements {IUniversalTextNode<Text>}
+ */
 export class TextNode extends GenericDomManupulations implements IUniversalTextNode<Text> {
 
+    /**
+     *
+     *
+     * @private
+     * @type {Text}
+     * @memberOf TextNode
+     */
     private original: Text;
 
+    /**
+     *
+     *
+     * @private
+     * @type {boolean}
+     * @memberOf TextNode
+     */
     private _isRehydrated: boolean = false;
 
+    /**
+     * Creates an instance of TextNode.
+     *
+     * @param {(string | Text)} data
+     *
+     * @memberOf TextNode
+     */
     constructor(data: string | Text) {
         super();
         if (data instanceof Text) {
@@ -151,38 +396,100 @@ export class TextNode extends GenericDomManupulations implements IUniversalTextN
         }
     }
 
+    /**
+     *
+     *
+     * @returns
+     *
+     * @memberOf TextNode
+     */
     public isRehydrated() {
         return this._isRehydrated;
     }
 
+    /**
+     *
+     *
+     * @returns {Text}
+     *
+     * @memberOf TextNode
+     */
     public getOriginal(): Text {
         return this.original;
     }
 
+    /**
+     *
+     *
+     * @param {string} value
+     *
+     * @memberOf TextNode
+     */
     public setValue(value: string): void {
         this.original.nodeValue = value;
     }
 
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf TextNode
+     */
     public getValue(): string {
         return this.original.nodeValue;
     }
 
+    /**
+     *
+     *
+     *
+     * @memberOf TextNode
+     */
     public remove(): void {
         this.original.parentElement.removeChild(this.original);
     }
 
+    /**
+     *
+     *
+     * @returns {IUniversalElement<any>}
+     *
+     * @memberOf TextNode
+     */
     public getParent(): IUniversalElement<any> {
         return new Element(this.original.parentElement);
     }
 
+    /**
+     *
+     *
+     * @param {IUniversalElement<any>} element
+     *
+     * @memberOf TextNode
+     */
     public appendTo(element: IUniversalElement<any>): void {
         element.append(this);
     }
 
+    /**
+     *
+     *
+     * @param {IUniversalElement<any>} element
+     *
+     * @memberOf TextNode
+     */
     public prependTo(element: IUniversalElement<any>): void {
         element.prepend(this);
     }
 
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf TextNode
+     */
     public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
         let referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
@@ -190,36 +497,69 @@ export class TextNode extends GenericDomManupulations implements IUniversalTextN
         }
     }
 
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf TextNode
+     */
     public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
         let referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
     }
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf TextNode
+     */
     public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getNextSibling(this);
     }
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf TextNode
+     */
     public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getPreviousSibling(this);
     }
 
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf TextNode
+     */
     public getSource(): string {
         return this.getValue();
     }
 }
-
-
-
 
 /**
  *
  *
  * @export
  * @class Element
+ * @extends {GenericDomManupulations}
  * @implements {IUniversalElement<HTMLElement>}
  */
 export class Element extends GenericDomManupulations implements IUniversalElement<HTMLElement> {
 
+    /**
+     *
+     *
+     * @private
+     * @type {boolean}
+     * @memberOf Element
+     */
     private _isRehydrated: boolean = false;
 
     /**
@@ -230,12 +570,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
      * @memberOf Element
      */
     private original: HTMLElement;
+
     /**
      *
      *
      * @private
      * @type {((IUniversalElement<HTMLElement> |
-     *         IUniversalTextNode<Text>)[])}
+     *         IUniversalTextNode<Text> | IUniversalComment<Comment>)[])}
      * @memberOf Element
      */
     private children: (IUniversalElement<HTMLElement> |
@@ -244,7 +585,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
     /**
      * Creates an instance of Element.
      *
-     * @param {string} name
+     * @param {(string | HTMLElement)} data
      *
      * @memberOf Element
      */
@@ -258,6 +599,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
     }
 
+    /**
+     *
+     *
+     * @returns
+     *
+     * @memberOf Element
+     */
     public isRehydrated() {
         return this._isRehydrated;
     }
@@ -273,11 +621,12 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         return this.original;
     }
 
+
     /**
      *
      *
      * @param {(IUniversalElement<HTMLElement> |
-     *         IUniversalTextNode<Text>)} element
+     *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
      *
      * @memberOf Element
      */
@@ -286,7 +635,6 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
 
         this.original.appendChild(element.getOriginal());
     }
-
 
     /**
      *
@@ -301,12 +649,11 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         element.getOriginal().appendChild(this.original);
     }
 
-
     /**
      *
      *
      * @param {(IUniversalElement<HTMLElement> |
-     *         IUniversalTextNode<Text>)} element
+     *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
      *
      * @memberOf Element
      */
@@ -328,7 +675,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
     }
 
-
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf Element
+     */
     public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>) {
         let referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
@@ -336,6 +689,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
     }
 
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf Element
+     */
     public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>) {
         let referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
@@ -343,9 +703,23 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
     }
 
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf Element
+     */
     public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getNextSibling(this);
     }
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf Element
+     */
     public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getPreviousSibling(this);
     }
@@ -360,11 +734,11 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         this.original.parentNode.removeChild(this.original);
     }
 
-    // attributes
     /**
      *
      *
-     * @param {IUniversalAttribute} attribute
+     * @param {IUniversalAttribute<Attr>} attribute
+     * @returns {IUniversalAttribute<Attr>}
      *
      * @memberOf Element
      */
@@ -374,11 +748,10 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         return attribute;
     }
 
-
     /**
      *
      *
-     * @param {(IUniversalAttribute<any> | string)} attribute
+     * @param {(IUniversalAttribute<Attr> | string)} attr
      *
      * @memberOf Element
      */
@@ -389,6 +762,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
             this.original.removeAttribute(<string>attr);
         }
     }
+
 
     /**
      *
@@ -413,7 +787,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
      *
      *
      * @param {string} name
-     * @returns {IUniversalAttribute}
+     * @returns {IUniversalAttribute<Attr>}
      *
      * @memberOf Element
      */
@@ -425,6 +799,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
     }
 
+    /**
+     *
+     *
+     * @returns {IUniversalAttribute<Attr>[]}
+     *
+     * @memberOf Element
+     */
     public getAttrs(): IUniversalAttribute<Attr>[] {
         let attrs = [];
         let originalAttrs = this.original.attributes;
@@ -433,7 +814,6 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
         return attrs;
     }
-
 
     /**
      *
@@ -470,7 +850,6 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         this.children = elements;
     }
 
-
     /**
      *
      *
@@ -483,6 +862,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
             this.original.classList.add(name);
         }
     }
+
     /**
      *
      *
@@ -494,6 +874,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
     public hasClass(name: string): boolean {
         return this.original.classList.contains(name);
     }
+
     /**
      *
      *
@@ -505,6 +886,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         this.original.classList.remove(name);
     }
 
+    /**
+     *
+     *
+     * @param {string} name
+     *
+     * @memberOf Element
+     */
     public toggleClass(name: string): void {
         if (this.original.classList.contains(name)) {
             this.original.classList.remove(name);
@@ -516,8 +904,8 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
     /**
      *
      *
-     * @param {string} name
-     * @param {string} value
+     * @param {*} data
+     * @param {string} [value]
      * @returns
      *
      * @memberOf Element
@@ -546,11 +934,10 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         return this.original.style[name];
     }
 
-
     /**
      *
      *
-     * @returns
+     * @returns {string}
      *
      * @memberOf Element
      */
@@ -562,7 +949,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
     /**
      *
      *
-     * @returns
+     * @returns {IUniversalElement<any>}
      *
      * @memberOf Element
      */
@@ -570,6 +957,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         let parent = this.original.parentElement;
         return new Element(parent);
     }
+
 
     /**
      *
@@ -592,17 +980,39 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
     }
 
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf Element
+     */
     public getHTML(): string {
         let html = this.original.innerHTML;
         return this.cleanUpHTML(html);
     }
 
+    /**
+     *
+     *
+     *
+     * @memberOf Element
+     */
     public empty() {
         while (this.original.firstChild) {
             this.original.removeChild(this.original.firstChild);
         }
     }
 
+    /**
+     *
+     *
+     * @private
+     * @param {string} html
+     * @returns {string}
+     *
+     * @memberOf Element
+     */
     private cleanUpHTML(html: string): string {
         html = html.replace(/\r?\n|\r|\t/g, "");
         html = html.replace(/\s{2,}/g, " ");
