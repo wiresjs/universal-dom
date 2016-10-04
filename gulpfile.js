@@ -69,7 +69,8 @@ gulp.task("build-universal", ["build"], () => {
 });
 
 gulp.task("dist-universal", ["build-universal"], () => {
-    return gulp.src(["build/universal-dom.js", "build/universal-dom-es5.js", "build/universal-dom.min.js"])
+
+    return gulp.src(["build/*.**"])
         .pipe(gulp.dest('dist/universal'));
 });
 

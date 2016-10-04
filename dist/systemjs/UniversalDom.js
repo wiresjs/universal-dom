@@ -12,7 +12,7 @@ System.register(["./Browser", "./Server"], function(exports_1, context_1) {
                 Server_1 = Server_1_1;
             }],
         execute: function() {
-            isBackend = typeof module !== "undefined" && module.exports;
+            isBackend = typeof module !== "undefined" && module.exports && typeof process === "object";
             UniversalDom = class UniversalDom {
                 static createElement(data) {
                     return isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);

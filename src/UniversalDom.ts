@@ -14,7 +14,8 @@ import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalCo
 
 
 declare const module: any;
-const isBackend = typeof module !== "undefined" && module.exports;
+declare const process: any;
+const isBackend = typeof module !== "undefined" && module.exports && typeof process === "object";
 
 export class UniversalDom {
     public static createElement(data: string | HTMLElement): IUniversalElement<any> {

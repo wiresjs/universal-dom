@@ -953,7 +953,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     define("UniversalDom", ["require", "exports", "Browser", "Server"], function (require, exports, Browser_1, Server_1) {
         "use strict";
 
-        var isBackend = typeof module !== "undefined" && module.exports;
+        var isBackend = typeof module !== "undefined" && module.exports && (typeof process === "undefined" ? "undefined" : _typeof(process)) === "object";
 
         var UniversalDom = function () {
             function UniversalDom() {

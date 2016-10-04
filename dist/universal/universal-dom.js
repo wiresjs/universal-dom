@@ -605,7 +605,7 @@ define("Server", ["require", "exports"], function (require, exports) {
 });
 define("UniversalDom", ["require", "exports", "Browser", "Server"], function (require, exports, Browser_1, Server_1) {
     "use strict";
-    const isBackend = typeof module !== "undefined" && module.exports;
+    const isBackend = typeof module !== "undefined" && module.exports && typeof process === "object";
     class UniversalDom {
         static createElement(data) {
             return isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
