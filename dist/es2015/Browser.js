@@ -257,7 +257,7 @@ export class Element {
     }
     getSource() {
         let html = this.original.outerHTML;
-        html = html.replace(/\r?\n|\r|\t/g, '');
+        html = html.replace(/\r?\n|\r|\t/g, "");
         html = html.replace(/\s{2,}/g, " ");
         html = html.replace(/>\s+</g, "><");
         html = html.replace(/\sclass=""/g, "");
