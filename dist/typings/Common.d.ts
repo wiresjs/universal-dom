@@ -10,6 +10,8 @@ export interface IUniversalTextNode<T> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     getSource(): string;
 }
 export interface IUniversalAttribute<T> {
@@ -27,6 +29,8 @@ export interface IUniversalComment<T> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     setParent?(element: IUniversalElement<any>): void;
     getParent(): IUniversalElement<any>;
     getSource(): string;
@@ -40,11 +44,14 @@ export interface IUniversalElement<T> {
     prependTo(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     remove(): void;
     setAttr(attribute: IUniversalAttribute<any>): IUniversalAttribute<Attr>;
     removeAttr(attribute: IUniversalAttribute<any> | string): void;
     attr(name: string, value?: any): IUniversalAttribute<Attr>;
     getAttr(name: string): IUniversalAttribute<any>;
+    getAttrs(): IUniversalAttribute<any>[];
     getChildren(): (IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<Text>)[];
     setChildren(elements: (IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<Text>)[]): void;
     addClass(name: string): void;

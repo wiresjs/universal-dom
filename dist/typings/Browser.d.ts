@@ -1,6 +1,7 @@
 import { IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment } from "./Common";
 export declare class GenericDomManupulations {
     protected _getNextSibling(element: any): any;
+    protected _getPreviousSibling(element: any): any;
 }
 export declare class BrowserComment extends GenericDomManupulations implements IUniversalComment<Comment> {
     private original;
@@ -13,6 +14,7 @@ export declare class BrowserComment extends GenericDomManupulations implements I
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     remove(): void;
     getParent(): IUniversalElement<any>;
     getSource(): string;
@@ -29,7 +31,7 @@ export declare class Attribute implements IUniversalAttribute<Attr> {
     setParent(parent: Element): void;
     getParent(): IUniversalElement<any>;
 }
-export declare class TextNode implements IUniversalTextNode<Text> {
+export declare class TextNode extends GenericDomManupulations implements IUniversalTextNode<Text> {
     private original;
     private _isRehydrated;
     constructor(data: string | Text);
@@ -43,9 +45,11 @@ export declare class TextNode implements IUniversalTextNode<Text> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     getSource(): string;
 }
-export declare class Element implements IUniversalElement<HTMLElement> {
+export declare class Element extends GenericDomManupulations implements IUniversalElement<HTMLElement> {
     private _isRehydrated;
     private original;
     private children;
@@ -58,11 +62,14 @@ export declare class Element implements IUniversalElement<HTMLElement> {
     prependTo(element: IUniversalElement<HTMLElement> | IUniversalTextNode<Text>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     remove(): void;
     setAttr(attribute: IUniversalAttribute<Attr>): IUniversalAttribute<Attr>;
     removeAttr(attr: IUniversalAttribute<Attr> | string): void;
     attr(name: string, value?: any): IUniversalAttribute<Attr>;
     getAttr(name: string): IUniversalAttribute<Attr>;
+    getAttrs(): IUniversalAttribute<Attr>[];
     getChildren(): (IUniversalElement<HTMLElement> | IUniversalTextNode<Text>)[];
     setChildren(elements: (IUniversalElement<HTMLElement> | IUniversalTextNode<Text>)[]): void;
     addClass(name: string): void;

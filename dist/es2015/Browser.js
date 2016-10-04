@@ -1,6 +1,25 @@
+let mapNodeObject = (node) => {
+    if (!node) {
+        return;
+    }
+    if (node.nodeType === 1) {
+        return new Element(node);
+    }
+    if (node.nodeType === 8) {
+        return new BrowserComment(node);
+    }
+    if (node.nodeType === 3) {
+        return new TextNode(node);
+    }
+};
 export class GenericDomManupulations {
     _getNextSibling(element) {
         let original = element.original;
+        return mapNodeObject(original.nextSibling);
+    }
+    _getPreviousSibling(element) {
+        let original = element.original;
+        return mapNodeObject(original.previousSibling);
     }
 }
 export class BrowserComment extends GenericDomManupulations {
@@ -42,6 +61,9 @@ export class BrowserComment extends GenericDomManupulations {
     getNextSibling() {
         return this._getNextSibling(this);
     }
+    getPreviousSibling() {
+        return this._getPreviousSibling(this);
+    }
     remove() {
         this.original.parentElement.removeChild(this.original);
     }
@@ -51,7 +73,7 @@ export class BrowserComment extends GenericDomManupulations {
         }
     }
     getSource() {
-        return `<--${this.original.nodeValue}-->`;
+        return `<!--${this.original.nodeValue}-->`;
     }
 }
 export class Attribute {
@@ -83,8 +105,9 @@ export class Attribute {
         return this.parent;
     }
 }
-export class TextNode {
+export class TextNode extends GenericDomManupulations {
     constructor(data) {
+        super();
         this._isRehydrated = false;
         if (data instanceof Text) {
             this.original = data;
@@ -130,12 +153,19 @@ export class TextNode {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
     }
+    getNextSibling() {
+        return this._getNextSibling(this);
+    }
+    getPreviousSibling() {
+        return this._getPreviousSibling(this);
+    }
     getSource() {
         return this.getValue();
     }
 }
-export class Element {
+export class Element extends GenericDomManupulations {
     constructor(data) {
+        super();
         this._isRehydrated = false;
         this.children = [];
         if (data instanceof HTMLElement) {
@@ -176,6 +206,12 @@ export class Element {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
     }
+    getNextSibling() {
+        return this._getNextSibling(this);
+    }
+    getPreviousSibling() {
+        return this._getPreviousSibling(this);
+    }
     remove() {
         this.original.parentNode.removeChild(this.original);
     }
@@ -209,21 +245,21 @@ export class Element {
             return attr;
         }
     }
+    getAttrs() {
+        let attrs = [];
+        let originalAttrs = this.original.attributes;
+        for (let i = 0; i < originalAttrs.length; i++) {
+            attrs.push(originalAttrs[i]);
+        }
+        return attrs;
+    }
     getChildren() {
         let childNodes = this.original.childNodes;
         let result = [];
         for (let i = 0; i < childNodes.length; i++) {
-            let node = childNodes[i];
-            if (node.nodeType === 1) {
-                result.push(new Element(node));
-            }
-            if (node.nodeType === 8) {
-                result.push(new BrowserComment(node));
-            }
-            if (node.nodeType === 3) {
-                if (node.nodeValue) {
-                    result.push(new TextNode(node));
-                }
+            let node = mapNodeObject(childNodes[i]);
+            if (node) {
+                result.push(node);
             }
         }
         return result;
@@ -293,6 +329,7 @@ export class Element {
         html = html.replace(/\s{2,}/g, " ");
         html = html.replace(/>\s+</g, "><");
         html = html.replace(/\sclass=""/g, "");
+        html = html.replace(/\s"/g, '"');
         html = html.trim();
         return html;
     }

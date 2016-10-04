@@ -1,13 +1,32 @@
 System.register([], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
-    var GenericDomManupulations, BrowserComment, Attribute, TextNode, Element;
+    var mapNodeObject, GenericDomManupulations, BrowserComment, Attribute, TextNode, Element;
     return {
         setters:[],
         execute: function() {
+            mapNodeObject = (node) => {
+                if (!node) {
+                    return;
+                }
+                if (node.nodeType === 1) {
+                    return new Element(node);
+                }
+                if (node.nodeType === 8) {
+                    return new BrowserComment(node);
+                }
+                if (node.nodeType === 3) {
+                    return new TextNode(node);
+                }
+            };
             GenericDomManupulations = class GenericDomManupulations {
                 _getNextSibling(element) {
                     let original = element.original;
+                    return mapNodeObject(original.nextSibling);
+                }
+                _getPreviousSibling(element) {
+                    let original = element.original;
+                    return mapNodeObject(original.previousSibling);
                 }
             };
             exports_1("GenericDomManupulations", GenericDomManupulations);
@@ -50,6 +69,9 @@ System.register([], function(exports_1, context_1) {
                 getNextSibling() {
                     return this._getNextSibling(this);
                 }
+                getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
                 remove() {
                     this.original.parentElement.removeChild(this.original);
                 }
@@ -59,7 +81,7 @@ System.register([], function(exports_1, context_1) {
                     }
                 }
                 getSource() {
-                    return `<--${this.original.nodeValue}-->`;
+                    return `<!--${this.original.nodeValue}-->`;
                 }
             };
             exports_1("BrowserComment", BrowserComment);
@@ -93,8 +115,9 @@ System.register([], function(exports_1, context_1) {
                 }
             };
             exports_1("Attribute", Attribute);
-            TextNode = class TextNode {
+            TextNode = class TextNode extends GenericDomManupulations {
                 constructor(data) {
+                    super();
                     this._isRehydrated = false;
                     if (data instanceof Text) {
                         this.original = data;
@@ -140,13 +163,20 @@ System.register([], function(exports_1, context_1) {
                         referenceNode.parentNode.insertBefore(this.original, referenceNode);
                     }
                 }
+                getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+                getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
                 getSource() {
                     return this.getValue();
                 }
             };
             exports_1("TextNode", TextNode);
-            Element = class Element {
+            Element = class Element extends GenericDomManupulations {
                 constructor(data) {
+                    super();
                     this._isRehydrated = false;
                     this.children = [];
                     if (data instanceof HTMLElement) {
@@ -187,6 +217,12 @@ System.register([], function(exports_1, context_1) {
                         referenceNode.parentNode.insertBefore(this.original, referenceNode);
                     }
                 }
+                getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+                getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
                 remove() {
                     this.original.parentNode.removeChild(this.original);
                 }
@@ -220,21 +256,21 @@ System.register([], function(exports_1, context_1) {
                         return attr;
                     }
                 }
+                getAttrs() {
+                    let attrs = [];
+                    let originalAttrs = this.original.attributes;
+                    for (let i = 0; i < originalAttrs.length; i++) {
+                        attrs.push(originalAttrs[i]);
+                    }
+                    return attrs;
+                }
                 getChildren() {
                     let childNodes = this.original.childNodes;
                     let result = [];
                     for (let i = 0; i < childNodes.length; i++) {
-                        let node = childNodes[i];
-                        if (node.nodeType === 1) {
-                            result.push(new Element(node));
-                        }
-                        if (node.nodeType === 8) {
-                            result.push(new BrowserComment(node));
-                        }
-                        if (node.nodeType === 3) {
-                            if (node.nodeValue) {
-                                result.push(new TextNode(node));
-                            }
+                        let node = mapNodeObject(childNodes[i]);
+                        if (node) {
+                            result.push(node);
                         }
                     }
                     return result;
@@ -304,6 +340,7 @@ System.register([], function(exports_1, context_1) {
                     html = html.replace(/\s{2,}/g, " ");
                     html = html.replace(/>\s+</g, "><");
                     html = html.replace(/\sclass=""/g, "");
+                    html = html.replace(/\s"/g, '"');
                     html = html.trim();
                     return html;
                 }

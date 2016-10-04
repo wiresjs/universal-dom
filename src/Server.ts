@@ -28,6 +28,24 @@ export class GenericDomManupulations {
             }
         }
     }
+    protected _getNextSibling(element: any): any {
+        let children = element.parent.children;
+        let index = element.parent.children.indexOf(element);
+        if (index > -1) {
+            if (index + 1 < children.length) {
+                return children[index + 1];
+            }
+        }
+    }
+    protected _getPreviousSibling(element: any): any {
+        let children = element.parent.children;
+        let index = element.parent.children.indexOf(element);
+        if (index > -1) {
+            if (index - 1 >= 0) {
+                return children[index - 1];
+            }
+        }
+    }
 }
 export class ServerComment extends GenericDomManupulations implements IUniversalComment<any>  {
     public $id: number = elementIDS++;
@@ -61,6 +79,13 @@ export class ServerComment extends GenericDomManupulations implements IUniversal
         this._insertBefore(element);
     }
 
+    public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getNextSibling(this);
+    }
+    public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getPreviousSibling(this);
+    }
+
     public remove(): void {
         this._remove(this.parent);
     }
@@ -82,6 +107,9 @@ export class Attribute implements IUniversalAttribute<any> {
     private name: string;
     private value: string;
     private parent: Element;
+
+    private userStyles: Map<string, string> = new Map();
+
     constructor(name: string | Attr, value?: string) {
         if (typeof name === "string") {
             this.name = name;
@@ -90,6 +118,23 @@ export class Attribute implements IUniversalAttribute<any> {
             this.value = value;
         }
     }
+
+    public setStyle(data: string | any, value: string) {
+        if (typeof data === "object") {
+            for (let k in data) {
+                if (data.hasOwnProperty(k)) {
+                    this.userStyles.set(k, data[k])
+                }
+            }
+            return;
+        }
+        this.userStyles.set(data, value);
+    }
+
+    public getStyle(key: string) {
+        return this.userStyles.get(key);
+    }
+
     public getName(): string {
         return this.name;
     }
@@ -100,6 +145,13 @@ export class Attribute implements IUniversalAttribute<any> {
         this.value = value;
     }
     public getValue(): string {
+        if (this.name === "style") {
+            let styles = [];
+            this.userStyles.forEach((value, key) => {
+                styles.push(`${key}: ${value}`);
+            });
+            return styles.length > 0 ? styles.join("; ") + ";" : this.value;
+        }
         return this.value;
     }
     public remove(): void {
@@ -113,6 +165,7 @@ export class Attribute implements IUniversalAttribute<any> {
     public getParent(): IUniversalElement<any> {
         return this.parent;
     }
+
 }
 
 export class TextNode extends GenericDomManupulations implements IUniversalTextNode<string> {
@@ -165,6 +218,13 @@ export class TextNode extends GenericDomManupulations implements IUniversalTextN
 
     public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
         this._insertBefore(element);
+    }
+
+    public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getNextSibling(this);
+    }
+    public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getPreviousSibling(this);
     }
 
     public getSource(): string {
@@ -232,6 +292,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         this._insertBefore(element);
     }
 
+    public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getNextSibling(this);
+    }
+    public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getPreviousSibling(this);
+    }
+
     public removeChild(element: Element) {
         let index = this.children.indexOf(element);
         if (index > -1) {
@@ -249,11 +316,9 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         return attribute;
     }
 
-
     public removeAttr(attribute: IUniversalAttribute<any> | string) {
         this.attrs.delete((<Attribute>attribute).getName());
     }
-
 
     public attr(name: string, value?: any): IUniversalAttribute<Attr> {
         if (value === undefined) {
@@ -270,23 +335,40 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         return this.attrs.get(name);
     }
 
+    public getAttrs(): IUniversalAttribute<any>[] {
+        let attrs = [];
+        if (this.classNames.size > 0) {
+            let clsNames = [];
+            this.classNames.forEach(clsName => {
+                clsNames.push(clsName);
+            });
+            let clsAttribute = new Attribute("class");
+            clsAttribute.setParent(this);
+            clsAttribute.setValue(clsNames.join(" "));
+            attrs.push(clsAttribute);
+        }
+        this.attrs.forEach(attr => {
+            attrs.push(attr);
+        });
+        return attrs;
+    }
 
-    public getChildren(): (IUniversalElement<HTMLElement> |
-        IUniversalTextNode<Text> | IUniversalComment<Text>)[] {
+    public getChildren(): (IUniversalElement<any> |
+        IUniversalTextNode<any> | IUniversalComment<any>)[] {
         return this.children;
     }
 
     public eachChild(closure: {
-        (element: IUniversalElement<HTMLElement>
-            | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void
+        (element: IUniversalElement<any>
+            | IUniversalTextNode<any> | IUniversalComment<any>, index: number): void
     }) {
         for (let i = 0; i < this.children.length; i++) {
             closure(this.children[i], i);
         }
     }
 
-    public setChildren(elements: (IUniversalElement<HTMLElement>
-        | IUniversalTextNode<Text>)[]): void {
+    public setChildren(elements: (IUniversalElement<any>
+        | IUniversalTextNode<any>)[]): void {
         this.children = elements;
     }
 
@@ -314,20 +396,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
     }
 
     public setStyle(data: any, value?: string) {
-        // if (typeof data === "object") {
-        //     for (let k in data) {
-        //         if (data.hasOwnProperty(k)) {
-        //             this.original.style[k] = data[k];
-        //         }
-        //     }
-        //     return;
-        // }
-        // return this.original.style[data] = value;
+        let styleAttr = <Attribute>(this.getAttr("style") || this.setAttr(new Attribute("style")));
+        styleAttr.setStyle(data, value);
     }
 
-    public getStyle(name: string) {
-        // return this.original.style[name];
-        return "";
+    public getStyle(name: string): string {
+        let styleAttr = <Attribute>(this.getAttr("style") || this.setAttr(new Attribute("style")));
+        return styleAttr.getStyle(name);
     }
 
     public getSource(): string {

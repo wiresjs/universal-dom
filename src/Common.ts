@@ -16,7 +16,8 @@ export interface IUniversalTextNode<T> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
-
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     getSource(): string;
 }
 
@@ -95,6 +96,8 @@ export interface IUniversalComment<T> {
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     setParent?(element: IUniversalElement<any>): void;
     getParent(): IUniversalElement<any>;
     getSource(): string;
@@ -166,6 +169,26 @@ export interface IUniversalElement<T> {
      * @memberOf IUniversalElement
      */
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+
+
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf IUniversalElement
+     */
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+
+    /**
+     *
+     *
+     * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+     *
+     * @memberOf IUniversalElement
+     */
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+
     /**
      *
      *
@@ -213,6 +236,9 @@ export interface IUniversalElement<T> {
      * @memberOf IUniversalElement
      */
     getAttr(name: string): IUniversalAttribute<any>;
+
+
+    getAttrs(): IUniversalAttribute<any>[];
 
     // children
     /**

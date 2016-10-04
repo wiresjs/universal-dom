@@ -3,6 +3,8 @@ export declare class GenericDomManupulations {
     protected _insertAfter(element: any): void;
     protected _insertBefore(element: any): void;
     protected _remove(parent: any): void;
+    protected _getNextSibling(element: any): any;
+    protected _getPreviousSibling(element: any): any;
 }
 export declare class ServerComment extends GenericDomManupulations implements IUniversalComment<any> {
     $id: number;
@@ -15,6 +17,8 @@ export declare class ServerComment extends GenericDomManupulations implements IU
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     remove(): void;
     setParent(element: Element): void;
     getParent(): IUniversalElement<any>;
@@ -24,7 +28,10 @@ export declare class Attribute implements IUniversalAttribute<any> {
     private name;
     private value;
     private parent;
+    private userStyles;
     constructor(name: string | Attr, value?: string);
+    setStyle(data: string | any, value: string): void;
+    getStyle(key: string): string;
     getName(): string;
     getOriginal(): string;
     setValue(value: string): void;
@@ -48,6 +55,8 @@ export declare class TextNode extends GenericDomManupulations implements IUniver
     prependTo(element: IUniversalElement<any>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     getSource(): string;
 }
 export declare class Element extends GenericDomManupulations implements IUniversalElement<any> {
@@ -66,17 +75,20 @@ export declare class Element extends GenericDomManupulations implements IUnivers
     prependTo(element: IUniversalElement<any> | IUniversalTextNode<Text>): void;
     insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
+    getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>;
     removeChild(element: Element): void;
     remove(): void;
     setAttr(attribute: IUniversalAttribute<any>): IUniversalAttribute<Attr>;
     removeAttr(attribute: IUniversalAttribute<any> | string): void;
     attr(name: string, value?: any): IUniversalAttribute<Attr>;
     getAttr(name: string): IUniversalAttribute<any>;
-    getChildren(): (IUniversalElement<HTMLElement> | IUniversalTextNode<Text> | IUniversalComment<Text>)[];
+    getAttrs(): IUniversalAttribute<any>[];
+    getChildren(): (IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)[];
     eachChild(closure: {
-        (element: IUniversalElement<HTMLElement> | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void;
+        (element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>, index: number): void;
     }): void;
-    setChildren(elements: (IUniversalElement<HTMLElement> | IUniversalTextNode<Text>)[]): void;
+    setChildren(elements: (IUniversalElement<any> | IUniversalTextNode<any>)[]): void;
     addClass(name: string): void;
     hasClass(name: string): boolean;
     removeClass(name: string): void;

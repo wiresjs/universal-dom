@@ -25,6 +25,24 @@ export class GenericDomManupulations {
             }
         }
     }
+    _getNextSibling(element) {
+        let children = element.parent.children;
+        let index = element.parent.children.indexOf(element);
+        if (index > -1) {
+            if (index + 1 < children.length) {
+                return children[index + 1];
+            }
+        }
+    }
+    _getPreviousSibling(element) {
+        let children = element.parent.children;
+        let index = element.parent.children.indexOf(element);
+        if (index > -1) {
+            if (index - 1 >= 0) {
+                return children[index - 1];
+            }
+        }
+    }
 }
 export class ServerComment extends GenericDomManupulations {
     constructor(data) {
@@ -52,6 +70,12 @@ export class ServerComment extends GenericDomManupulations {
     insertBefore(element) {
         this._insertBefore(element);
     }
+    getNextSibling() {
+        return this._getNextSibling(this);
+    }
+    getPreviousSibling() {
+        return this._getPreviousSibling(this);
+    }
     remove() {
         this._remove(this.parent);
     }
@@ -67,12 +91,27 @@ export class ServerComment extends GenericDomManupulations {
 }
 export class Attribute {
     constructor(name, value) {
+        this.userStyles = new Map();
         if (typeof name === "string") {
             this.name = name;
         }
         if (value !== undefined) {
             this.value = value;
         }
+    }
+    setStyle(data, value) {
+        if (typeof data === "object") {
+            for (let k in data) {
+                if (data.hasOwnProperty(k)) {
+                    this.userStyles.set(k, data[k]);
+                }
+            }
+            return;
+        }
+        this.userStyles.set(data, value);
+    }
+    getStyle(key) {
+        return this.userStyles.get(key);
     }
     getName() {
         return this.name;
@@ -84,6 +123,13 @@ export class Attribute {
         this.value = value;
     }
     getValue() {
+        if (this.name === "style") {
+            let styles = [];
+            this.userStyles.forEach((value, key) => {
+                styles.push(`${key}: ${value}`);
+            });
+            return styles.length > 0 ? styles.join("; ") + ";" : this.value;
+        }
         return this.value;
     }
     remove() {
@@ -134,6 +180,12 @@ export class TextNode extends GenericDomManupulations {
     insertBefore(element) {
         this._insertBefore(element);
     }
+    getNextSibling() {
+        return this._getNextSibling(this);
+    }
+    getPreviousSibling() {
+        return this._getPreviousSibling(this);
+    }
     getSource() {
         return this.getValue();
     }
@@ -176,6 +228,12 @@ export class Element extends GenericDomManupulations {
     insertBefore(element) {
         this._insertBefore(element);
     }
+    getNextSibling() {
+        return this._getNextSibling(this);
+    }
+    getPreviousSibling() {
+        return this._getPreviousSibling(this);
+    }
     removeChild(element) {
         let index = this.children.indexOf(element);
         if (index > -1) {
@@ -205,6 +263,23 @@ export class Element extends GenericDomManupulations {
     }
     getAttr(name) {
         return this.attrs.get(name);
+    }
+    getAttrs() {
+        let attrs = [];
+        if (this.classNames.size > 0) {
+            let clsNames = [];
+            this.classNames.forEach(clsName => {
+                clsNames.push(clsName);
+            });
+            let clsAttribute = new Attribute("class");
+            clsAttribute.setParent(this);
+            clsAttribute.setValue(clsNames.join(" "));
+            attrs.push(clsAttribute);
+        }
+        this.attrs.forEach(attr => {
+            attrs.push(attr);
+        });
+        return attrs;
     }
     getChildren() {
         return this.children;
@@ -237,9 +312,12 @@ export class Element extends GenericDomManupulations {
         }
     }
     setStyle(data, value) {
+        let styleAttr = (this.getAttr("style") || this.setAttr(new Attribute("style")));
+        styleAttr.setStyle(data, value);
     }
     getStyle(name) {
-        return "";
+        let styleAttr = (this.getAttr("style") || this.setAttr(new Attribute("style")));
+        return styleAttr.getStyle(name);
     }
     getSource() {
         let html = [];

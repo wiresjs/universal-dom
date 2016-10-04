@@ -4,9 +4,28 @@ define("Common", ["require", "exports"], function (require, exports) {
 });
 define("Browser", ["require", "exports"], function (require, exports) {
     "use strict";
+    let mapNodeObject = (node) => {
+        if (!node) {
+            return;
+        }
+        if (node.nodeType === 1) {
+            return new Element(node);
+        }
+        if (node.nodeType === 8) {
+            return new BrowserComment(node);
+        }
+        if (node.nodeType === 3) {
+            return new TextNode(node);
+        }
+    };
     class GenericDomManupulations {
         _getNextSibling(element) {
             let original = element.original;
+            return mapNodeObject(original.nextSibling);
+        }
+        _getPreviousSibling(element) {
+            let original = element.original;
+            return mapNodeObject(original.previousSibling);
         }
     }
     exports.GenericDomManupulations = GenericDomManupulations;
@@ -49,6 +68,9 @@ define("Browser", ["require", "exports"], function (require, exports) {
         getNextSibling() {
             return this._getNextSibling(this);
         }
+        getPreviousSibling() {
+            return this._getPreviousSibling(this);
+        }
         remove() {
             this.original.parentElement.removeChild(this.original);
         }
@@ -58,7 +80,7 @@ define("Browser", ["require", "exports"], function (require, exports) {
             }
         }
         getSource() {
-            return `<--${this.original.nodeValue}-->`;
+            return `<!--${this.original.nodeValue}-->`;
         }
     }
     exports.BrowserComment = BrowserComment;
@@ -92,8 +114,9 @@ define("Browser", ["require", "exports"], function (require, exports) {
         }
     }
     exports.Attribute = Attribute;
-    class TextNode {
+    class TextNode extends GenericDomManupulations {
         constructor(data) {
+            super();
             this._isRehydrated = false;
             if (data instanceof Text) {
                 this.original = data;
@@ -139,13 +162,20 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 referenceNode.parentNode.insertBefore(this.original, referenceNode);
             }
         }
+        getNextSibling() {
+            return this._getNextSibling(this);
+        }
+        getPreviousSibling() {
+            return this._getPreviousSibling(this);
+        }
         getSource() {
             return this.getValue();
         }
     }
     exports.TextNode = TextNode;
-    class Element {
+    class Element extends GenericDomManupulations {
         constructor(data) {
+            super();
             this._isRehydrated = false;
             this.children = [];
             if (data instanceof HTMLElement) {
@@ -186,6 +216,12 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 referenceNode.parentNode.insertBefore(this.original, referenceNode);
             }
         }
+        getNextSibling() {
+            return this._getNextSibling(this);
+        }
+        getPreviousSibling() {
+            return this._getPreviousSibling(this);
+        }
         remove() {
             this.original.parentNode.removeChild(this.original);
         }
@@ -219,21 +255,21 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 return attr;
             }
         }
+        getAttrs() {
+            let attrs = [];
+            let originalAttrs = this.original.attributes;
+            for (let i = 0; i < originalAttrs.length; i++) {
+                attrs.push(originalAttrs[i]);
+            }
+            return attrs;
+        }
         getChildren() {
             let childNodes = this.original.childNodes;
             let result = [];
             for (let i = 0; i < childNodes.length; i++) {
-                let node = childNodes[i];
-                if (node.nodeType === 1) {
-                    result.push(new Element(node));
-                }
-                if (node.nodeType === 8) {
-                    result.push(new BrowserComment(node));
-                }
-                if (node.nodeType === 3) {
-                    if (node.nodeValue) {
-                        result.push(new TextNode(node));
-                    }
+                let node = mapNodeObject(childNodes[i]);
+                if (node) {
+                    result.push(node);
                 }
             }
             return result;
@@ -303,6 +339,7 @@ define("Browser", ["require", "exports"], function (require, exports) {
             html = html.replace(/\s{2,}/g, " ");
             html = html.replace(/>\s+</g, "><");
             html = html.replace(/\sclass=""/g, "");
+            html = html.replace(/\s"/g, '"');
             html = html.trim();
             return html;
         }
@@ -338,6 +375,24 @@ define("Server", ["require", "exports"], function (require, exports) {
                 }
             }
         }
+        _getNextSibling(element) {
+            let children = element.parent.children;
+            let index = element.parent.children.indexOf(element);
+            if (index > -1) {
+                if (index + 1 < children.length) {
+                    return children[index + 1];
+                }
+            }
+        }
+        _getPreviousSibling(element) {
+            let children = element.parent.children;
+            let index = element.parent.children.indexOf(element);
+            if (index > -1) {
+                if (index - 1 >= 0) {
+                    return children[index - 1];
+                }
+            }
+        }
     }
     exports.GenericDomManupulations = GenericDomManupulations;
     class ServerComment extends GenericDomManupulations {
@@ -366,6 +421,12 @@ define("Server", ["require", "exports"], function (require, exports) {
         insertBefore(element) {
             this._insertBefore(element);
         }
+        getNextSibling() {
+            return this._getNextSibling(this);
+        }
+        getPreviousSibling() {
+            return this._getPreviousSibling(this);
+        }
         remove() {
             this._remove(this.parent);
         }
@@ -382,12 +443,27 @@ define("Server", ["require", "exports"], function (require, exports) {
     exports.ServerComment = ServerComment;
     class Attribute {
         constructor(name, value) {
+            this.userStyles = new Map();
             if (typeof name === "string") {
                 this.name = name;
             }
             if (value !== undefined) {
                 this.value = value;
             }
+        }
+        setStyle(data, value) {
+            if (typeof data === "object") {
+                for (let k in data) {
+                    if (data.hasOwnProperty(k)) {
+                        this.userStyles.set(k, data[k]);
+                    }
+                }
+                return;
+            }
+            this.userStyles.set(data, value);
+        }
+        getStyle(key) {
+            return this.userStyles.get(key);
         }
         getName() {
             return this.name;
@@ -399,6 +475,13 @@ define("Server", ["require", "exports"], function (require, exports) {
             this.value = value;
         }
         getValue() {
+            if (this.name === "style") {
+                let styles = [];
+                this.userStyles.forEach((value, key) => {
+                    styles.push(`${key}: ${value}`);
+                });
+                return styles.length > 0 ? styles.join("; ") + ";" : this.value;
+            }
             return this.value;
         }
         remove() {
@@ -450,6 +533,12 @@ define("Server", ["require", "exports"], function (require, exports) {
         insertBefore(element) {
             this._insertBefore(element);
         }
+        getNextSibling() {
+            return this._getNextSibling(this);
+        }
+        getPreviousSibling() {
+            return this._getPreviousSibling(this);
+        }
         getSource() {
             return this.getValue();
         }
@@ -493,6 +582,12 @@ define("Server", ["require", "exports"], function (require, exports) {
         insertBefore(element) {
             this._insertBefore(element);
         }
+        getNextSibling() {
+            return this._getNextSibling(this);
+        }
+        getPreviousSibling() {
+            return this._getPreviousSibling(this);
+        }
         removeChild(element) {
             let index = this.children.indexOf(element);
             if (index > -1) {
@@ -522,6 +617,23 @@ define("Server", ["require", "exports"], function (require, exports) {
         }
         getAttr(name) {
             return this.attrs.get(name);
+        }
+        getAttrs() {
+            let attrs = [];
+            if (this.classNames.size > 0) {
+                let clsNames = [];
+                this.classNames.forEach(clsName => {
+                    clsNames.push(clsName);
+                });
+                let clsAttribute = new Attribute("class");
+                clsAttribute.setParent(this);
+                clsAttribute.setValue(clsNames.join(" "));
+                attrs.push(clsAttribute);
+            }
+            this.attrs.forEach(attr => {
+                attrs.push(attr);
+            });
+            return attrs;
         }
         getChildren() {
             return this.children;
@@ -554,9 +666,12 @@ define("Server", ["require", "exports"], function (require, exports) {
             }
         }
         setStyle(data, value) {
+            let styleAttr = (this.getAttr("style") || this.setAttr(new Attribute("style")));
+            styleAttr.setStyle(data, value);
         }
         getStyle(name) {
-            return "";
+            let styleAttr = (this.getAttr("style") || this.setAttr(new Attribute("style")));
+            return styleAttr.getStyle(name);
         }
         getSource() {
             let html = [];

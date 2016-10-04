@@ -30,6 +30,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     define("Browser", ["require", "exports"], function (require, exports) {
         "use strict";
 
+        var mapNodeObject = function mapNodeObject(node) {
+            if (!node) {
+                return;
+            }
+            if (node.nodeType === 1) {
+                return new Element(node);
+            }
+            if (node.nodeType === 8) {
+                return new BrowserComment(node);
+            }
+            if (node.nodeType === 3) {
+                return new TextNode(node);
+            }
+        };
+
         var GenericDomManupulations = function () {
             function GenericDomManupulations() {
                 _classCallCheck(this, GenericDomManupulations);
@@ -39,6 +54,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 key: "_getNextSibling",
                 value: function _getNextSibling(element) {
                     var original = element.original;
+                    return mapNodeObject(original.nextSibling);
+                }
+            }, {
+                key: "_getPreviousSibling",
+                value: function _getPreviousSibling(element) {
+                    var original = element.original;
+                    return mapNodeObject(original.previousSibling);
                 }
             }]);
 
@@ -107,6 +129,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return this._getNextSibling(this);
                 }
             }, {
+                key: "getPreviousSibling",
+                value: function getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
+            }, {
                 key: "remove",
                 value: function remove() {
                     this.original.parentElement.removeChild(this.original);
@@ -121,7 +148,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }, {
                 key: "getSource",
                 value: function getSource() {
-                    return "<--" + this.original.nodeValue + "-->";
+                    return "<!--" + this.original.nodeValue + "-->";
                 }
             }]);
 
@@ -182,17 +209,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         exports.Attribute = Attribute;
 
-        var TextNode = function () {
+        var TextNode = function (_GenericDomManupulati2) {
+            _inherits(TextNode, _GenericDomManupulati2);
+
             function TextNode(data) {
                 _classCallCheck(this, TextNode);
 
-                this._isRehydrated = false;
+                var _this2 = _possibleConstructorReturn(this, (TextNode.__proto__ || Object.getPrototypeOf(TextNode)).call(this));
+
+                _this2._isRehydrated = false;
                 if (data instanceof Text) {
-                    this.original = data;
-                    this._isRehydrated = true;
+                    _this2.original = data;
+                    _this2._isRehydrated = true;
                 } else {
-                    this.original = document.createTextNode(data);
+                    _this2.original = document.createTextNode(data);
                 }
+                return _this2;
             }
 
             _createClass(TextNode, [{
@@ -252,6 +284,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                 }
             }, {
+                key: "getNextSibling",
+                value: function getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+            }, {
+                key: "getPreviousSibling",
+                value: function getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
+            }, {
                 key: "getSource",
                 value: function getSource() {
                     return this.getValue();
@@ -259,22 +301,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }]);
 
             return TextNode;
-        }();
+        }(GenericDomManupulations);
 
         exports.TextNode = TextNode;
 
-        var Element = function () {
+        var Element = function (_GenericDomManupulati3) {
+            _inherits(Element, _GenericDomManupulati3);
+
             function Element(data) {
                 _classCallCheck(this, Element);
 
-                this._isRehydrated = false;
-                this.children = [];
+                var _this3 = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
+
+                _this3._isRehydrated = false;
+                _this3.children = [];
                 if (data instanceof HTMLElement) {
-                    this.original = data;
-                    this._isRehydrated = true;
+                    _this3.original = data;
+                    _this3._isRehydrated = true;
                 } else {
-                    this.original = document.createElement(data);
+                    _this3.original = document.createElement(data);
                 }
+                return _this3;
             }
 
             _createClass(Element, [{
@@ -324,6 +371,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                 }
             }, {
+                key: "getNextSibling",
+                value: function getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+            }, {
+                key: "getPreviousSibling",
+                value: function getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
+            }, {
                 key: "remove",
                 value: function remove() {
                     this.original.parentNode.removeChild(this.original);
@@ -365,22 +422,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     }
                 }
             }, {
+                key: "getAttrs",
+                value: function getAttrs() {
+                    var attrs = [];
+                    var originalAttrs = this.original.attributes;
+                    for (var i = 0; i < originalAttrs.length; i++) {
+                        attrs.push(originalAttrs[i]);
+                    }
+                    return attrs;
+                }
+            }, {
                 key: "getChildren",
                 value: function getChildren() {
                     var childNodes = this.original.childNodes;
                     var result = [];
                     for (var i = 0; i < childNodes.length; i++) {
-                        var node = childNodes[i];
-                        if (node.nodeType === 1) {
-                            result.push(new Element(node));
-                        }
-                        if (node.nodeType === 8) {
-                            result.push(new BrowserComment(node));
-                        }
-                        if (node.nodeType === 3) {
-                            if (node.nodeValue) {
-                                result.push(new TextNode(node));
-                            }
+                        var node = mapNodeObject(childNodes[i]);
+                        if (node) {
+                            result.push(node);
                         }
                     }
                     return result;
@@ -475,13 +534,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     html = html.replace(/\s{2,}/g, " ");
                     html = html.replace(/>\s+</g, "><");
                     html = html.replace(/\sclass=""/g, "");
+                    html = html.replace(/\s"/g, '"');
                     html = html.trim();
                     return html;
                 }
             }]);
 
             return Element;
-        }();
+        }(GenericDomManupulations);
 
         exports.Element = Element;
     });
@@ -526,6 +586,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         }
                     }
                 }
+            }, {
+                key: "_getNextSibling",
+                value: function _getNextSibling(element) {
+                    var children = element.parent.children;
+                    var index = element.parent.children.indexOf(element);
+                    if (index > -1) {
+                        if (index + 1 < children.length) {
+                            return children[index + 1];
+                        }
+                    }
+                }
+            }, {
+                key: "_getPreviousSibling",
+                value: function _getPreviousSibling(element) {
+                    var children = element.parent.children;
+                    var index = element.parent.children.indexOf(element);
+                    if (index > -1) {
+                        if (index - 1 >= 0) {
+                            return children[index - 1];
+                        }
+                    }
+                }
             }]);
 
             return GenericDomManupulations;
@@ -533,19 +615,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         exports.GenericDomManupulations = GenericDomManupulations;
 
-        var ServerComment = function (_GenericDomManupulati2) {
-            _inherits(ServerComment, _GenericDomManupulati2);
+        var ServerComment = function (_GenericDomManupulati4) {
+            _inherits(ServerComment, _GenericDomManupulati4);
 
             function ServerComment(data) {
                 _classCallCheck(this, ServerComment);
 
-                var _this2 = _possibleConstructorReturn(this, (ServerComment.__proto__ || Object.getPrototypeOf(ServerComment)).call(this));
+                var _this4 = _possibleConstructorReturn(this, (ServerComment.__proto__ || Object.getPrototypeOf(ServerComment)).call(this));
 
-                _this2.$id = elementIDS++;
+                _this4.$id = elementIDS++;
                 if (typeof data === "string") {
-                    _this2.value = data;
+                    _this4.value = data;
                 }
-                return _this2;
+                return _this4;
             }
 
             _createClass(ServerComment, [{
@@ -579,6 +661,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this._insertBefore(element);
                 }
             }, {
+                key: "getNextSibling",
+                value: function getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+            }, {
+                key: "getPreviousSibling",
+                value: function getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
+            }, {
                 key: "remove",
                 value: function remove() {
                     this._remove(this.parent);
@@ -609,6 +701,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             function Attribute(name, value) {
                 _classCallCheck(this, Attribute);
 
+                this.userStyles = new Map();
                 if (typeof name === "string") {
                     this.name = name;
                 }
@@ -618,6 +711,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }
 
             _createClass(Attribute, [{
+                key: "setStyle",
+                value: function setStyle(data, value) {
+                    if ((typeof data === "undefined" ? "undefined" : _typeof(data)) === "object") {
+                        for (var k in data) {
+                            if (data.hasOwnProperty(k)) {
+                                this.userStyles.set(k, data[k]);
+                            }
+                        }
+                        return;
+                    }
+                    this.userStyles.set(data, value);
+                }
+            }, {
+                key: "getStyle",
+                value: function getStyle(key) {
+                    return this.userStyles.get(key);
+                }
+            }, {
                 key: "getName",
                 value: function getName() {
                     return this.name;
@@ -635,6 +746,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             }, {
                 key: "getValue",
                 value: function getValue() {
+                    var _this5 = this;
+
+                    if (this.name === "style") {
+                        var _ret = function () {
+                            var styles = [];
+                            _this5.userStyles.forEach(function (value, key) {
+                                styles.push(key + ": " + value);
+                            });
+                            return {
+                                v: styles.length > 0 ? styles.join("; ") + ";" : _this5.value
+                            };
+                        }();
+
+                        if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+                    }
                     return this.value;
                 }
             }, {
@@ -659,16 +785,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         exports.Attribute = Attribute;
 
-        var TextNode = function (_GenericDomManupulati3) {
-            _inherits(TextNode, _GenericDomManupulati3);
+        var TextNode = function (_GenericDomManupulati5) {
+            _inherits(TextNode, _GenericDomManupulati5);
 
             function TextNode(value) {
                 _classCallCheck(this, TextNode);
 
-                var _this3 = _possibleConstructorReturn(this, (TextNode.__proto__ || Object.getPrototypeOf(TextNode)).call(this));
+                var _this6 = _possibleConstructorReturn(this, (TextNode.__proto__ || Object.getPrototypeOf(TextNode)).call(this));
 
-                _this3.value = value;
-                return _this3;
+                _this6.value = value;
+                return _this6;
             }
 
             _createClass(TextNode, [{
@@ -727,6 +853,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this._insertBefore(element);
                 }
             }, {
+                key: "getNextSibling",
+                value: function getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+            }, {
+                key: "getPreviousSibling",
+                value: function getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
+            }, {
                 key: "getSource",
                 value: function getSource() {
                     return this.getValue();
@@ -738,22 +874,22 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         exports.TextNode = TextNode;
 
-        var Element = function (_GenericDomManupulati4) {
-            _inherits(Element, _GenericDomManupulati4);
+        var Element = function (_GenericDomManupulati6) {
+            _inherits(Element, _GenericDomManupulati6);
 
             function Element(name) {
                 _classCallCheck(this, Element);
 
-                var _this4 = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
+                var _this7 = _possibleConstructorReturn(this, (Element.__proto__ || Object.getPrototypeOf(Element)).call(this));
 
-                _this4.$id = ++elementIDS;
-                _this4.attrs = new Map();
-                _this4.classNames = new Set();
-                _this4.children = [];
+                _this7.$id = ++elementIDS;
+                _this7.attrs = new Map();
+                _this7.classNames = new Set();
+                _this7.children = [];
                 if (typeof name === "string") {
-                    _this4.name = name;
+                    _this7.name = name;
                 }
-                return _this4;
+                return _this7;
             }
 
             _createClass(Element, [{
@@ -800,6 +936,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     this._insertBefore(element);
                 }
             }, {
+                key: "getNextSibling",
+                value: function getNextSibling() {
+                    return this._getNextSibling(this);
+                }
+            }, {
+                key: "getPreviousSibling",
+                value: function getPreviousSibling() {
+                    return this._getPreviousSibling(this);
+                }
+            }, {
                 key: "removeChild",
                 value: function removeChild(element) {
                     var index = this.children.indexOf(element);
@@ -839,6 +985,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 key: "getAttr",
                 value: function getAttr(name) {
                     return this.attrs.get(name);
+                }
+            }, {
+                key: "getAttrs",
+                value: function getAttrs() {
+                    var _this8 = this;
+
+                    var attrs = [];
+                    if (this.classNames.size > 0) {
+                        (function () {
+                            var clsNames = [];
+                            _this8.classNames.forEach(function (clsName) {
+                                clsNames.push(clsName);
+                            });
+                            var clsAttribute = new Attribute("class");
+                            clsAttribute.setParent(_this8);
+                            clsAttribute.setValue(clsNames.join(" "));
+                            attrs.push(clsAttribute);
+                        })();
+                    }
+                    this.attrs.forEach(function (attr) {
+                        attrs.push(attr);
+                    });
+                    return attrs;
                 }
             }, {
                 key: "getChildren",
@@ -885,11 +1054,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
             }, {
                 key: "setStyle",
-                value: function setStyle(data, value) {}
+                value: function setStyle(data, value) {
+                    var styleAttr = this.getAttr("style") || this.setAttr(new Attribute("style"));
+                    styleAttr.setStyle(data, value);
+                }
             }, {
                 key: "getStyle",
                 value: function getStyle(name) {
-                    return "";
+                    var styleAttr = this.getAttr("style") || this.setAttr(new Attribute("style"));
+                    return styleAttr.getStyle(name);
                 }
             }, {
                 key: "getSource",

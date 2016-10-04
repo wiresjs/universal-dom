@@ -43,6 +43,32 @@ describe("Text manipulation", function() {
         root.getSource().should.equal('<div id="root"><div foo="bar"></div></div>');
     });
 
+    it("Should give a list of attributes", function() {
+        root.empty();
+        var el = Dom.createElement("div");
+        el.addClass("foo")
+        el.attr("bar", "car");
+        (el.getAttrs().length === 2).should.equal(true)
+    });
+
+    it("Should handle styles (key:value)", function() {
+        root.empty();
+        var el = Dom.createElement("div");
+        el.setStyle("color", "red");
+        el.getSource().should.equal('<div style="color: red;"></div>');
+    });
+
+    it("Should handle styles (object)", function() {
+        root.empty();
+        var el = Dom.createElement("div");
+        el.setStyle({
+            color: "red",
+            display: "block"
+        });
+        el.setStyle("display", "none")
+        el.getSource().should.equal('<div style="color: red; display: none;"></div>');
+    });
+
     after(function() {
         root.empty();
     })

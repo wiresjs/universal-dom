@@ -1,7 +1,28 @@
 import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
+
+
+let mapNodeObject = (node: any): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> => {
+    if (!node) {
+        return;
+    }
+    if (node.nodeType === 1) {
+        return new Element(<HTMLElement>node);
+    }
+    if (node.nodeType === 8) {
+        return new BrowserComment(<Comment>node);
+    }
+    if (node.nodeType === 3) {
+        return new TextNode(<Text>node);
+    }
+}
 export class GenericDomManupulations {
     protected _getNextSibling(element: any): any {
         let original = element.original;
+        return mapNodeObject(original.nextSibling);
+    }
+    protected _getPreviousSibling(element: any): any {
+        let original = element.original;
+        return mapNodeObject(original.previousSibling);
     }
 }
 
@@ -50,6 +71,9 @@ export class BrowserComment extends GenericDomManupulations implements IUniversa
     public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
         return this._getNextSibling(this);
     }
+    public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getPreviousSibling(this);
+    }
 
     public remove(): void {
         this.original.parentElement.removeChild(this.original);
@@ -62,7 +86,7 @@ export class BrowserComment extends GenericDomManupulations implements IUniversa
     }
 
     public getSource() {
-        return `<--${this.original.nodeValue}-->`;
+        return `<!--${this.original.nodeValue}-->`;
     }
 
 }
@@ -74,6 +98,7 @@ export class Attribute implements IUniversalAttribute<Attr> {
     private parent: Element;
 
     constructor(name: string | Attr, value?: string) {
+
         this.original = typeof name === "string" ? document.createAttribute(name) : name;
         if (value !== undefined) {
             this.original.value = value;
@@ -110,13 +135,14 @@ export class Attribute implements IUniversalAttribute<Attr> {
 
 
 
-export class TextNode implements IUniversalTextNode<Text> {
+export class TextNode extends GenericDomManupulations implements IUniversalTextNode<Text> {
 
     private original: Text;
 
     private _isRehydrated: boolean = false;
 
     constructor(data: string | Text) {
+        super();
         if (data instanceof Text) {
             this.original = data;
             this._isRehydrated = true;
@@ -170,6 +196,12 @@ export class TextNode implements IUniversalTextNode<Text> {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
     }
+    public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getNextSibling(this);
+    }
+    public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getPreviousSibling(this);
+    }
 
     public getSource(): string {
         return this.getValue();
@@ -186,7 +218,7 @@ export class TextNode implements IUniversalTextNode<Text> {
  * @class Element
  * @implements {IUniversalElement<HTMLElement>}
  */
-export class Element implements IUniversalElement<HTMLElement> {
+export class Element extends GenericDomManupulations implements IUniversalElement<HTMLElement> {
 
     private _isRehydrated: boolean = false;
 
@@ -217,7 +249,7 @@ export class Element implements IUniversalElement<HTMLElement> {
      * @memberOf Element
      */
     constructor(data: string | HTMLElement) {
-
+        super();
         if (data instanceof HTMLElement) {
             this.original = data;
             this._isRehydrated = true;
@@ -310,6 +342,14 @@ export class Element implements IUniversalElement<HTMLElement> {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
     }
+
+    public getNextSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getNextSibling(this);
+    }
+    public getPreviousSibling(): IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any> {
+        return this._getPreviousSibling(this);
+    }
+
     /**
      *
      *
@@ -385,6 +425,15 @@ export class Element implements IUniversalElement<HTMLElement> {
         }
     }
 
+    public getAttrs(): IUniversalAttribute<Attr>[] {
+        let attrs = [];
+        let originalAttrs = this.original.attributes;
+        for (let i = 0; i < originalAttrs.length; i++) {
+            attrs.push(originalAttrs[i]);
+        }
+        return attrs;
+    }
+
 
     /**
      *
@@ -400,17 +449,9 @@ export class Element implements IUniversalElement<HTMLElement> {
         let result = [];
 
         for (let i = 0; i < childNodes.length; i++) {
-            let node = childNodes[i];
-            if (node.nodeType === 1) {
-                result.push(new Element(<HTMLElement>node));
-            }
-            if (node.nodeType === 8) {
-                result.push(new BrowserComment(<Comment>node));
-            }
-            if (node.nodeType === 3) {
-                if (node.nodeValue) {
-                    result.push(new TextNode(<Text>node));
-                }
+            let node = mapNodeObject(childNodes[i]);
+            if (node) {
+                result.push(node);
             }
         }
         return result;
@@ -567,6 +608,7 @@ export class Element implements IUniversalElement<HTMLElement> {
         html = html.replace(/\s{2,}/g, " ");
         html = html.replace(/>\s+</g, "><");
         html = html.replace(/\sclass=""/g, "");
+        html = html.replace(/\s"/g, '"');
         html = html.trim();
         return html;
     }
