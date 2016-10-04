@@ -10,11 +10,11 @@ if (isServer) {
 }
 
 var subject, paragraph;
-describe("Text manipulation", function() {
+describe("Comments", function() {
     it("Should append comment", function() {
-        subject = Dom.createComment("hello world");
+        subject = Dom.createTextNode("hello world");
         root.append(subject);
-        root.getSource().should.equal('<div id="root"><!--hello world--></div>');
+        root.getSource().should.equal('<div id="root">hello world</div>');
     });
 
     it("Should remove comment", function() {
@@ -22,16 +22,17 @@ describe("Text manipulation", function() {
         root.getSource().should.equal('<div id="root"></div>');
     });
 
-    it("Should prepend  comment", function() {
+    it("Should prepend text", function() {
         var p = Dom.createElement("p");
         root.append(p);
         root.prepend(subject)
-        root.getSource().should.equal('<div id="root"><!--hello world--><p></p></div>');
+        root.getSource().should.equal('<div id="root">hello world<p></p></div>');
         p.remove();
         subject.remove();
     });
 
-    it("Should use comment.insertAfter", function() {
+
+    it("Should use text.insertAfter", function() {
         var p1 = Dom.createElement("p");
         p1.attr("id", "p1")
 
@@ -42,12 +43,14 @@ describe("Text manipulation", function() {
         root.append(p2)
 
         subject.insertAfter(p1)
-        root.getSource().should.equal('<div id="root"><p id="p1"></p><!--hello world--><p id="p2"></p></div>');
+        root.getSource().should.equal('<div id="root"><p id="p1"></p>hello world<p id="p2"></p></div>');
     });
 
 
 
-    it("Should use comment.insertBefore", function() {
+
+
+    it("Should use text.insertBefore", function() {
         root.empty();
         var p1 = Dom.createElement("p");
         p1.attr("id", "p10");
@@ -56,20 +59,20 @@ describe("Text manipulation", function() {
         root.append(p1);
         root.append(p2);
         subject.insertBefore(p2);
-        root.getSource().should.equal('<div id="root"><p id="p10"></p><!--hello world--><p id="p11"></p></div>');
+        root.getSource().should.equal('<div id="root"><p id="p10"></p>hello world<p id="p11"></p></div>');
     });
 
-    it("Should insert comment after comment", function() {
+    it("Should insert text after comment", function() {
         root.empty();
 
         var c1 = Dom.createComment("comment1")
         var c2 = Dom.createComment("comment2")
-        var c3 = Dom.createComment("comment3")
+        var c3 = Dom.createTextNode("foo")
 
         root.append(c1);
         root.append(c2);
         c3.insertBefore(c1);
-        root.getSource().should.equal('<div id="root"><!--comment3--><!--comment1--><!--comment2--></div>');
+        root.getSource().should.equal('<div id="root">foo<!--comment1--><!--comment2--></div>');
     });
 
     after(function() {

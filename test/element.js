@@ -53,6 +53,68 @@ describe("Children and dom manipulations", function() {
         root.getSource().should.equal('<div id="root"><div id="foo"></div></div>');
     });
 
+
+    it("Should work element.insertAfter", function() {
+        root.empty();
+        subject = Dom.createElement("div");
+        subject.attr("id", "target")
+
+        var p1 = Dom.createElement("p");
+        p1.attr("id", "p1")
+
+        var p2 = Dom.createElement("p");
+        p2.attr("id", "p2")
+
+        root.append(p1);
+        root.append(p2);
+        subject.insertAfter(p1);
+
+        root.getSource().should.equal('<div id="root"><p id="p1"></p><div id="target"></div><p id="p2"></p></div>');
+    });
+
+    it("Should work element.insertBefore", function() {
+        root.empty();
+        subject = Dom.createElement("div");
+        subject.attr("id", "target")
+
+        var p1 = Dom.createElement("p");
+        p1.attr("id", "p1")
+
+        var p2 = Dom.createElement("p");
+        p2.attr("id", "p2")
+
+        root.append(p1);
+        root.append(p2);
+        subject.insertBefore(p1);
+
+        root.getSource().should.equal('<div id="root"><div id="target"></div><p id="p1"></p><p id="p2"></p></div>');
+    });
+
+    it("Should insert node after a comment", function() {
+        root.empty();
+        subject = Dom.createElement("div");
+        subject.attr("id", "foo");
+        var c1 = Dom.createComment("comment1")
+        var c2 = Dom.createComment("comment2")
+        root.append(c1);
+        root.append(c2);
+
+        subject.insertAfter(c2);
+        root.getSource().should.equal('<div id="root"><!--comment1--><!--comment2--><div id="foo"></div></div>');
+    });
+
+    it("Should insert node before a comment", function() {
+        root.empty();
+        subject = Dom.createElement("div");
+        subject.attr("id", "foo");
+        var c1 = Dom.createComment("comment1")
+        var c2 = Dom.createComment("comment2")
+        root.append(c1);
+        root.append(c2);
+
+        subject.insertBefore(c2);
+        root.getSource().should.equal('<div id="root"><!--comment1--><div id="foo"></div><!--comment2--></div>');
+    });
     /*
         it("Should add a class name foo", function() {
             subject.addClass("foo")

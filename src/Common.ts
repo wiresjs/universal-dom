@@ -5,12 +5,17 @@
  * @interface IUniversalTextNode
  */
 export interface IUniversalTextNode<T> {
+    isRehydrated();
     getOriginal(): T;
     setValue(value: string): void;
     getValue(): string;
     remove(): void;
     setParent?(element: IUniversalElement<any>): void;
     getParent(): IUniversalElement<any>;
+    appendTo(element: IUniversalElement<any>): void;
+    prependTo(element: IUniversalElement<any>): void;
+    insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+    insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     getSource(): string;
 }
 
@@ -142,6 +147,24 @@ export interface IUniversalElement<T> {
      */
     prependTo(element: IUniversalElement<any> | IUniversalTextNode<any>): void;
 
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf IUniversalElement
+     */
+    insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
+
+    /**
+     *
+     *
+     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     *
+     * @memberOf IUniversalElement
+     */
+    insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void;
     /**
      *
      *
@@ -276,4 +299,6 @@ export interface IUniversalElement<T> {
         (element: IUniversalElement<HTMLElement>
             | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void
     }): void;
+
+    empty(): void;
 }

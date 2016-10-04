@@ -2,13 +2,18 @@ import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalCo
 
 export class BrowserComment implements IUniversalComment<Comment> {
     private original: Comment;
+    private _isRehydrated: boolean = false;
 
     constructor(data: string | Comment) {
         if (typeof data === "string") {
             this.original = document.createComment(data);
         } else {
+            this._isRehydrated = true;
             this.original = data;
         }
+    }
+    public isRehydrated() {
+        return this._isRehydrated;
     }
 
     public getOriginal(): Comment {
@@ -52,31 +57,12 @@ export class BrowserComment implements IUniversalComment<Comment> {
 
 }
 
-/**
- *
- *
- * @export
- * @class Attribute
- * @implements {IUniversalAttribute<Attr>}
- */
+
 export class Attribute implements IUniversalAttribute<Attr> {
-    /**
-     *
-     *
-     * @private
-     * @type {Attr}
-     * @memberOf Attribute
-     */
+
     private original: Attr;
+    private parent: Element;
 
-
-    /**
-     * Creates an instance of Attribute.
-     *
-     * @param {string} name
-     *
-     * @memberOf Attribute
-     */
     constructor(name: string | Attr, value?: string) {
         this.original = typeof name === "string" ? document.createAttribute(name) : name;
         if (value !== undefined) {
@@ -84,143 +70,95 @@ export class Attribute implements IUniversalAttribute<Attr> {
         }
     }
 
-    /**
-     *
-     *
-     * @returns {string}
-     *
-     * @memberOf Attribute
-     */
     public getName(): string {
         return this.original.name;
     }
 
-    /**
-     *
-     *
-     * @returns
-     *
-     * @memberOf Attribute
-     */
+
     public getOriginal() {
         return this.original;
     }
 
-    /**
-     *
-     *
-     * @param {string} value
-     *
-     * @memberOf Attribute
-     */
     public setValue(value: string): void {
         this.original.value = value;
     }
 
-    /**
-     *
-     *
-     * @returns {string}
-     *
-     * @memberOf Attribute
-     */
     public getValue(): string {
         return this.original.value;
     }
 
-    /**
-     *
-     *
-     *
-     * @memberOf Attribute
-     */
     public remove(): void {
-        this.original.parentElement.removeAttribute(this.original.name);
+        this.parent.removeAttr(this);
     }
-
-    /**
-     *
-     *
-     * @returns {IUniversalElement<any>}
-     *
-     * @memberOf Attribute
-     */
+    public setParent(parent: Element) {
+        this.parent = parent;
+    }
     public getParent(): IUniversalElement<any> {
-        return new Element(this.original.parentElement);
+        return this.parent;
     }
 }
 
 
 
 export class TextNode implements IUniversalTextNode<Text> {
-    /**
-     *
-     *
-     * @private
-     * @type {Text}
-     * @memberOf TextNode
-     */
+
     private original: Text;
 
-    /**
-     * Creates an instance of TextNode.
-     *
-     * @param {string} value
-     *
-     * @memberOf TextNode
-     */
+    private _isRehydrated: boolean = false;
+
     constructor(data: string | Text) {
         if (data instanceof Text) {
             this.original = data;
+            this._isRehydrated = true;
         } else {
             this.original = document.createTextNode(data);
         }
-
     }
 
-    /**
-     *
-     *
-     * @returns {Text}
-     *
-     * @memberOf TextNode
-     */
+    public isRehydrated() {
+        return this._isRehydrated;
+    }
+
     public getOriginal(): Text {
         return this.original;
     }
 
-    /**
-     *
-     *
-     * @param {string} value
-     *
-     * @memberOf TextNode
-     */
     public setValue(value: string): void {
         this.original.nodeValue = value;
     }
-    /**
-     *
-     *
-     * @returns {string}
-     *
-     * @memberOf IUniversalTextNode
-     */
+
     public getValue(): string {
         return this.original.nodeValue;
     }
-    /**
-     *
-     *
-     *
-     * @memberOf IUniversalTextNode
-     */
+
     public remove(): void {
         this.original.parentElement.removeChild(this.original);
     }
 
     public getParent(): IUniversalElement<any> {
         return new Element(this.original.parentElement);
+    }
+
+    public appendTo(element: IUniversalElement<any>): void {
+        element.append(this);
+    }
+
+    public prependTo(element: IUniversalElement<any>): void {
+        element.prepend(this);
+    }
+
+    public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+        }
+    }
+
+    public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode);
+        }
     }
 
     public getSource(): string {
@@ -239,6 +177,8 @@ export class TextNode implements IUniversalTextNode<Text> {
  * @implements {IUniversalElement<HTMLElement>}
  */
 export class Element implements IUniversalElement<HTMLElement> {
+
+    private _isRehydrated: boolean = false;
 
     /**
      *
@@ -270,9 +210,14 @@ export class Element implements IUniversalElement<HTMLElement> {
 
         if (data instanceof HTMLElement) {
             this.original = data;
+            this._isRehydrated = true;
         } else {
             this.original = document.createElement(data);
         }
+    }
+
+    public isRehydrated() {
+        return this._isRehydrated;
     }
 
     /**
@@ -341,6 +286,20 @@ export class Element implements IUniversalElement<HTMLElement> {
         element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
     }
 
+
+    public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>) {
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+        }
+    }
+
+    public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>) {
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode);
+        }
+    }
     /**
      *
      *
@@ -360,6 +319,7 @@ export class Element implements IUniversalElement<HTMLElement> {
      * @memberOf Element
      */
     public setAttr(attribute: IUniversalAttribute<Attr>): IUniversalAttribute<Attr> {
+        attribute.setParent(this);
         this.original.setAttributeNode(attribute.getOriginal());
         return attribute;
     }
@@ -372,8 +332,12 @@ export class Element implements IUniversalElement<HTMLElement> {
      *
      * @memberOf Element
      */
-    public removeAttr(attribute: IUniversalAttribute<any> | string) {
-
+    public removeAttr(attr: IUniversalAttribute<Attr> | string) {
+        if (attr instanceof Attribute) {
+            this.original.removeAttributeNode(attr.getOriginal());
+        } else {
+            this.original.removeAttribute(<string>attr);
+        }
     }
 
     /**
@@ -411,7 +375,7 @@ export class Element implements IUniversalElement<HTMLElement> {
         }
     }
 
-    // children
+
     /**
      *
      *
@@ -567,6 +531,12 @@ export class Element implements IUniversalElement<HTMLElement> {
         for (let i = 0; i < childNodes.length; i++) {
             let el = <HTMLElement>childNodes[i];
             closure(new Element(el), i);
+        }
+    }
+
+    public empty() {
+        while (this.original.firstChild) {
+            this.original.removeChild(this.original.firstChild);
         }
     }
 }

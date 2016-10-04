@@ -6,12 +6,17 @@ define("Browser", ["require", "exports"], function (require, exports) {
     "use strict";
     class BrowserComment {
         constructor(data) {
+            this._isRehydrated = false;
             if (typeof data === "string") {
                 this.original = document.createComment(data);
             }
             else {
+                this._isRehydrated = true;
                 this.original = data;
             }
+        }
+        isRehydrated() {
+            return this._isRehydrated;
         }
         getOriginal() {
             return this.original;
@@ -67,21 +72,29 @@ define("Browser", ["require", "exports"], function (require, exports) {
             return this.original.value;
         }
         remove() {
-            this.original.parentElement.removeAttribute(this.original.name);
+            this.parent.removeAttr(this);
+        }
+        setParent(parent) {
+            this.parent = parent;
         }
         getParent() {
-            return new Element(this.original.parentElement);
+            return this.parent;
         }
     }
     exports.Attribute = Attribute;
     class TextNode {
         constructor(data) {
+            this._isRehydrated = false;
             if (data instanceof Text) {
                 this.original = data;
+                this._isRehydrated = true;
             }
             else {
                 this.original = document.createTextNode(data);
             }
+        }
+        isRehydrated() {
+            return this._isRehydrated;
         }
         getOriginal() {
             return this.original;
@@ -98,6 +111,24 @@ define("Browser", ["require", "exports"], function (require, exports) {
         getParent() {
             return new Element(this.original.parentElement);
         }
+        appendTo(element) {
+            element.append(this);
+        }
+        prependTo(element) {
+            element.prepend(this);
+        }
+        insertAfter(element) {
+            let referenceNode = element.getOriginal();
+            if (referenceNode.parentNode) {
+                referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+            }
+        }
+        insertBefore(element) {
+            let referenceNode = element.getOriginal();
+            if (referenceNode.parentNode) {
+                referenceNode.parentNode.insertBefore(this.original, referenceNode);
+            }
+        }
         getSource() {
             return this.getValue();
         }
@@ -105,13 +136,18 @@ define("Browser", ["require", "exports"], function (require, exports) {
     exports.TextNode = TextNode;
     class Element {
         constructor(data) {
+            this._isRehydrated = false;
             this.children = [];
             if (data instanceof HTMLElement) {
                 this.original = data;
+                this._isRehydrated = true;
             }
             else {
                 this.original = document.createElement(data);
             }
+        }
+        isRehydrated() {
+            return this._isRehydrated;
         }
         getOriginal() {
             return this.original;
@@ -128,14 +164,33 @@ define("Browser", ["require", "exports"], function (require, exports) {
         prependTo(element) {
             element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
         }
+        insertAfter(element) {
+            let referenceNode = element.getOriginal();
+            if (referenceNode.parentNode) {
+                referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+            }
+        }
+        insertBefore(element) {
+            let referenceNode = element.getOriginal();
+            if (referenceNode.parentNode) {
+                referenceNode.parentNode.insertBefore(this.original, referenceNode);
+            }
+        }
         remove() {
             this.original.parentNode.removeChild(this.original);
         }
         setAttr(attribute) {
+            attribute.setParent(this);
             this.original.setAttributeNode(attribute.getOriginal());
             return attribute;
         }
-        removeAttr(attribute) {
+        removeAttr(attr) {
+            if (attr instanceof Attribute) {
+                this.original.removeAttributeNode(attr.getOriginal());
+            }
+            else {
+                this.original.removeAttribute(attr);
+            }
         }
         attr(name, value) {
             if (value === undefined) {
@@ -218,20 +273,58 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 closure(new Element(el), i);
             }
         }
+        empty() {
+            while (this.original.firstChild) {
+                this.original.removeChild(this.original.firstChild);
+            }
+        }
     }
     exports.Element = Element;
 });
 define("Server", ["require", "exports"], function (require, exports) {
     "use strict";
     let elementIDS = 0;
-    class ServerComment {
+    class GenericDomManupulations {
+        _insertAfter(element) {
+            let parent = element.getParent();
+            let children = parent.getChildren();
+            let index = children.indexOf(element);
+            if (index > -1) {
+                children.splice(index + 1, 0, this);
+            }
+        }
+        _insertBefore(element) {
+            let parent = element.getParent();
+            let children = parent.getChildren();
+            let index = children.indexOf(element);
+            if (index > -1) {
+                children.splice(index, 0, this);
+            }
+        }
+        _remove(parent) {
+            let children = parent.getChildren();
+            if (parent) {
+                let index = children.indexOf(this);
+                if (index > -1) {
+                    children.splice(index, 1);
+                }
+            }
+        }
+    }
+    exports.GenericDomManupulations = GenericDomManupulations;
+    class ServerComment extends GenericDomManupulations {
         constructor(data) {
+            super();
             this.$id = elementIDS++;
             if (typeof data === "string") {
                 this.value = data;
             }
         }
         getOriginal() {
+            return this;
+        }
+        isRehydrated() {
+            return false;
         }
         appendTo(element) {
             element.append(this);
@@ -240,28 +333,19 @@ define("Server", ["require", "exports"], function (require, exports) {
             element.prepend(this);
         }
         insertAfter(element) {
-            let parent = element.getParent();
-            parent.eachChild(child => {
-            });
+            this._insertAfter(element);
         }
         insertBefore(element) {
+            this._insertBefore(element);
         }
         remove() {
-            let parent = this.parent;
-            let children = parent.getChildren();
-            if (parent) {
-                parent.eachChild((child, index) => {
-                    if (child === this) {
-                        children.splice(index, 1);
-                    }
-                });
-            }
+            this._remove(this.parent);
         }
         setParent(element) {
             this.parent = element;
         }
         getParent() {
-            return null;
+            return this.parent;
         }
         getSource() {
             return `<!--${this.value}-->`;
@@ -290,6 +374,7 @@ define("Server", ["require", "exports"], function (require, exports) {
             return this.value;
         }
         remove() {
+            this.parent.removeAttr(this);
         }
         setParent(element) {
             this.parent = element;
@@ -299,9 +384,13 @@ define("Server", ["require", "exports"], function (require, exports) {
         }
     }
     exports.Attribute = Attribute;
-    class TextNode {
+    class TextNode extends GenericDomManupulations {
         constructor(value) {
+            super();
             this.value = value;
+        }
+        isRehydrated() {
+            return false;
         }
         getOriginal() {
             return this.value;
@@ -313,6 +402,7 @@ define("Server", ["require", "exports"], function (require, exports) {
             return this.value;
         }
         remove() {
+            this._remove(this.parent);
         }
         setParent(element) {
             this.parent = element;
@@ -320,19 +410,35 @@ define("Server", ["require", "exports"], function (require, exports) {
         getParent() {
             return this.parent;
         }
+        appendTo(element) {
+            element.append(this);
+        }
+        prependTo(element) {
+            element.prepend(this);
+        }
+        insertAfter(element) {
+            this._insertAfter(element);
+        }
+        insertBefore(element) {
+            this._insertBefore(element);
+        }
         getSource() {
             return this.getValue();
         }
     }
     exports.TextNode = TextNode;
-    class Element {
+    class Element extends GenericDomManupulations {
         constructor(name) {
+            super();
             this.$id = ++elementIDS;
             this.attrs = new Map();
             this.children = [];
             if (typeof name === "string") {
                 this.name = name;
             }
+        }
+        isRehydrated() {
+            return false;
         }
         getOriginal() { }
         append(element) {
@@ -352,18 +458,23 @@ define("Server", ["require", "exports"], function (require, exports) {
             let el = element;
             el.prepend(this);
         }
+        insertAfter(element) {
+            this._insertAfter(element);
+        }
+        insertBefore(element) {
+            this._insertBefore(element);
+        }
         removeChild(element) {
-            this.children.forEach((item, index) => {
-                let child = item;
-                if (child.$id === element.$id) {
-                    this.children.splice(index, 1);
-                }
-            });
+            let index = this.children.indexOf(element);
+            if (index > -1) {
+                this.children.splice(index, 1);
+            }
         }
         remove() {
             this.parent.removeChild(this);
         }
         setAttr(attribute) {
+            attribute.setParent(this);
             this.attrs.set(attribute.getName(), attribute);
             return attribute;
         }
@@ -429,6 +540,9 @@ define("Server", ["require", "exports"], function (require, exports) {
         }
         getParent() {
             return this.parent;
+        }
+        empty() {
+            this.children = [];
         }
     }
     exports.Element = Element;

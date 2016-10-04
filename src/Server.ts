@@ -2,18 +2,49 @@ import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalCo
 
 let elementIDS = 0;
 
-export class ServerComment implements IUniversalComment<any> {
+export class GenericDomManupulations {
+    protected _insertAfter(element: any) {
+        let parent = element.getParent();
+        let children = parent.getChildren();
+        let index = children.indexOf(element);
+        if (index > -1) {
+            children.splice(index + 1, 0, this);
+        }
+    }
+    protected _insertBefore(element: any): void {
+        let parent = element.getParent();
+        let children = parent.getChildren();
+        let index = children.indexOf(element);
+        if (index > -1) {
+            children.splice(index, 0, this);
+        }
+    }
+    protected _remove(parent: any) {
+        let children = parent.getChildren();
+        if (parent) {
+            let index = children.indexOf(this);
+            if (index > -1) {
+                children.splice(index, 1);
+            }
+        }
+    }
+}
+export class ServerComment extends GenericDomManupulations implements IUniversalComment<any>  {
     public $id: number = elementIDS++;
-
     private value;
     private parent: Element;
     constructor(data: string | Comment) {
+        super();
         if (typeof data === "string") {
             this.value = data;
         }
     }
     public getOriginal(): any {
+        return this;
+    }
 
+    public isRehydrated() {
+        return false;
     }
 
     public appendTo(element: IUniversalElement<any>): void {
@@ -22,44 +53,22 @@ export class ServerComment implements IUniversalComment<any> {
     public prependTo(element: IUniversalElement<any>): void {
         element.prepend(this);
     }
-
     public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
-        let parent = element.getParent();
-        parent.eachChild(child => {
-
-        });
-        // let referenceNode = element.getOriginal();
-        // if (referenceNode.parentNode) {
-        //     referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
-        // }
+        this._insertAfter(element);
     }
 
     public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
-        // let referenceNode = element.getOriginal();
-        // if (referenceNode.parentNode) {
-        //     referenceNode.parentNode.insertBefore(this.original, referenceNode);
-        // }
+        this._insertBefore(element);
     }
 
     public remove(): void {
-        let parent = this.parent;
-        let children = parent.getChildren();
-        if (parent) {
-            parent.eachChild((child, index) => {
-                if (child === this) {
-                    children.splice(index, 1);
-                }
-            });
-        }
+        this._remove(this.parent);
     }
     public setParent(element: Element) {
         this.parent = element;
     }
     public getParent(): IUniversalElement<any> {
-        // if (this.original.parentNode) {
-        //     return new Element(this.original.parentElement);
-        // }
-        return null;
+        return this.parent;
     }
 
     public getSource() {
@@ -94,7 +103,7 @@ export class Attribute implements IUniversalAttribute<any> {
         return this.value;
     }
     public remove(): void {
-
+        this.parent.removeAttr(this);
     }
 
     public setParent(element: IUniversalElement<any>): void {
@@ -106,32 +115,56 @@ export class Attribute implements IUniversalAttribute<any> {
     }
 }
 
-export class TextNode implements IUniversalTextNode<string> {
+export class TextNode extends GenericDomManupulations implements IUniversalTextNode<string> {
 
     private value;
     private parent: Element;
     constructor(value: string) {
+        super();
         this.value = value;
     }
+
+    public isRehydrated() {
+        return false;
+    }
+
     public getOriginal(): string {
         return this.value;
     }
+
     public setValue(value: string): void {
         this.value = value;
     }
+
     public getValue(): string {
         return this.value;
     }
-    public remove(): void {
 
+    public remove(): void {
+        this._remove(this.parent);
     }
 
     public setParent(element: Element): void {
-
         this.parent = element;
     }
+
     public getParent(): IUniversalElement<any> {
         return <IUniversalElement<any>>this.parent;
+    }
+
+    public appendTo(element: IUniversalElement<any>): void {
+        element.append(this);
+    }
+    public prependTo(element: IUniversalElement<any>): void {
+        element.prepend(this);
+    }
+
+    public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
+        this._insertAfter(element);
+    }
+
+    public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
+        this._insertBefore(element);
     }
 
     public getSource(): string {
@@ -139,7 +172,7 @@ export class TextNode implements IUniversalTextNode<string> {
     }
 }
 
-export class Element implements IUniversalElement<any> {
+export class Element extends GenericDomManupulations implements IUniversalElement<any> {
     public $id: number = ++elementIDS;
     private parent: Element;
     private name: string;
@@ -151,9 +184,14 @@ export class Element implements IUniversalElement<any> {
 
 
     constructor(name: string | HTMLElement) {
+        super();
         if (typeof name === "string") {
             this.name = name;
         }
+    }
+
+    public isRehydrated() {
+        return false;
     }
 
     public getOriginal(): any { }
@@ -185,21 +223,27 @@ export class Element implements IUniversalElement<any> {
         el.prepend(this);
     }
 
+    public insertAfter(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
+        this._insertAfter(element);
+    }
+
+    public insertBefore(element: IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>): void {
+        this._insertBefore(element);
+    }
+
     public removeChild(element: Element) {
-        this.children.forEach((item, index) => {
-            let child = <Element>item;
-            if (child.$id === element.$id) {
-                this.children.splice(index, 1);
-            }
-        });
+        let index = this.children.indexOf(element);
+        if (index > -1) {
+            this.children.splice(index, 1);
+        }
     }
 
     public remove(): void {
         this.parent.removeChild(this);
     }
 
-
     public setAttr(attribute: IUniversalAttribute<any>): IUniversalAttribute<Attr> {
+        attribute.setParent(this);
         this.attrs.set(attribute.getName(), <Attribute>attribute);
         return attribute;
     }
@@ -302,5 +346,9 @@ export class Element implements IUniversalElement<any> {
 
     public getParent(): IUniversalElement<any> {
         return this.parent;
+    }
+
+    public empty() {
+        this.children = [];
     }
 }

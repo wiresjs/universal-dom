@@ -26,7 +26,7 @@ gulp.task("es5-build", function() {
         .pipe(babel({ presets: ["es2015"], plugins: ["nofn"] }))
         .pipe(rename("universal-dom-es5.js"))
         .pipe(replace(/exports : undefined,/, "exports : this,"))
-        // .pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest("build/"))
 })
 gulp.task('build', function() {
