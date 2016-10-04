@@ -51,6 +51,7 @@ declare module "Common" {
         addClass(name: string): void;
         hasClass(name: string): boolean;
         removeClass(name: string): void;
+        toggleClass(name: string): void;
         setStyle(data: any, value?: string): void;
         getStyle(name: string): string;
         getSource(): string;
@@ -129,6 +130,7 @@ declare module "Browser" {
         addClass(name: string): void;
         hasClass(name: string): boolean;
         removeClass(name: string): void;
+        toggleClass(name: string): void;
         setStyle(data: any, value?: string): string;
         getStyle(name: string): any;
         getSource(): string;
@@ -197,6 +199,7 @@ declare module "Server" {
         private parent;
         private name;
         private attrs;
+        private classNames;
         private children;
         constructor(name: string | HTMLElement);
         isRehydrated(): boolean;
@@ -221,6 +224,7 @@ declare module "Server" {
         addClass(name: string): void;
         hasClass(name: string): boolean;
         removeClass(name: string): void;
+        toggleClass(name: string): void;
         setStyle(data: any, value?: string): void;
         getStyle(name: string): string;
         getSource(): string;

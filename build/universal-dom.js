@@ -232,13 +232,23 @@ define("Browser", ["require", "exports"], function (require, exports) {
             this.children = elements;
         }
         addClass(name) {
-            this.original.classList.add(name);
+            if (!this.original.classList.contains(name)) {
+                this.original.classList.add(name);
+            }
         }
         hasClass(name) {
             return this.original.classList.contains(name);
         }
         removeClass(name) {
             this.original.classList.remove(name);
+        }
+        toggleClass(name) {
+            if (this.original.classList.contains(name)) {
+                this.original.classList.remove(name);
+            }
+            else {
+                this.original.classList.add(name);
+            }
         }
         setStyle(data, value) {
             if (typeof data === "object") {
@@ -259,6 +269,7 @@ define("Browser", ["require", "exports"], function (require, exports) {
             html = html.replace(/\r?\n|\r|\t/g, '');
             html = html.replace(/\s{2,}/g, " ");
             html = html.replace(/>\s+</g, "><");
+            html = html.replace(/\sclass=""/g, "");
             html = html.trim();
             return html;
         }
@@ -432,6 +443,7 @@ define("Server", ["require", "exports"], function (require, exports) {
             super();
             this.$id = ++elementIDS;
             this.attrs = new Map();
+            this.classNames = new Set();
             this.children = [];
             if (typeof name === "string") {
                 this.name = name;
@@ -506,11 +518,23 @@ define("Server", ["require", "exports"], function (require, exports) {
             this.children = elements;
         }
         addClass(name) {
+            if (!this.classNames.has(name)) {
+                this.classNames.add(name);
+            }
         }
         hasClass(name) {
-            return false;
+            return this.classNames.has(name);
         }
         removeClass(name) {
+            this.classNames.delete(name);
+        }
+        toggleClass(name) {
+            if (this.classNames.has(name)) {
+                this.classNames.delete(name);
+            }
+            else {
+                this.classNames.add(name);
+            }
         }
         setStyle(data, value) {
         }
@@ -524,6 +548,13 @@ define("Server", ["require", "exports"], function (require, exports) {
             this.attrs.forEach(attr => {
                 localAttrs.push(`${attr.getName()}="${attr.getValue() || ""}"`);
             });
+            let clsNames = [];
+            this.classNames.forEach(clsName => {
+                clsNames.push(clsName);
+            });
+            if (this.classNames.size > 0) {
+                html.push(` class="${clsNames.join(" ")}"`);
+            }
             if (localAttrs.length) {
                 html.push(" " + localAttrs.join(" "));
             }

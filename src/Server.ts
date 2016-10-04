@@ -178,6 +178,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
     private name: string;
     private attrs: Map<string, Attribute> = new Map();
 
+    private classNames: Set<string> = new Set();
 
     private children: (IUniversalElement<HTMLElement> |
         IUniversalTextNode<Text> | IUniversalComment<Text>)[] = [];
@@ -291,16 +292,25 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
 
 
     public addClass(name: string): void {
-        //this.original.classList.add(name);
+        if (!this.classNames.has(name)) {
+            this.classNames.add(name);
+        }
     }
 
     public hasClass(name: string): boolean {
-        //return this.original.classList.contains(name);
-        return false;
+        return this.classNames.has(name);
     }
 
     public removeClass(name: string): void {
-        //  this.original.classList.remove(name);
+        this.classNames.delete(name);
+    }
+
+    public toggleClass(name: string): void {
+        if (this.classNames.has(name)) {
+            this.classNames.delete(name);
+        } else {
+            this.classNames.add(name);
+        }
     }
 
     public setStyle(data: any, value?: string) {
@@ -328,6 +338,13 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         this.attrs.forEach(attr => {
             localAttrs.push(`${attr.getName()}="${attr.getValue() || ""}"`);
         });
+        let clsNames = [];
+        this.classNames.forEach(clsName => {
+            clsNames.push(clsName);
+        });
+        if (this.classNames.size > 0) {
+            html.push(` class="${clsNames.join(" ")}"`);
+        }
         if (localAttrs.length) {
             html.push(" " + localAttrs.join(" "));
         }

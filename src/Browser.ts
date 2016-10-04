@@ -428,7 +428,9 @@ export class Element implements IUniversalElement<HTMLElement> {
      * @memberOf Element
      */
     public addClass(name: string): void {
-        this.original.classList.add(name);
+        if (!this.original.classList.contains(name)) {
+            this.original.classList.add(name);
+        }
     }
     /**
      *
@@ -450,6 +452,14 @@ export class Element implements IUniversalElement<HTMLElement> {
      */
     public removeClass(name: string): void {
         this.original.classList.remove(name);
+    }
+
+    public toggleClass(name: string): void {
+        if (this.original.classList.contains(name)) {
+            this.original.classList.remove(name)
+        } else {
+            this.original.classList.add(name);
+        }
     }
 
     /**
@@ -497,6 +507,7 @@ export class Element implements IUniversalElement<HTMLElement> {
         html = html.replace(/\r?\n|\r|\t/g, '');
         html = html.replace(/\s{2,}/g, " ");
         html = html.replace(/>\s+</g, "><");
+        html = html.replace(/\sclass=""/g, "");
         html = html.trim();
         return html;
     }
