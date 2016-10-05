@@ -30,6 +30,21 @@ let projectSystemJs = ts.createProject('src/tsconfig.json', {
     outFile: undefined
 });
 
+const LIBRARY_NAME = 'universal-dom';
+
+gulp.task('build', function() {
+    let result = gulp.src('src/**/*.ts')
+        .pipe(sourcemaps.init())
+        .pipe(project());
+    return result.js.pipe(tsUniversal('build/', {
+            expose: 'index',
+            expose2window: true,
+            name: LIBRARY_NAME
+        }))
+        .pipe(rename(LIBRARY_NAME + '.js'))
+        .pipe(gulp.dest('build/'));
+});
+
 gulp.task('watch', ['build'], function() {
     runSequence("es5-build");
     gulp.watch(['src/**/*.ts'], () => {
@@ -38,34 +53,24 @@ gulp.task('watch', ['build'], function() {
 });
 
 gulp.task("es5-build", function() {
-    return gulp.src("build/universal-dom.js")
+    return gulp.src("build/" + LIBRARY_NAME + ".js")
         .pipe(babel({ presets: ["es2015"], plugins: ["nofn"] }))
-        .pipe(rename("universal-dom-es5.js"))
+        .pipe(rename(LIBRARY_NAME + "-es5.js"))
         .pipe(replace(/exports : undefined,/, "exports : this,"))
         .pipe(gulp.dest("build/"))
 })
 
 gulp.task("es5-uglify", function() {
-    return gulp.src("build/universal-dom-es5.js")
+    return gulp.src("build/" + LIBRARY_NAME + "-es5.js")
         .pipe(rename("universal-dom.min.js"))
         .pipe(uglify())
         .pipe(gulp.dest("build/"))
 })
-gulp.task('build', function() {
-    let result = gulp.src('src/**/*.ts')
-        .pipe(sourcemaps.init())
-        .pipe(project());
-    return result.js.pipe(tsUniversal('build/', {
-            expose: 'index',
-            expose2window: true,
-            name: 'universal-dom'
-        }))
-        .pipe(rename('universal-dom.js'))
-        .pipe(gulp.dest('build/'));
-});
 
-gulp.task("build-universal", ["build"], () => {
-    return runSequence("es5-build", "es5-uglify");
+
+gulp.task("build-universal", ["build"], (done) => {
+
+    return runSequence("es5-build", "es5-uglify", done);
 });
 
 gulp.task("dist-universal", ["build-universal"], () => {
