@@ -56,7 +56,6 @@ gulp.task("es5-build", function() {
     return gulp.src("build/" + LIBRARY_NAME + ".js")
         .pipe(babel({ presets: ["es2015"], plugins: ["nofn"] }))
         .pipe(rename(LIBRARY_NAME + "-es5.js"))
-        .pipe(replace(/exports : undefined,/, "exports : this,"))
         .pipe(gulp.dest("build/"))
 })
 
@@ -65,16 +64,13 @@ gulp.task("es5-uglify", function() {
         .pipe(rename("universal-dom.min.js"))
         .pipe(uglify())
         .pipe(gulp.dest("build/"))
-})
-
+});
 
 gulp.task("build-universal", ["build"], (done) => {
-
     return runSequence("es5-build", "es5-uglify", done);
 });
 
 gulp.task("dist-universal", ["build-universal"], () => {
-
     return gulp.src(["build/*.**"])
         .pipe(gulp.dest('dist/universal'));
 });
@@ -83,8 +79,8 @@ gulp.task("dist-typings", () => {
     let result = gulp.src('src/**/*.ts')
         .pipe(typingsProject());
     return result.dts.pipe(gulp.dest('dist/typings'));
-
 });
+
 gulp.task("dist-es2015", () => {
     let result = gulp.src('src/**/*.ts')
         .pipe(sourcemaps.init())
