@@ -1,6 +1,6 @@
 {
   "name": "universal-dom",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hello!",
   "typings": "./dist/typings/index.d.ts",
   "main": "dist/universal/universal-dom.js",
@@ -23,7 +23,7 @@
     "mocha-phantomjs": "^4.1.0",
     "run-sequence": "^1.2.2",
     "should": "^11.1.0",
-    "ts-universal": "^2.0.3",
+    "ts-universal": "^2.0.4",
     "typescript": "^2.0.3"
   },
   "scripts": {
