@@ -93,6 +93,9 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 this.original = data;
             }
         }
+        getType() {
+            return "comment";
+        }
         /**
          *
          *
@@ -339,6 +342,9 @@ define("Browser", ["require", "exports"], function (require, exports) {
                 this.original = document.createTextNode(data);
             }
         }
+        getType() {
+            return "text";
+        }
         /**
          *
          *
@@ -518,6 +524,9 @@ define("Browser", ["require", "exports"], function (require, exports) {
             else {
                 this.original = document.createElement(data);
             }
+        }
+        getType() {
+            return "element";
         }
         /**
          *
@@ -1032,6 +1041,9 @@ define("Server", ["require", "exports"], function (require, exports) {
                 this.value = data;
             }
         }
+        getType() {
+            return "comment";
+        }
         /**
          *
          *
@@ -1314,6 +1326,9 @@ define("Server", ["require", "exports"], function (require, exports) {
             super();
             this.value = value;
         }
+        getType() {
+            return "text";
+        }
         /**
          *
          *
@@ -1508,6 +1523,16 @@ define("Server", ["require", "exports"], function (require, exports) {
             if (typeof name === "string") {
                 this.name = name;
             }
+        }
+        /**
+         *
+         *
+         * @returns {string}
+         *
+         * @memberOf Element
+         */
+        getType() {
+            return "element";
         }
         /**
          *

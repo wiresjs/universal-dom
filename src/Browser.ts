@@ -1,4 +1,4 @@
-import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
+import { IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment } from "./Common";
 
 
 /**
@@ -101,6 +101,10 @@ export class BrowserComment extends GenericDomManupulations implements IUniversa
             this._isRehydrated = true;
             this.original = data;
         }
+    }
+
+    public getType(): string {
+        return "comment";
     }
     /**
      *
@@ -395,6 +399,10 @@ export class TextNode extends GenericDomManupulations implements IUniversalTextN
         }
     }
 
+    public getType(): string {
+        return "text";
+    }
+
     /**
      *
      *
@@ -596,6 +604,10 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         } else {
             this.original = document.createElement(data);
         }
+    }
+
+    public getType() : string {
+        return "element";
     }
 
     /**

@@ -86,6 +86,9 @@ export class BrowserComment extends GenericDomManupulations {
             this.original = data;
         }
     }
+    getType() {
+        return "comment";
+    }
     /**
      *
      *
@@ -330,6 +333,9 @@ export class TextNode extends GenericDomManupulations {
             this.original = document.createTextNode(data);
         }
     }
+    getType() {
+        return "text";
+    }
     /**
      *
      *
@@ -508,6 +514,9 @@ export class Element extends GenericDomManupulations {
         else {
             this.original = document.createElement(data);
         }
+    }
+    getType() {
+        return "element";
     }
     /**
      *

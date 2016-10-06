@@ -1,4 +1,4 @@
-import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
+import { IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment } from "./Common";
 
 let elementIDS = 0;
 
@@ -139,6 +139,10 @@ export class ServerComment extends GenericDomManupulations implements IUniversal
         if (typeof data === "string") {
             this.value = data;
         }
+    }
+
+    public getType(): string {
+        return "comment";
     }
     /**
      *
@@ -480,6 +484,10 @@ export class TextNode extends GenericDomManupulations implements IUniversalTextN
         this.value = value;
     }
 
+    public getType(): string {
+        return "text";
+    }
+
     /**
      *
      *
@@ -706,6 +714,18 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         if (typeof name === "string") {
             this.name = name;
         }
+    }
+
+
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf Element
+     */
+    public getType(): string {
+        return "element";
     }
 
     /**

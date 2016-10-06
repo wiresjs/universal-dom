@@ -129,6 +129,9 @@ System.register([], function(exports_1, context_1) {
                         this.value = data;
                     }
                 }
+                getType() {
+                    return "comment";
+                }
                 /**
                  *
                  *
@@ -411,6 +414,9 @@ System.register([], function(exports_1, context_1) {
                     super();
                     this.value = value;
                 }
+                getType() {
+                    return "text";
+                }
                 /**
                  *
                  *
@@ -605,6 +611,16 @@ System.register([], function(exports_1, context_1) {
                     if (typeof name === "string") {
                         this.name = name;
                     }
+                }
+                /**
+                 *
+                 *
+                 * @returns {string}
+                 *
+                 * @memberOf Element
+                 */
+                getType() {
+                    return "element";
                 }
                 /**
                  *

@@ -5,6 +5,7 @@
  * @interface IUniversalTextNode
  */
 export interface IUniversalTextNode<T> {
+    getType(): any;
     /**
      *
      *
@@ -180,6 +181,7 @@ export interface IUniversalAttribute<T> {
     getParent(): IUniversalElement<any>;
 }
 export interface IUniversalComment<T> {
+    getType(): any;
     /**
      *
      *
@@ -275,6 +277,21 @@ export interface IUniversalComment<T> {
  * @interface IUniversalElement
  */
 export interface IUniversalElement<T> {
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf IUniversalElement
+     */
+    getType(): string;
+    /**
+     *
+     *
+     * @returns {T}
+     *
+     * @memberOf IUniversalElement
+     */
     getOriginal(): T;
     /**
      *

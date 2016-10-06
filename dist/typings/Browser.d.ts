@@ -60,6 +60,7 @@ export declare class BrowserComment extends GenericDomManupulations implements I
      * @memberOf BrowserComment
      */
     constructor(data: string | Comment);
+    getType(): string;
     /**
      *
      *
@@ -270,6 +271,7 @@ export declare class TextNode extends GenericDomManupulations implements IUniver
      * @memberOf TextNode
      */
     constructor(data: string | Text);
+    getType(): string;
     /**
      *
      *
@@ -416,6 +418,7 @@ export declare class Element extends GenericDomManupulations implements IUnivers
      * @memberOf Element
      */
     constructor(data: string | HTMLElement);
+    getType(): string;
     /**
      *
      *

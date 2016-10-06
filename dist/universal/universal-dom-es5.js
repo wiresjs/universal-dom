@@ -140,16 +140,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this;
             }
-            /**
-             *
-             *
-             * @returns
-             *
-             * @memberOf BrowserComment
-             */
-
 
             _createClass(BrowserComment, [{
+                key: "getType",
+                value: function getType() {
+                    return "comment";
+                }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf BrowserComment
+                 */
+
+            }, {
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return this._isRehydrated;
@@ -459,16 +464,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this2;
             }
-            /**
-             *
-             *
-             * @returns
-             *
-             * @memberOf TextNode
-             */
-
 
             _createClass(TextNode, [{
+                key: "getType",
+                value: function getType() {
+                    return "text";
+                }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf TextNode
+                 */
+
+            }, {
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return this._isRehydrated;
@@ -689,16 +699,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this3;
             }
-            /**
-             *
-             *
-             * @returns
-             *
-             * @memberOf Element
-             */
-
 
             _createClass(Element, [{
+                key: "getType",
+                value: function getType() {
+                    return "element";
+                }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf Element
+                 */
+
+            }, {
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return this._isRehydrated;
@@ -1326,16 +1341,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }
                 return _this4;
             }
-            /**
-             *
-             *
-             * @returns {*}
-             *
-             * @memberOf ServerComment
-             */
-
 
             _createClass(ServerComment, [{
+                key: "getType",
+                value: function getType() {
+                    return "comment";
+                }
+                /**
+                 *
+                 *
+                 * @returns {*}
+                 *
+                 * @memberOf ServerComment
+                 */
+
+            }, {
                 key: "getOriginal",
                 value: function getOriginal() {
                     return this;
@@ -1699,16 +1719,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 _this6.value = value;
                 return _this6;
             }
-            /**
-             *
-             *
-             * @returns
-             *
-             * @memberOf TextNode
-             */
-
 
             _createClass(TextNode, [{
+                key: "getType",
+                value: function getType() {
+                    return "text";
+                }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf TextNode
+                 */
+
+            }, {
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return false;
@@ -1951,13 +1976,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             /**
              *
              *
-             * @returns
+             * @returns {string}
              *
              * @memberOf Element
              */
 
 
             _createClass(Element, [{
+                key: "getType",
+                value: function getType() {
+                    return "element";
+                }
+                /**
+                 *
+                 *
+                 * @returns
+                 *
+                 * @memberOf Element
+                 */
+
+            }, {
                 key: "isRehydrated",
                 value: function isRehydrated() {
                     return false;

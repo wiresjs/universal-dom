@@ -94,6 +94,9 @@ System.register([], function(exports_1, context_1) {
                         this.original = data;
                     }
                 }
+                getType() {
+                    return "comment";
+                }
                 /**
                  *
                  *
@@ -340,6 +343,9 @@ System.register([], function(exports_1, context_1) {
                         this.original = document.createTextNode(data);
                     }
                 }
+                getType() {
+                    return "text";
+                }
                 /**
                  *
                  *
@@ -519,6 +525,9 @@ System.register([], function(exports_1, context_1) {
                     else {
                         this.original = document.createElement(data);
                     }
+                }
+                getType() {
+                    return "element";
                 }
                 /**
                  *

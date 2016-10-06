@@ -121,6 +121,9 @@ export class ServerComment extends GenericDomManupulations {
             this.value = data;
         }
     }
+    getType() {
+        return "comment";
+    }
     /**
      *
      *
@@ -401,6 +404,9 @@ export class TextNode extends GenericDomManupulations {
         super();
         this.value = value;
     }
+    getType() {
+        return "text";
+    }
     /**
      *
      *
@@ -594,6 +600,16 @@ export class Element extends GenericDomManupulations {
         if (typeof name === "string") {
             this.name = name;
         }
+    }
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf Element
+     */
+    getType() {
+        return "element";
     }
     /**
      *

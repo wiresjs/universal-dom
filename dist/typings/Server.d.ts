@@ -94,6 +94,7 @@ export declare class ServerComment extends GenericDomManupulations implements IU
      * @memberOf ServerComment
      */
     constructor(data: string | Comment);
+    getType(): string;
     /**
      *
      *
@@ -347,6 +348,7 @@ export declare class TextNode extends GenericDomManupulations implements IUniver
      * @memberOf TextNode
      */
     constructor(value: string);
+    getType(): string;
     /**
      *
      *
@@ -524,6 +526,14 @@ export declare class Element extends GenericDomManupulations implements IUnivers
      * @memberOf Element
      */
     constructor(name: string | HTMLElement);
+    /**
+     *
+     *
+     * @returns {string}
+     *
+     * @memberOf Element
+     */
+    getType(): string;
     /**
      *
      *
