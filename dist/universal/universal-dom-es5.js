@@ -2546,12 +2546,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var bc;
         if (!$isBackend) {
             var npm = $__exports__.__npm__ = $__exports__.__npm__ || {};if (m) {
-                bc = npm[m];
+                bc = npm[m] = {};
             }
         }
         for (var k in e) {
             $isBackend || w ? $__exports__[k] = e[k] : null;
-            bc ? bc[e] = e[k] : null;
+            bc ? bc[k] = e[k] : null;
         }
     };
     __expose__("index", "universal-dom", true, "");
