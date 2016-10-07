@@ -181,6 +181,7 @@ export interface IUniversalAttribute<T> {
     getParent(): IUniversalElement<any>;
 }
 export interface IUniversalComment<T> {
+    isRehydrated(): any;
     getType(): any;
     /**
      *
@@ -277,6 +278,7 @@ export interface IUniversalComment<T> {
  * @interface IUniversalElement
  */
 export interface IUniversalElement<T> {
+    isRehydrated(): any;
     /**
      *
      *

@@ -189,6 +189,9 @@ export interface IUniversalAttribute<T> {
 }
 
 export interface IUniversalComment<T> {
+
+    isRehydrated();
+
     getType();
     /**
      *
@@ -286,6 +289,8 @@ export interface IUniversalComment<T> {
  * @interface IUniversalElement
  */
 export interface IUniversalElement<T> {
+
+    isRehydrated();
 
     /**
      *
