@@ -32,11 +32,13 @@ gulp.task("webpack", () => {
         .pipe(webpack({
             output: {
                 filename: 'index.js',
+                libraryTarget: "var",
+                library: "uDom"
             }
-
         }))
         .pipe(rename("universal-dom.js"))
-        .pipe(gulp.dest('dist/browser'));
+        .pipe(babel({ presets: ["es2015"] }))
+        .pipe(gulp.dest('build/browser'));
 });
 
 

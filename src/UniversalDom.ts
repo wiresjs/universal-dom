@@ -15,7 +15,8 @@ import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalCo
 
 declare const module: any;
 declare const process: any;
-const isBackend = typeof module !== "undefined" && module.exports && typeof process === "object";
+const isBackend = typeof module !== "undefined" && module.exports && typeof window === "undefined";
+console.log(isBackend);
 
 /**
  *

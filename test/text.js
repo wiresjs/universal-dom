@@ -1,12 +1,14 @@
 var isServer = typeof exports !== "undefined"
 var root;
+var Dom
 if (isServer) {
-   var Dom = require("../build/commonjs/index.js").Dom;
+    Dom = require("../build/commonjs/index.js").Dom;
     var should = require("should");
     root = Dom.createElement("div");
     root.attr("id", "root")
 } else {
-    root = Dom.createElement(document.getElementById("root"));
+    root = uDom.Dom.createElement(document.getElementById("root"));
+    Dom = uDom.Dom;
 }
 
 var subject, paragraph;

@@ -5,7 +5,8 @@
   "typings": "./dist/typings/index.d.ts",
   "main": "dist/commonjs/index.js",
   "directories": {
-    "test": "test"
+    "test": "test",
+    "packages": "jspm_packages"
   },
   "dependencies": {},
   "devDependencies": {
@@ -15,6 +16,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-browserify": "^0.5.1",
     "gulp-concat": "^2.6.0",
+    "gulp-jspm": "^0.5.13",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
     "gulp-sourcemaps": "^1.6.0",
@@ -37,5 +39,12 @@
   },
   "author": "",
   "license": "ISC",
-  "homepage": "https://github.com/wiresjs/universal-dom/#readme"
+  "homepage": "https://github.com/wiresjs/universal-dom/#readme",
+  "jspm": {
+    "directories": {
+      "test": "test"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+  }
 }
