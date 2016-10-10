@@ -1,7 +1,8 @@
 "use strict";
 const Browser_1 = require("./Browser");
 const Server_1 = require("./Server");
-const isBackend = typeof module !== "undefined" && module.exports && typeof process === "object";
+const isBackend = typeof module !== "undefined" && module.exports && typeof window === "undefined";
+console.log(isBackend);
 /**
  *
  *

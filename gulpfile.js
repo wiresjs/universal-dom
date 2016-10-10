@@ -4,7 +4,6 @@ const replace = require("gulp-replace");
 const ts = require('gulp-typescript');
 const concat = require('gulp-concat');
 const fs = require('fs');
-const tsUniversal = require("ts-universal");
 const sourcemaps = require('gulp-sourcemaps');
 const runSequence = require('run-sequence');
 const uglify = require("gulp-uglify");
@@ -28,7 +27,7 @@ gulp.task("dist-commonjs", () => {
 });
 
 gulp.task("webpack", () => {
-    let result = gulp.src('build/commonjs/index.js')
+    return gulp.src('build/commonjs/index.js')
         .pipe(webpack({
             output: {
                 filename: 'index.js',
@@ -41,6 +40,10 @@ gulp.task("webpack", () => {
         .pipe(gulp.dest('build/browser'));
 });
 
+gulp.task("test-build", ["build"], () => {
+    return runSequence("webpack")
+});
+
 
 
 gulp.task('build', function() {
@@ -51,30 +54,11 @@ gulp.task('build', function() {
 });
 
 gulp.task('watch', ['build'], function() {
-    runSequence("es5-build");
+    runSequence("webpack");
     gulp.watch(['src/**/*.ts'], () => {
-        runSequence('build', "es5-build");
+        runSequence('build', "webpack");
     });
 });
-
-gulp.task("es5-build", function() {
-    return gulp.src("build/" + LIBRARY_NAME + ".js")
-        .pipe(babel({ presets: ["es2015"], plugins: ["nofn"] }))
-        .pipe(rename(LIBRARY_NAME + "-es5.js"))
-        .pipe(gulp.dest("build/"))
-})
-
-gulp.task("es5-uglify", function() {
-    return gulp.src("build/" + LIBRARY_NAME + "-es5.js")
-        .pipe(rename("universal-dom.min.js"))
-        .pipe(uglify())
-        .pipe(gulp.dest("build/"))
-});
-
-gulp.task("build-universal", ["build"], (done) => {
-    return runSequence("es5-build", "es5-uglify", done);
-});
-
 
 gulp.task('dist', ['dist-typings', 'dist-commonjs'], function() {
 
