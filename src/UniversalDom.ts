@@ -1,22 +1,23 @@
-import {Element as BrowserElement,
+import {
+    Element as BrowserElement,
     TextNode as BrowserTextNode,
     Attribute as BrowserAttribute,
     BrowserComment,
 } from "./Browser";
 
-import {Element as ServerElement,
+import {
+    Element as ServerElement,
     TextNode as ServerTextNode,
     Attribute as ServerAttribute,
     ServerComment,
 } from "./Server";
 
-import {IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment} from "./Common";
-
+import { IUniversalElement, IUniversalTextNode, IUniversalAttribute, IUniversalComment } from "./Common";
+declare const window : any;
 
 declare const module: any;
 declare const process: any;
 const isBackend = typeof module !== "undefined" && module.exports && typeof window === "undefined";
-console.log(isBackend);
 
 /**
  *
