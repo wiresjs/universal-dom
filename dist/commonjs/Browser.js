@@ -1,60 +1,31 @@
-let elementIDS = 0;
+"use strict";
+/**
+ *
+ *
+ * @param {*} node
+ * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
+ */
+let mapNodeObject = (node) => {
+    if (!node) {
+        return;
+    }
+    if (node.nodeType === 1) {
+        return new Element(node);
+    }
+    if (node.nodeType === 8) {
+        return new BrowserComment(node);
+    }
+    if (node.nodeType === 3) {
+        return new TextNode(node);
+    }
+};
 /**
  *
  *
  * @export
  * @class GenericDomManupulations
  */
-export class GenericDomManupulations {
-    /**
-     *
-     *
-     * @protected
-     * @param {*} element
-     *
-     * @memberOf GenericDomManupulations
-     */
-    _insertAfter(element) {
-        let parent = element.getParent();
-        let children = parent.getChildren();
-        let index = children.indexOf(element);
-        if (index > -1) {
-            children.splice(index + 1, 0, this);
-        }
-    }
-    /**
-     *
-     *
-     * @protected
-     * @param {*} element
-     *
-     * @memberOf GenericDomManupulations
-     */
-    _insertBefore(element) {
-        let parent = element.getParent();
-        let children = parent.getChildren();
-        let index = children.indexOf(element);
-        if (index > -1) {
-            children.splice(index, 0, this);
-        }
-    }
-    /**
-     *
-     *
-     * @protected
-     * @param {*} parent
-     *
-     * @memberOf GenericDomManupulations
-     */
-    _remove(parent) {
-        let children = parent.getChildren();
-        if (parent) {
-            let index = children.indexOf(this);
-            if (index > -1) {
-                children.splice(index, 1);
-            }
-        }
-    }
+class GenericDomManupulations {
     /**
      *
      *
@@ -65,13 +36,8 @@ export class GenericDomManupulations {
      * @memberOf GenericDomManupulations
      */
     _getNextSibling(element) {
-        let children = element.parent.children;
-        let index = element.parent.children.indexOf(element);
-        if (index > -1) {
-            if (index + 1 < children.length) {
-                return children[index + 1];
-            }
-        }
+        let original = element.original;
+        return mapNodeObject(original.nextSibling);
     }
     /**
      *
@@ -83,42 +49,43 @@ export class GenericDomManupulations {
      * @memberOf GenericDomManupulations
      */
     _getPreviousSibling(element) {
-        let children = element.parent.children;
-        let index = element.parent.children.indexOf(element);
-        if (index > -1) {
-            if (index - 1 >= 0) {
-                return children[index - 1];
-            }
-        }
+        let original = element.original;
+        return mapNodeObject(original.previousSibling);
     }
 }
+exports.GenericDomManupulations = GenericDomManupulations;
 /**
  *
  *
  * @export
- * @class ServerComment
+ * @class BrowserComment
  * @extends {GenericDomManupulations}
- * @implements {IUniversalComment<any>}
+ * @implements {IUniversalComment<Comment>}
  */
-export class ServerComment extends GenericDomManupulations {
+class BrowserComment extends GenericDomManupulations {
     /**
-     * Creates an instance of ServerComment.
+     * Creates an instance of BrowserComment.
      *
      * @param {(string | Comment)} data
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     constructor(data) {
         super();
         /**
          *
          *
-         * @type {number}
-         * @memberOf ServerComment
+         * @private
+         * @type {boolean}
+         * @memberOf BrowserComment
          */
-        this.$id = elementIDS++;
+        this._isRehydrated = false;
         if (typeof data === "string") {
-            this.value = data;
+            this.original = document.createComment(data);
+        }
+        else {
+            this._isRehydrated = true;
+            this.original = data;
         }
     }
     getType() {
@@ -127,29 +94,29 @@ export class ServerComment extends GenericDomManupulations {
     /**
      *
      *
-     * @returns {*}
+     * @returns
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
-    getOriginal() {
-        return this;
+    isRehydrated() {
+        return this._isRehydrated;
     }
     /**
      *
      *
-     * @returns
+     * @returns {Comment}
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
-    isRehydrated() {
-        return false;
+    getOriginal() {
+        return this.original;
     }
     /**
      *
      *
      * @param {IUniversalElement<any>} element
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     appendTo(element) {
         element.append(this);
@@ -159,7 +126,7 @@ export class ServerComment extends GenericDomManupulations {
      *
      * @param {IUniversalElement<any>} element
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     prependTo(element) {
         element.prepend(this);
@@ -169,27 +136,33 @@ export class ServerComment extends GenericDomManupulations {
      *
      * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     insertAfter(element) {
-        this._insertAfter(element);
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+        }
     }
     /**
      *
      *
      * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     insertBefore(element) {
-        this._insertBefore(element);
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode);
+        }
     }
     /**
      *
      *
      * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     getNextSibling() {
         return this._getNextSibling(this);
@@ -199,7 +172,7 @@ export class ServerComment extends GenericDomManupulations {
      *
      * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     getPreviousSibling() {
         return this._getPreviousSibling(this);
@@ -208,50 +181,43 @@ export class ServerComment extends GenericDomManupulations {
      *
      *
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     remove() {
-        this._remove(this.parent);
-    }
-    /**
-     *
-     *
-     * @param {Element} element
-     *
-     * @memberOf ServerComment
-     */
-    setParent(element) {
-        this.parent = element;
+        this.original.parentElement.removeChild(this.original);
     }
     /**
      *
      *
      * @returns {IUniversalElement<any>}
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     getParent() {
-        return this.parent;
+        if (this.original.parentNode) {
+            return new Element(this.original.parentElement);
+        }
     }
     /**
      *
      *
      * @returns
      *
-     * @memberOf ServerComment
+     * @memberOf BrowserComment
      */
     getSource() {
-        return `<!--${this.value}-->`;
+        return `<!--${this.original.nodeValue}-->`;
     }
 }
+exports.BrowserComment = BrowserComment;
 /**
  *
  *
  * @export
  * @class Attribute
- * @implements {IUniversalAttribute<any>}
+ * @implements {IUniversalAttribute<Attr>}
  */
-export class Attribute {
+class Attribute {
     /**
      * Creates an instance of Attribute.
      *
@@ -261,51 +227,10 @@ export class Attribute {
      * @memberOf Attribute
      */
     constructor(name, value) {
-        /**
-         *
-         *
-         * @private
-         * @type {Map<string, string>}
-         * @memberOf Attribute
-         */
-        this.userStyles = new Map();
-        if (typeof name === "string") {
-            this.name = name;
-        }
+        this.original = typeof name === "string" ? document.createAttribute(name) : name;
         if (value !== undefined) {
-            this.value = value;
+            this.original.value = value;
         }
-    }
-    /**
-     *
-     *
-     * @param {(string | any)} data
-     * @param {string} value
-     * @returns
-     *
-     * @memberOf Attribute
-     */
-    setStyle(data, value) {
-        if (typeof data === "object") {
-            for (let k in data) {
-                if (data.hasOwnProperty(k)) {
-                    this.userStyles.set(k, data[k]);
-                }
-            }
-            return;
-        }
-        this.userStyles.set(data, value);
-    }
-    /**
-     *
-     *
-     * @param {string} key
-     * @returns
-     *
-     * @memberOf Attribute
-     */
-    getStyle(key) {
-        return this.userStyles.get(key);
     }
     /**
      *
@@ -315,7 +240,7 @@ export class Attribute {
      * @memberOf Attribute
      */
     getName() {
-        return this.name;
+        return this.original.name;
     }
     /**
      *
@@ -325,7 +250,7 @@ export class Attribute {
      * @memberOf Attribute
      */
     getOriginal() {
-        return this.value;
+        return this.original;
     }
     /**
      *
@@ -335,7 +260,7 @@ export class Attribute {
      * @memberOf Attribute
      */
     setValue(value) {
-        this.value = value;
+        this.original.value = value;
     }
     /**
      *
@@ -345,14 +270,7 @@ export class Attribute {
      * @memberOf Attribute
      */
     getValue() {
-        if (this.name === "style") {
-            let styles = [];
-            this.userStyles.forEach((value, key) => {
-                styles.push(`${key}: ${value}`);
-            });
-            return styles.length > 0 ? styles.join("; ") + ";" : this.value;
-        }
-        return this.value;
+        return this.original.value;
     }
     /**
      *
@@ -366,12 +284,12 @@ export class Attribute {
     /**
      *
      *
-     * @param {IUniversalElement<any>} element
+     * @param {Element} parent
      *
      * @memberOf Attribute
      */
-    setParent(element) {
-        this.parent = element;
+    setParent(parent) {
+        this.parent = parent;
     }
     /**
      *
@@ -384,25 +302,40 @@ export class Attribute {
         return this.parent;
     }
 }
+exports.Attribute = Attribute;
 /**
  *
  *
  * @export
  * @class TextNode
  * @extends {GenericDomManupulations}
- * @implements {IUniversalTextNode<string>}
+ * @implements {IUniversalTextNode<Text>}
  */
-export class TextNode extends GenericDomManupulations {
+class TextNode extends GenericDomManupulations {
     /**
      * Creates an instance of TextNode.
      *
-     * @param {string} value
+     * @param {(string | Text)} data
      *
      * @memberOf TextNode
      */
-    constructor(value) {
+    constructor(data) {
         super();
-        this.value = value;
+        /**
+         *
+         *
+         * @private
+         * @type {boolean}
+         * @memberOf TextNode
+         */
+        this._isRehydrated = false;
+        if (data instanceof Text) {
+            this.original = data;
+            this._isRehydrated = true;
+        }
+        else {
+            this.original = document.createTextNode(data);
+        }
     }
     getType() {
         return "text";
@@ -415,17 +348,17 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     isRehydrated() {
-        return false;
+        return this._isRehydrated;
     }
     /**
      *
      *
-     * @returns {string}
+     * @returns {Text}
      *
      * @memberOf TextNode
      */
     getOriginal() {
-        return this.value;
+        return this.original;
     }
     /**
      *
@@ -435,7 +368,7 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     setValue(value) {
-        this.value = value;
+        this.original.nodeValue = value;
     }
     /**
      *
@@ -445,7 +378,7 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     getValue() {
-        return this.value;
+        return this.original.nodeValue;
     }
     /**
      *
@@ -454,17 +387,7 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     remove() {
-        this._remove(this.parent);
-    }
-    /**
-     *
-     *
-     * @param {Element} element
-     *
-     * @memberOf TextNode
-     */
-    setParent(element) {
-        this.parent = element;
+        this.original.parentElement.removeChild(this.original);
     }
     /**
      *
@@ -474,7 +397,7 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     getParent() {
-        return this.parent;
+        return new Element(this.original.parentElement);
     }
     /**
      *
@@ -504,7 +427,10 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     insertAfter(element) {
-        this._insertAfter(element);
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+        }
     }
     /**
      *
@@ -514,7 +440,10 @@ export class TextNode extends GenericDomManupulations {
      * @memberOf TextNode
      */
     insertBefore(element) {
-        this._insertBefore(element);
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode);
+        }
     }
     /**
      *
@@ -547,67 +476,50 @@ export class TextNode extends GenericDomManupulations {
         return this.getValue();
     }
 }
+exports.TextNode = TextNode;
 /**
  *
  *
  * @export
  * @class Element
  * @extends {GenericDomManupulations}
- * @implements {IUniversalElement<any>}
+ * @implements {IUniversalElement<HTMLElement>}
  */
-export class Element extends GenericDomManupulations {
+class Element extends GenericDomManupulations {
     /**
      * Creates an instance of Element.
      *
-     * @param {(string | HTMLElement)} name
+     * @param {(string | HTMLElement)} data
      *
      * @memberOf Element
      */
-    constructor(name) {
+    constructor(data) {
         super();
         /**
          *
          *
-         * @type {number}
-         * @memberOf Element
-         */
-        this.$id = ++elementIDS;
-        /**
-         *
-         *
          * @private
-         * @type {Map<string, Attribute>}
+         * @type {boolean}
          * @memberOf Element
          */
-        this.attrs = new Map();
-        /**
-         *
-         *
-         * @private
-         * @type {Set<string>}
-         * @memberOf Element
-         */
-        this.classNames = new Set();
+        this._isRehydrated = false;
         /**
          *
          *
          * @private
          * @type {((IUniversalElement<HTMLElement> |
-         *         IUniversalTextNode<Text> | IUniversalComment<Text>)[])}
+         *         IUniversalTextNode<Text> | IUniversalComment<Comment>)[])}
          * @memberOf Element
          */
         this.children = [];
-        if (typeof name === "string") {
-            this.name = name;
+        if (data instanceof HTMLElement) {
+            this.original = data;
+            this._isRehydrated = true;
+        }
+        else {
+            this.original = document.createElement(data);
         }
     }
-    /**
-     *
-     *
-     * @returns {string}
-     *
-     * @memberOf Element
-     */
     getType() {
         return "element";
     }
@@ -619,63 +531,61 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     isRehydrated() {
-        return false;
+        return this._isRehydrated;
     }
     /**
      *
      *
-     * @returns {*}
+     * @returns {HTMLElement}
      *
      * @memberOf Element
      */
-    getOriginal() { }
+    getOriginal() {
+        return this.original;
+    }
     /**
      *
      *
-     * @param {(IUniversalElement<any> |
+     * @param {(IUniversalElement<HTMLElement> |
      *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
      *
      * @memberOf Element
      */
     append(element) {
-        let el = element;
-        el.setParent(this);
-        this.children.push(el);
+        this.original.appendChild(element.getOriginal());
     }
     /**
      *
      *
-     * @param {(IUniversalElement<any> |
+     * @param {(IUniversalElement<HTMLElement> |
      *         IUniversalTextNode<Text>)} element
      *
      * @memberOf Element
      */
     appendTo(element) {
-        let el = element;
-        el.append(this);
+        element.getOriginal().appendChild(this.original);
     }
     /**
      *
      *
-     * @param {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)} element
+     * @param {(IUniversalElement<HTMLElement> |
+     *         IUniversalTextNode<Text> | IUniversalComment<any>)} element
      *
      * @memberOf Element
      */
     prepend(element) {
-        element.setParent(this);
-        this.children.splice(0, 0, element);
+        this.original.insertBefore(element.getOriginal(), this.original.firstChild);
     }
     /**
      *
      *
-     * @param {(IUniversalElement<any> |
+     * @param {(IUniversalElement<HTMLElement> |
      *         IUniversalTextNode<Text>)} element
      *
      * @memberOf Element
      */
     prependTo(element) {
-        let el = element;
-        el.prepend(this);
+        element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
     }
     /**
      *
@@ -685,7 +595,10 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     insertAfter(element) {
-        this._insertAfter(element);
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
+        }
     }
     /**
      *
@@ -695,7 +608,10 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     insertBefore(element) {
-        this._insertBefore(element);
+        let referenceNode = element.getOriginal();
+        if (referenceNode.parentNode) {
+            referenceNode.parentNode.insertBefore(this.original, referenceNode);
+        }
     }
     /**
      *
@@ -720,47 +636,39 @@ export class Element extends GenericDomManupulations {
     /**
      *
      *
-     * @param {Element} element
-     *
-     * @memberOf Element
-     */
-    removeChild(element) {
-        let index = this.children.indexOf(element);
-        if (index > -1) {
-            this.children.splice(index, 1);
-        }
-    }
-    /**
-     *
-     *
      *
      * @memberOf Element
      */
     remove() {
-        this.parent.removeChild(this);
+        this.original.parentNode.removeChild(this.original);
     }
     /**
      *
      *
-     * @param {IUniversalAttribute<any>} attribute
+     * @param {IUniversalAttribute<Attr>} attribute
      * @returns {IUniversalAttribute<Attr>}
      *
      * @memberOf Element
      */
     setAttr(attribute) {
         attribute.setParent(this);
-        this.attrs.set(attribute.getName(), attribute);
+        this.original.setAttributeNode(attribute.getOriginal());
         return attribute;
     }
     /**
      *
      *
-     * @param {(IUniversalAttribute<any> | string)} attribute
+     * @param {(IUniversalAttribute<Attr> | string)} attr
      *
      * @memberOf Element
      */
-    removeAttr(attribute) {
-        this.attrs.delete(attribute.getName());
+    removeAttr(attr) {
+        if (attr instanceof Attribute) {
+            this.original.removeAttributeNode(attr.getOriginal());
+        }
+        else {
+            this.original.removeAttribute(attr);
+        }
     }
     /**
      *
@@ -785,68 +693,56 @@ export class Element extends GenericDomManupulations {
      *
      *
      * @param {string} name
-     * @returns {IUniversalAttribute<any>}
+     * @returns {IUniversalAttribute<Attr>}
      *
      * @memberOf Element
      */
     getAttr(name) {
-        return this.attrs.get(name);
+        let oAttr = this.original.getAttributeNode(name);
+        if (oAttr) {
+            let attr = new Attribute(oAttr);
+            return attr;
+        }
     }
     /**
      *
      *
-     * @returns {IUniversalAttribute<any>[]}
+     * @returns {IUniversalAttribute<Attr>[]}
      *
      * @memberOf Element
      */
     getAttrs() {
         let attrs = [];
-        if (this.classNames.size > 0) {
-            let clsNames = [];
-            this.classNames.forEach(clsName => {
-                clsNames.push(clsName);
-            });
-            let clsAttribute = new Attribute("class");
-            clsAttribute.setParent(this);
-            clsAttribute.setValue(clsNames.join(" "));
-            attrs.push(clsAttribute);
+        let originalAttrs = this.original.attributes;
+        for (let i = 0; i < originalAttrs.length; i++) {
+            attrs.push(originalAttrs[i]);
         }
-        this.attrs.forEach(attr => {
-            attrs.push(attr);
-        });
         return attrs;
     }
     /**
      *
      *
-     * @returns {((IUniversalElement<any> |
-     *         IUniversalTextNode<any> | IUniversalComment<any>)[])}
+     * @returns {((IUniversalElement<HTMLElement> |
+     *         IUniversalTextNode<Text>)[])}
      *
      * @memberOf Element
      */
     getChildren() {
-        return this.children;
-    }
-    /**
-     *
-     *
-     * @param {({
-     *         (element: IUniversalElement<any>
-     *             | IUniversalTextNode<any> | IUniversalComment<any>, index: number): void
-     *     })} closure
-     *
-     * @memberOf Element
-     */
-    eachChild(closure) {
-        for (let i = 0; i < this.children.length; i++) {
-            closure(this.children[i], i);
+        let childNodes = this.original.childNodes;
+        let result = [];
+        for (let i = 0; i < childNodes.length; i++) {
+            let node = mapNodeObject(childNodes[i]);
+            if (node) {
+                result.push(node);
+            }
         }
+        return result;
     }
     /**
      *
      *
-     * @param {((IUniversalElement<any>
-     *         | IUniversalTextNode<any>)[])} elements
+     * @param {((IUniversalElement<HTMLElement>
+     *         | IUniversalTextNode<Text>)[])} elements
      *
      * @memberOf Element
      */
@@ -861,8 +757,8 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     addClass(name) {
-        if (!this.classNames.has(name)) {
-            this.classNames.add(name);
+        if (!this.original.classList.contains(name)) {
+            this.original.classList.add(name);
         }
     }
     /**
@@ -874,7 +770,7 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     hasClass(name) {
-        return this.classNames.has(name);
+        return this.original.classList.contains(name);
     }
     /**
      *
@@ -884,7 +780,7 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     removeClass(name) {
-        this.classNames.delete(name);
+        this.original.classList.remove(name);
     }
     /**
      *
@@ -894,11 +790,11 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     toggleClass(name) {
-        if (this.classNames.has(name)) {
-            this.classNames.delete(name);
+        if (this.original.classList.contains(name)) {
+            this.original.classList.remove(name);
         }
         else {
-            this.classNames.add(name);
+            this.original.classList.add(name);
         }
     }
     /**
@@ -906,24 +802,31 @@ export class Element extends GenericDomManupulations {
      *
      * @param {*} data
      * @param {string} [value]
+     * @returns
      *
      * @memberOf Element
      */
     setStyle(data, value) {
-        let styleAttr = (this.getAttr("style") || this.setAttr(new Attribute("style")));
-        styleAttr.setStyle(data, value);
+        if (typeof data === "object") {
+            for (let k in data) {
+                if (data.hasOwnProperty(k)) {
+                    this.original.style[k] = data[k];
+                }
+            }
+            return;
+        }
+        return this.original.style[data] = value;
     }
     /**
      *
      *
      * @param {string} name
-     * @returns {string}
+     * @returns
      *
      * @memberOf Element
      */
     getStyle(name) {
-        let styleAttr = (this.getAttr("style") || this.setAttr(new Attribute("style")));
-        return styleAttr.getStyle(name);
+        return this.original.style[name];
     }
     /**
      *
@@ -933,39 +836,8 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     getSource() {
-        let html = [];
-        html.push(`<${this.name}`);
-        let localAttrs = [];
-        this.attrs.forEach(attr => {
-            localAttrs.push(`${attr.getName()}="${attr.getValue() || ""}"`);
-        });
-        let clsNames = [];
-        this.classNames.forEach(clsName => {
-            clsNames.push(clsName);
-        });
-        if (this.classNames.size > 0) {
-            html.push(` class="${clsNames.join(" ")}"`);
-        }
-        if (localAttrs.length) {
-            html.push(" " + localAttrs.join(" "));
-        }
-        html.push(">");
-        for (let i = 0; i < this.children.length; i++) {
-            let child = this.children[i];
-            html.push(child.getSource());
-        }
-        html.push(`</${this.name}>`);
-        return html.join("");
-    }
-    /**
-     *
-     *
-     * @param {Element} element
-     *
-     * @memberOf Element
-     */
-    setParent(element) {
-        this.parent = element;
+        let html = this.original.outerHTML;
+        return this.cleanUpHTML(html);
     }
     /**
      *
@@ -975,7 +847,25 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     getParent() {
-        return this.parent;
+        let parent = this.original.parentElement;
+        return new Element(parent);
+    }
+    /**
+     *
+     *
+     * @param {({
+     *         (element: IUniversalElement<HTMLElement>
+     *             | IUniversalTextNode<Text> | IUniversalComment<Text>, index: number): void
+     *     })} closure
+     *
+     * @memberOf Element
+     */
+    eachChild(closure) {
+        let childNodes = this.original.childNodes;
+        for (let i = 0; i < childNodes.length; i++) {
+            let el = childNodes[i];
+            closure(new Element(el), i);
+        }
     }
     /**
      *
@@ -985,12 +875,8 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     getHTML() {
-        let html = [];
-        for (let i = 0; i < this.children.length; i++) {
-            let child = this.children[i];
-            html.push(child.getSource());
-        }
-        return html.join("");
+        let html = this.original.innerHTML;
+        return this.cleanUpHTML(html);
     }
     /**
      *
@@ -999,6 +885,27 @@ export class Element extends GenericDomManupulations {
      * @memberOf Element
      */
     empty() {
-        this.children = [];
+        while (this.original.firstChild) {
+            this.original.removeChild(this.original.firstChild);
+        }
+    }
+    /**
+     *
+     *
+     * @private
+     * @param {string} html
+     * @returns {string}
+     *
+     * @memberOf Element
+     */
+    cleanUpHTML(html) {
+        html = html.replace(/\r?\n|\r|\t/g, "");
+        html = html.replace(/\s{2,}/g, " ");
+        html = html.replace(/>\s+</g, "><");
+        html = html.replace(/\sclass=""/g, "");
+        html = html.replace(/\s"/g, '"');
+        html = html.trim();
+        return html;
     }
 }
+exports.Element = Element;

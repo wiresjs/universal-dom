@@ -606,7 +606,7 @@ export class Element extends GenericDomManupulations implements IUniversalElemen
         }
     }
 
-    public getType() : string {
+    public getType(): string {
         return "element";
     }
 

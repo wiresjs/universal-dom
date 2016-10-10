@@ -1,7 +1,7 @@
 var isServer = typeof exports !== "undefined"
 var root;
 if (isServer) {
-    var Dom = require("../build/universal-dom.js").Dom;
+   var Dom = require("../build/commonjs/index.js").Dom;
     var should = require("should");
     root = Dom.createElement("div");
     root.attr("id", "root")

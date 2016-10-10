@@ -1,5 +1,6 @@
-import { Element as BrowserElement, TextNode as BrowserTextNode, Attribute as BrowserAttribute, BrowserComment } from "./Browser";
-import { Element as ServerElement, TextNode as ServerTextNode, Attribute as ServerAttribute, ServerComment } from "./Server";
+"use strict";
+const Browser_1 = require("./Browser");
+const Server_1 = require("./Server");
 const isBackend = typeof module !== "undefined" && module.exports && typeof process === "object";
 /**
  *
@@ -7,7 +8,7 @@ const isBackend = typeof module !== "undefined" && module.exports && typeof proc
  * @export
  * @class UniversalDom
  */
-export class UniversalDom {
+class UniversalDom {
     /**
      *
      *
@@ -18,7 +19,7 @@ export class UniversalDom {
      * @memberOf UniversalDom
      */
     static createElement(data) {
-        return isBackend ? new ServerElement(data) : new BrowserElement(data);
+        return isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
     }
     /**
      *
@@ -31,7 +32,7 @@ export class UniversalDom {
      * @memberOf UniversalDom
      */
     static createAttribute(name, value) {
-        return isBackend ? new ServerAttribute(name, value) : new BrowserAttribute(name, value);
+        return isBackend ? new Server_1.Attribute(name, value) : new Browser_1.Attribute(name, value);
     }
     /**
      *
@@ -43,7 +44,7 @@ export class UniversalDom {
      * @memberOf UniversalDom
      */
     static createTextNode(value) {
-        return isBackend ? new ServerTextNode(value) : new BrowserTextNode(value);
+        return isBackend ? new Server_1.TextNode(value) : new Browser_1.TextNode(value);
     }
     /**
      *
@@ -55,6 +56,7 @@ export class UniversalDom {
      * @memberOf UniversalDom
      */
     static createComment(value) {
-        return isBackend ? new ServerComment(value) : new BrowserComment(value);
+        return isBackend ? new Server_1.ServerComment(value) : new Browser_1.BrowserComment(value);
     }
 }
+exports.UniversalDom = UniversalDom;
