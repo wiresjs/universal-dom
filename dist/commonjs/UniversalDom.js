@@ -1,14 +1,16 @@
 "use strict";
-const Browser_1 = require("./Browser");
-const Server_1 = require("./Server");
-const isBackend = typeof module !== "undefined" && module.exports && typeof window === "undefined";
+var Browser_1 = require("./Browser");
+var Server_1 = require("./Server");
+var isBackend = typeof module !== "undefined" && module.exports && typeof window === "undefined";
 /**
  *
  *
  * @export
  * @class UniversalDom
  */
-class UniversalDom {
+var UniversalDom = (function () {
+    function UniversalDom() {
+    }
     /**
      *
      *
@@ -18,9 +20,9 @@ class UniversalDom {
      *
      * @memberOf UniversalDom
      */
-    static createElement(data) {
+    UniversalDom.createElement = function (data) {
         return isBackend ? new Server_1.Element(data) : new Browser_1.Element(data);
-    }
+    };
     /**
      *
      *
@@ -31,9 +33,9 @@ class UniversalDom {
      *
      * @memberOf UniversalDom
      */
-    static createAttribute(name, value) {
+    UniversalDom.createAttribute = function (name, value) {
         return isBackend ? new Server_1.Attribute(name, value) : new Browser_1.Attribute(name, value);
-    }
+    };
     /**
      *
      *
@@ -43,9 +45,9 @@ class UniversalDom {
      *
      * @memberOf UniversalDom
      */
-    static createTextNode(value) {
+    UniversalDom.createTextNode = function (value) {
         return isBackend ? new Server_1.TextNode(value) : new Browser_1.TextNode(value);
-    }
+    };
     /**
      *
      *
@@ -55,8 +57,9 @@ class UniversalDom {
      *
      * @memberOf UniversalDom
      */
-    static createComment(value) {
+    UniversalDom.createComment = function (value) {
         return isBackend ? new Server_1.ServerComment(value) : new Browser_1.BrowserComment(value);
-    }
-}
+    };
+    return UniversalDom;
+}());
 exports.UniversalDom = UniversalDom;

@@ -11,7 +11,10 @@ const babel = require("gulp-babel");
 const browserify = require('gulp-browserify');
 const webpack = require('webpack-stream');
 let projectTypings = ts.createProject('src/tsconfig.json');
-let projectCommonjs = ts.createProject('src/tsconfig.json');
+
+let projectCommonjs = ts.createProject('src/tsconfig.json', {
+    target: "es5"
+});
 const LIBRARY_NAME = 'universal-dom';
 gulp.task("dist-typings", () => {
     let result = gulp.src('src/**/*.ts')

@@ -1,11 +1,16 @@
 "use strict";
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
 /**
  *
  *
  * @param {*} node
  * @returns {(IUniversalElement<any> | IUniversalTextNode<any> | IUniversalComment<any>)}
  */
-let mapNodeObject = (node) => {
+var mapNodeObject = function (node) {
     if (!node) {
         return;
     }
@@ -25,7 +30,9 @@ let mapNodeObject = (node) => {
  * @export
  * @class GenericDomManupulations
  */
-class GenericDomManupulations {
+var GenericDomManupulations = (function () {
+    function GenericDomManupulations() {
+    }
     /**
      *
      *
@@ -35,10 +42,10 @@ class GenericDomManupulations {
      *
      * @memberOf GenericDomManupulations
      */
-    _getNextSibling(element) {
-        let original = element.original;
+    GenericDomManupulations.prototype._getNextSibling = function (element) {
+        var original = element.original;
         return mapNodeObject(original.nextSibling);
-    }
+    };
     /**
      *
      *
@@ -48,11 +55,12 @@ class GenericDomManupulations {
      *
      * @memberOf GenericDomManupulations
      */
-    _getPreviousSibling(element) {
-        let original = element.original;
+    GenericDomManupulations.prototype._getPreviousSibling = function (element) {
+        var original = element.original;
         return mapNodeObject(original.previousSibling);
-    }
-}
+    };
+    return GenericDomManupulations;
+}());
 exports.GenericDomManupulations = GenericDomManupulations;
 /**
  *
@@ -62,7 +70,8 @@ exports.GenericDomManupulations = GenericDomManupulations;
  * @extends {GenericDomManupulations}
  * @implements {IUniversalComment<Comment>}
  */
-class BrowserComment extends GenericDomManupulations {
+var BrowserComment = (function (_super) {
+    __extends(BrowserComment, _super);
     /**
      * Creates an instance of BrowserComment.
      *
@@ -70,8 +79,8 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    constructor(data) {
-        super();
+    function BrowserComment(data) {
+        _super.call(this);
         /**
          *
          *
@@ -88,9 +97,9 @@ class BrowserComment extends GenericDomManupulations {
             this.original = data;
         }
     }
-    getType() {
+    BrowserComment.prototype.getType = function () {
         return "comment";
-    }
+    };
     /**
      *
      *
@@ -98,9 +107,9 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    isRehydrated() {
+    BrowserComment.prototype.isRehydrated = function () {
         return this._isRehydrated;
-    }
+    };
     /**
      *
      *
@@ -108,9 +117,9 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    getOriginal() {
+    BrowserComment.prototype.getOriginal = function () {
         return this.original;
-    }
+    };
     /**
      *
      *
@@ -118,9 +127,9 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    appendTo(element) {
+    BrowserComment.prototype.appendTo = function (element) {
         element.append(this);
-    }
+    };
     /**
      *
      *
@@ -128,9 +137,9 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    prependTo(element) {
+    BrowserComment.prototype.prependTo = function (element) {
         element.prepend(this);
-    }
+    };
     /**
      *
      *
@@ -138,12 +147,12 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    insertAfter(element) {
-        let referenceNode = element.getOriginal();
+    BrowserComment.prototype.insertAfter = function (element) {
+        var referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
         }
-    }
+    };
     /**
      *
      *
@@ -151,12 +160,12 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    insertBefore(element) {
-        let referenceNode = element.getOriginal();
+    BrowserComment.prototype.insertBefore = function (element) {
+        var referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
-    }
+    };
     /**
      *
      *
@@ -164,9 +173,9 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    getNextSibling() {
+    BrowserComment.prototype.getNextSibling = function () {
         return this._getNextSibling(this);
-    }
+    };
     /**
      *
      *
@@ -174,18 +183,18 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    getPreviousSibling() {
+    BrowserComment.prototype.getPreviousSibling = function () {
         return this._getPreviousSibling(this);
-    }
+    };
     /**
      *
      *
      *
      * @memberOf BrowserComment
      */
-    remove() {
+    BrowserComment.prototype.remove = function () {
         this.original.parentElement.removeChild(this.original);
-    }
+    };
     /**
      *
      *
@@ -193,11 +202,11 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    getParent() {
+    BrowserComment.prototype.getParent = function () {
         if (this.original.parentNode) {
             return new Element(this.original.parentElement);
         }
-    }
+    };
     /**
      *
      *
@@ -205,10 +214,11 @@ class BrowserComment extends GenericDomManupulations {
      *
      * @memberOf BrowserComment
      */
-    getSource() {
-        return `<!--${this.original.nodeValue}-->`;
-    }
-}
+    BrowserComment.prototype.getSource = function () {
+        return "<!--" + this.original.nodeValue + "-->";
+    };
+    return BrowserComment;
+}(GenericDomManupulations));
 exports.BrowserComment = BrowserComment;
 /**
  *
@@ -217,7 +227,7 @@ exports.BrowserComment = BrowserComment;
  * @class Attribute
  * @implements {IUniversalAttribute<Attr>}
  */
-class Attribute {
+var Attribute = (function () {
     /**
      * Creates an instance of Attribute.
      *
@@ -226,7 +236,7 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    constructor(name, value) {
+    function Attribute(name, value) {
         this.original = typeof name === "string" ? document.createAttribute(name) : name;
         if (value !== undefined) {
             this.original.value = value;
@@ -239,9 +249,9 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    getName() {
+    Attribute.prototype.getName = function () {
         return this.original.name;
-    }
+    };
     /**
      *
      *
@@ -249,9 +259,9 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    getOriginal() {
+    Attribute.prototype.getOriginal = function () {
         return this.original;
-    }
+    };
     /**
      *
      *
@@ -259,9 +269,9 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    setValue(value) {
+    Attribute.prototype.setValue = function (value) {
         this.original.value = value;
-    }
+    };
     /**
      *
      *
@@ -269,18 +279,18 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    getValue() {
+    Attribute.prototype.getValue = function () {
         return this.original.value;
-    }
+    };
     /**
      *
      *
      *
      * @memberOf Attribute
      */
-    remove() {
+    Attribute.prototype.remove = function () {
         this.parent.removeAttr(this);
-    }
+    };
     /**
      *
      *
@@ -288,9 +298,9 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    setParent(parent) {
+    Attribute.prototype.setParent = function (parent) {
         this.parent = parent;
-    }
+    };
     /**
      *
      *
@@ -298,10 +308,11 @@ class Attribute {
      *
      * @memberOf Attribute
      */
-    getParent() {
+    Attribute.prototype.getParent = function () {
         return this.parent;
-    }
-}
+    };
+    return Attribute;
+}());
 exports.Attribute = Attribute;
 /**
  *
@@ -311,7 +322,8 @@ exports.Attribute = Attribute;
  * @extends {GenericDomManupulations}
  * @implements {IUniversalTextNode<Text>}
  */
-class TextNode extends GenericDomManupulations {
+var TextNode = (function (_super) {
+    __extends(TextNode, _super);
     /**
      * Creates an instance of TextNode.
      *
@@ -319,8 +331,8 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    constructor(data) {
-        super();
+    function TextNode(data) {
+        _super.call(this);
         /**
          *
          *
@@ -337,9 +349,9 @@ class TextNode extends GenericDomManupulations {
             this.original = document.createTextNode(data);
         }
     }
-    getType() {
+    TextNode.prototype.getType = function () {
         return "text";
-    }
+    };
     /**
      *
      *
@@ -347,9 +359,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    isRehydrated() {
+    TextNode.prototype.isRehydrated = function () {
         return this._isRehydrated;
-    }
+    };
     /**
      *
      *
@@ -357,9 +369,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    getOriginal() {
+    TextNode.prototype.getOriginal = function () {
         return this.original;
-    }
+    };
     /**
      *
      *
@@ -367,9 +379,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    setValue(value) {
+    TextNode.prototype.setValue = function (value) {
         this.original.nodeValue = value;
-    }
+    };
     /**
      *
      *
@@ -377,18 +389,18 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    getValue() {
+    TextNode.prototype.getValue = function () {
         return this.original.nodeValue;
-    }
+    };
     /**
      *
      *
      *
      * @memberOf TextNode
      */
-    remove() {
+    TextNode.prototype.remove = function () {
         this.original.parentElement.removeChild(this.original);
-    }
+    };
     /**
      *
      *
@@ -396,9 +408,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    getParent() {
+    TextNode.prototype.getParent = function () {
         return new Element(this.original.parentElement);
-    }
+    };
     /**
      *
      *
@@ -406,9 +418,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    appendTo(element) {
+    TextNode.prototype.appendTo = function (element) {
         element.append(this);
-    }
+    };
     /**
      *
      *
@@ -416,9 +428,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    prependTo(element) {
+    TextNode.prototype.prependTo = function (element) {
         element.prepend(this);
-    }
+    };
     /**
      *
      *
@@ -426,12 +438,12 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    insertAfter(element) {
-        let referenceNode = element.getOriginal();
+    TextNode.prototype.insertAfter = function (element) {
+        var referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
         }
-    }
+    };
     /**
      *
      *
@@ -439,12 +451,12 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    insertBefore(element) {
-        let referenceNode = element.getOriginal();
+    TextNode.prototype.insertBefore = function (element) {
+        var referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
-    }
+    };
     /**
      *
      *
@@ -452,9 +464,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    getNextSibling() {
+    TextNode.prototype.getNextSibling = function () {
         return this._getNextSibling(this);
-    }
+    };
     /**
      *
      *
@@ -462,9 +474,9 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    getPreviousSibling() {
+    TextNode.prototype.getPreviousSibling = function () {
         return this._getPreviousSibling(this);
-    }
+    };
     /**
      *
      *
@@ -472,10 +484,11 @@ class TextNode extends GenericDomManupulations {
      *
      * @memberOf TextNode
      */
-    getSource() {
+    TextNode.prototype.getSource = function () {
         return this.getValue();
-    }
-}
+    };
+    return TextNode;
+}(GenericDomManupulations));
 exports.TextNode = TextNode;
 /**
  *
@@ -485,7 +498,8 @@ exports.TextNode = TextNode;
  * @extends {GenericDomManupulations}
  * @implements {IUniversalElement<HTMLElement>}
  */
-class Element extends GenericDomManupulations {
+var Element = (function (_super) {
+    __extends(Element, _super);
     /**
      * Creates an instance of Element.
      *
@@ -493,8 +507,8 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    constructor(data) {
-        super();
+    function Element(data) {
+        _super.call(this);
         /**
          *
          *
@@ -520,9 +534,9 @@ class Element extends GenericDomManupulations {
             this.original = document.createElement(data);
         }
     }
-    getType() {
+    Element.prototype.getType = function () {
         return "element";
-    }
+    };
     /**
      *
      *
@@ -530,9 +544,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    isRehydrated() {
+    Element.prototype.isRehydrated = function () {
         return this._isRehydrated;
-    }
+    };
     /**
      *
      *
@@ -540,9 +554,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getOriginal() {
+    Element.prototype.getOriginal = function () {
         return this.original;
-    }
+    };
     /**
      *
      *
@@ -551,9 +565,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    append(element) {
+    Element.prototype.append = function (element) {
         this.original.appendChild(element.getOriginal());
-    }
+    };
     /**
      *
      *
@@ -562,9 +576,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    appendTo(element) {
+    Element.prototype.appendTo = function (element) {
         element.getOriginal().appendChild(this.original);
-    }
+    };
     /**
      *
      *
@@ -573,9 +587,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    prepend(element) {
+    Element.prototype.prepend = function (element) {
         this.original.insertBefore(element.getOriginal(), this.original.firstChild);
-    }
+    };
     /**
      *
      *
@@ -584,9 +598,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    prependTo(element) {
+    Element.prototype.prependTo = function (element) {
         element.getOriginal().insertBefore(this.original, element.getOriginal().firstChild);
-    }
+    };
     /**
      *
      *
@@ -594,12 +608,12 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    insertAfter(element) {
-        let referenceNode = element.getOriginal();
+    Element.prototype.insertAfter = function (element) {
+        var referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode.nextSibling);
         }
-    }
+    };
     /**
      *
      *
@@ -607,12 +621,12 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    insertBefore(element) {
-        let referenceNode = element.getOriginal();
+    Element.prototype.insertBefore = function (element) {
+        var referenceNode = element.getOriginal();
         if (referenceNode.parentNode) {
             referenceNode.parentNode.insertBefore(this.original, referenceNode);
         }
-    }
+    };
     /**
      *
      *
@@ -620,9 +634,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getNextSibling() {
+    Element.prototype.getNextSibling = function () {
         return this._getNextSibling(this);
-    }
+    };
     /**
      *
      *
@@ -630,18 +644,18 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getPreviousSibling() {
+    Element.prototype.getPreviousSibling = function () {
         return this._getPreviousSibling(this);
-    }
+    };
     /**
      *
      *
      *
      * @memberOf Element
      */
-    remove() {
+    Element.prototype.remove = function () {
         this.original.parentNode.removeChild(this.original);
-    }
+    };
     /**
      *
      *
@@ -650,11 +664,11 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    setAttr(attribute) {
+    Element.prototype.setAttr = function (attribute) {
         attribute.setParent(this);
         this.original.setAttributeNode(attribute.getOriginal());
         return attribute;
-    }
+    };
     /**
      *
      *
@@ -662,14 +676,14 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    removeAttr(attr) {
+    Element.prototype.removeAttr = function (attr) {
         if (attr instanceof Attribute) {
             this.original.removeAttributeNode(attr.getOriginal());
         }
         else {
             this.original.removeAttribute(attr);
         }
-    }
+    };
     /**
      *
      *
@@ -679,16 +693,16 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    attr(name, value) {
+    Element.prototype.attr = function (name, value) {
         if (value === undefined) {
             return this.getAttr(name);
         }
         else {
-            let attr = this.getAttr(name) || this.setAttr(new Attribute(name));
+            var attr = this.getAttr(name) || this.setAttr(new Attribute(name));
             attr.setValue(value);
             return attr;
         }
-    }
+    };
     /**
      *
      *
@@ -697,13 +711,13 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getAttr(name) {
-        let oAttr = this.original.getAttributeNode(name);
+    Element.prototype.getAttr = function (name) {
+        var oAttr = this.original.getAttributeNode(name);
         if (oAttr) {
-            let attr = new Attribute(oAttr);
+            var attr = new Attribute(oAttr);
             return attr;
         }
-    }
+    };
     /**
      *
      *
@@ -711,14 +725,14 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getAttrs() {
-        let attrs = [];
-        let originalAttrs = this.original.attributes;
-        for (let i = 0; i < originalAttrs.length; i++) {
+    Element.prototype.getAttrs = function () {
+        var attrs = [];
+        var originalAttrs = this.original.attributes;
+        for (var i = 0; i < originalAttrs.length; i++) {
             attrs.push(originalAttrs[i]);
         }
         return attrs;
-    }
+    };
     /**
      *
      *
@@ -727,17 +741,17 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getChildren() {
-        let childNodes = this.original.childNodes;
-        let result = [];
-        for (let i = 0; i < childNodes.length; i++) {
-            let node = mapNodeObject(childNodes[i]);
+    Element.prototype.getChildren = function () {
+        var childNodes = this.original.childNodes;
+        var result = [];
+        for (var i = 0; i < childNodes.length; i++) {
+            var node = mapNodeObject(childNodes[i]);
             if (node) {
                 result.push(node);
             }
         }
         return result;
-    }
+    };
     /**
      *
      *
@@ -746,9 +760,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    setChildren(elements) {
+    Element.prototype.setChildren = function (elements) {
         this.children = elements;
-    }
+    };
     /**
      *
      *
@@ -756,11 +770,11 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    addClass(name) {
+    Element.prototype.addClass = function (name) {
         if (!this.original.classList.contains(name)) {
             this.original.classList.add(name);
         }
-    }
+    };
     /**
      *
      *
@@ -769,9 +783,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    hasClass(name) {
+    Element.prototype.hasClass = function (name) {
         return this.original.classList.contains(name);
-    }
+    };
     /**
      *
      *
@@ -779,9 +793,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    removeClass(name) {
+    Element.prototype.removeClass = function (name) {
         this.original.classList.remove(name);
-    }
+    };
     /**
      *
      *
@@ -789,14 +803,14 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    toggleClass(name) {
+    Element.prototype.toggleClass = function (name) {
         if (this.original.classList.contains(name)) {
             this.original.classList.remove(name);
         }
         else {
             this.original.classList.add(name);
         }
-    }
+    };
     /**
      *
      *
@@ -806,9 +820,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    setStyle(data, value) {
+    Element.prototype.setStyle = function (data, value) {
         if (typeof data === "object") {
-            for (let k in data) {
+            for (var k in data) {
                 if (data.hasOwnProperty(k)) {
                     this.original.style[k] = data[k];
                 }
@@ -816,7 +830,7 @@ class Element extends GenericDomManupulations {
             return;
         }
         return this.original.style[data] = value;
-    }
+    };
     /**
      *
      *
@@ -825,9 +839,9 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getStyle(name) {
+    Element.prototype.getStyle = function (name) {
         return this.original.style[name];
-    }
+    };
     /**
      *
      *
@@ -835,10 +849,10 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getSource() {
-        let html = this.original.outerHTML;
+    Element.prototype.getSource = function () {
+        var html = this.original.outerHTML;
         return this.cleanUpHTML(html);
-    }
+    };
     /**
      *
      *
@@ -846,10 +860,10 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getParent() {
-        let parent = this.original.parentElement;
+    Element.prototype.getParent = function () {
+        var parent = this.original.parentElement;
         return new Element(parent);
-    }
+    };
     /**
      *
      *
@@ -860,13 +874,13 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    eachChild(closure) {
-        let childNodes = this.original.childNodes;
-        for (let i = 0; i < childNodes.length; i++) {
-            let el = childNodes[i];
+    Element.prototype.eachChild = function (closure) {
+        var childNodes = this.original.childNodes;
+        for (var i = 0; i < childNodes.length; i++) {
+            var el = childNodes[i];
             closure(new Element(el), i);
         }
-    }
+    };
     /**
      *
      *
@@ -874,21 +888,21 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    getHTML() {
-        let html = this.original.innerHTML;
+    Element.prototype.getHTML = function () {
+        var html = this.original.innerHTML;
         return this.cleanUpHTML(html);
-    }
+    };
     /**
      *
      *
      *
      * @memberOf Element
      */
-    empty() {
+    Element.prototype.empty = function () {
         while (this.original.firstChild) {
             this.original.removeChild(this.original.firstChild);
         }
-    }
+    };
     /**
      *
      *
@@ -898,7 +912,7 @@ class Element extends GenericDomManupulations {
      *
      * @memberOf Element
      */
-    cleanUpHTML(html) {
+    Element.prototype.cleanUpHTML = function (html) {
         html = html.replace(/\r?\n|\r|\t/g, "");
         html = html.replace(/\s{2,}/g, " ");
         html = html.replace(/>\s+</g, "><");
@@ -906,6 +920,7 @@ class Element extends GenericDomManupulations {
         html = html.replace(/\s"/g, '"');
         html = html.trim();
         return html;
-    }
-}
+    };
+    return Element;
+}(GenericDomManupulations));
 exports.Element = Element;
